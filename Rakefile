@@ -5,13 +5,15 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "postmark"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API}
+    gem.description = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
     gem.email = "underlog@gmail.com"
     gem.homepage = "http://github.com/underlog/postmark"
     gem.authors = ["Petyo Ivanov"]
     gem.add_development_dependency "rspec"
     gem.add_development_dependency "cucumber"
+    gem.add_dependency "tmail"
+    gem.files << "lib/postmark/tmail_mail_extension.rb"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
