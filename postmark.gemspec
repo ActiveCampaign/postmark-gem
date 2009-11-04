@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     ".rake_tasks",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
