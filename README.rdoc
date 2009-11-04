@@ -1,6 +1,32 @@
-= postmark
+= Postmark gem
 
-Description goes here.
+Ruby gem for sending emails through http://postmarkapp.com HTTP API
+
+== Example
+
+    #!/usr/bin/env ruby
+
+    require 'rubygems'
+    require 'postmark'
+    require 'tmail'
+    require 'ruby-debug'
+
+    Postmark.host = "postmarkapp.com"
+    Postmark.api_key = "your-api-key"
+
+    message = TMail::Mail.new
+    message.from = "underlog@gmail.com"
+    message.to = "petyoooo@wildbit.com"
+    message.subject = "Welcome to Postmark!"
+    message.content_type = "text/html"
+    message.body = "<b>Hello!</b> World"
+
+    p Postmark.send_through_postmark(message).body
+
+== Requirements
+
+The gem relies on TMail for building the message. You will also need postmark account, server and sender signature set up to use it. 
+If you plan using it in a rails project, check out the postmark-rails gem, which is meant to integrate with ActionMailer. 
 
 == Note on Patches/Pull Requests
  
@@ -15,4 +41,4 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2009 Petyo Ivanov. See LICENSE for details.
+Copyright (c) 2009 Wildbit LLC. See LICENSE for details.
