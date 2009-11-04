@@ -40,8 +40,8 @@ module TMail
     # returs an String with just the plain text part of the body
     # or nil if there is not any plain text part
     #
-    def body_plain
-      result = nil
+    def body_text
+      result = unquoted_body
       if multipart?
         parts.each do |part|
           if part.multipart?
