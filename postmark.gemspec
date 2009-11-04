@@ -28,7 +28,10 @@ Gem::Specification.new do |s|
      "features/support/env.rb",
      "lib/postmark.rb",
      "lib/postmark/tmail_mail_extension.rb",
+     "lib/postmark/tmail_mail_extension.rb",
+     "postmark.gemspec",
      "spec/postmark_spec.rb",
+     "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/underlog/postmark}
