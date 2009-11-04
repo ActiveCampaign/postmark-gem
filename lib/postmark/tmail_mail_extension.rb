@@ -35,6 +35,28 @@ module TMail
       end
       result
     end
+
+    #
+    # returs an String with just the plain text part of the body
+    # or nil if there is not any plain text part
+    #
+    def body_plain
+      result = nil
+      if multipart?
+        parts.each do |part|
+          if part.multipart?
+            part.parts.each do |part2|
+              result = part2.unquoted_body if part2.content_type =~ /plain/i
+            end
+          elsif !attachment?(part)
+            result = part.unquoted_body if part.content_type =~ /plain/i
+          end
+        end
+      else
+        result = unquoted_body if content_type =~ /plain/i
+      end
+      result
+    end
     
     #
     # This is only for develop.

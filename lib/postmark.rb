@@ -93,10 +93,16 @@ module Postmark
 
     def convert_tmail(message)
       { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject }.tap do |hash|
-        if html = message.body_html
+        # not always true, but should work I guess
+        html = message.body_html
+        text = message.body_text
+        if message.multipart? 
           hash["HtmlBody"] = html
+          hash["TextBody"] = text
+        elsif html
+          hash["HtmlBody"] = message.body_html
         else
-          hash["TextBody"] = message.body
+          hash["TextBody"] = text
         end
       end
     end
