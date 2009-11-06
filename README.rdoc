@@ -2,6 +2,16 @@
 
 Ruby gem for sending emails through http://postmarkapp.com HTTP API
 
+== Install
+
+The gem is hosted at gemcutter. If you don't have it, install it first:
+
+    sudo gem install gemcutter
+    gem tumble
+
+Then
+    sudo gem install postmark
+
 == Example
 
     #!/usr/bin/env ruby
@@ -23,16 +33,20 @@ Ruby gem for sending emails through http://postmarkapp.com HTTP API
 
 == Requirements
 
-The gem relies on TMail for building the message. You will also need postmark account, server and sender signature set up to use it. 
-If you plan using it in a rails project, check out the postmark-rails gem, which is meant to integrate with ActionMailer. 
+The gem relies on TMail for building the message. You will also need postmark account, server and sender signature set up to use it.
+If you plan using it in a rails project, check out the postmark-rails gem, which is meant to integrate with ActionMailer.
+
+== Limitations
+  Currently postmark API does not support multiple recipients, or attachments. For more information, check the docs here:
+  TODO: URL to docs.
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
   future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.  
+* Commit, do not mess with rakefile, version, or history.
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
