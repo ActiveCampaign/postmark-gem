@@ -29,7 +29,7 @@ module Postmark
 
     # The host to connect to.
     def host
-      @host ||= 'postmarkapp.com'
+      @host ||= 'api.postmarkapp.com'
     end
 
     # The path of the listener
