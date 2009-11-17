@@ -23,8 +23,9 @@ Then
     Postmark.api_key = "your-api-key"
 
     message = TMail::Mail.new
+    # make sure you have a sender signature with that email
     message.from = "leonard@bigbangtheory.com"
-    message.to = "Sheldon Cooper, Ph.D. <sheldon@bigbangtheory.com>"
+    message.to = "Sheldon Cooper <sheldon@bigbangtheory.com>"
     message.subject = "Hi Sheldon!"
     message.content_type = "text/html"
     message.body = "Hello my friend!"
