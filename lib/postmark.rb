@@ -8,7 +8,7 @@ require 'postmark/tmail_mail_extension'
 
 module Postmark
 
-  class InvalidApiKeyError < StandardError; end 
+  class InvalidApiKeyError < StandardError; end
   class UnknownError < StandardError; end
   class InvalidMessageError < StandardError; end
   class InternalServerError < StandardError; end
@@ -42,9 +42,9 @@ module Postmark
       @http_open_timeout ||= 2
     end
 
-    # The HTTP read timeout (defaults to 5 seconds).
+    # The HTTP read timeout (defaults to 15 seconds).
     def http_read_timeout
-      @http_read_timeout ||= 5
+      @http_read_timeout ||= 15
     end
 
     def configure
@@ -96,7 +96,7 @@ module Postmark
         # not always true, but should work I guess
         html = message.body_html
         text = message.body_text
-        if message.multipart? 
+        if message.multipart?
           hash["HtmlBody"] = html
           hash["TextBody"] = text
         elsif html
