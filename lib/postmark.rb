@@ -1,7 +1,6 @@
 require 'net/http'
 require 'net/https'
 require 'rubygems'
-require 'active_support'
 require 'tmail'
 require 'json'
 require 'postmark/tmail_mail_extension'
