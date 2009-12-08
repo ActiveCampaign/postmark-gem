@@ -38,7 +38,7 @@ module Postmark
 
     # The HTTP open timeout (defaults to 2 seconds).
     def http_open_timeout
-      @http_open_timeout ||= 2
+      @http_open_timeout ||= 5
     end
 
     # The HTTP read timeout (defaults to 15 seconds).
