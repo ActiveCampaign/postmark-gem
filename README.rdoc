@@ -37,6 +37,11 @@ Then
 The gem relies on TMail for building the message. You will also need postmark account, server and sender signature set up to use it.
 If you plan using it in a rails project, check out the postmark-rails gem, which is meant to integrate with ActionMailer.
 
+The plugin will try to use ActiveSupport Json if it is already included. If not, it will attempt using the built-in ruby Json library.
+You can also explicitly specify which one to be used, using
+
+    Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl is also supported.
+
 == Limitations
   Currently postmark API does not support multiple recipients, or attachments. For more information, check the docs here:
   TODO: URL to docs.

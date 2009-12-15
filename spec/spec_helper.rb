@@ -13,5 +13,5 @@ if ENV['JSONGEM']
 end
 
 Spec::Runner.configure do |config|
-  
+
 end

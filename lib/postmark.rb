@@ -25,6 +25,7 @@ module Postmark
   class << self
     attr_accessor :host, :host_path, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
       :proxy_host, :proxy_port, :proxy_user, :proxy_pass
+
     attr_writer :response_parser_class
 
     def response_parser_class
