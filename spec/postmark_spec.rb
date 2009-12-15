@@ -102,4 +102,16 @@ describe "Postmark" do
     end
   end
 
+  context "JSON library support" do
+    [:Json, :ActiveSupport, :Yajl].each do |lib|
+      begin
+        Postmark.response_parser_class = lib
+        it "parses error message" do
+          Postmark.error_message(%({"Message":"OK"})).should == "OK"
+        end
+      rescue LoadError # No ActiveSupport or Yajl :(
+      end
+    end
+  end
+
 end
