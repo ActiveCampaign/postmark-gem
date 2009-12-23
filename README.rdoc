@@ -29,6 +29,8 @@ Then
     message.subject = "Hi Sheldon!"
     message.content_type = "text/html"
     message.body = "Hello my friend!"
+    # set custom headers at will.
+    message["CUSTOM-HEADER"] = "my custom header value"
 
     p Postmark.send_through_postmark(message).body
 

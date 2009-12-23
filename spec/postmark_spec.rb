@@ -102,4 +102,24 @@ describe "Postmark" do
     end
   end
 
+  context "custom headers" do
+
+    let :message_with_headers do
+      TMail::Mail.new.tap do |mail|
+        mail.from = "sheldon@bigbangtheory.com"
+        mail.to = "lenard@bigbangtheory.com"
+        mail.subject = "Hello!"
+        mail.body = "Hello Sheldon!"
+        mail['CUSTOM-HEADER'] = "header"
+      end
+    end
+
+    it "should encode headers properly" do
+      json = %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"CUSTOM-HEADER", "Value":"header"}]}]
+      result = Postmark.convert_tmail(message_with_headers)
+      result.should == JSON.parse(json)
+    end
+
+  end
+
 end
