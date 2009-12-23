@@ -2,7 +2,6 @@ require 'net/http'
 require 'net/https'
 require 'rubygems'
 require 'tmail'
-require 'json'
 require 'postmark/tmail_mail_extension'
 
 module Postmark
@@ -12,6 +11,12 @@ module Postmark
   class InvalidMessageError < StandardError; end
   class InternalServerError < StandardError; end
 
+  module ResponseParsers
+    autoload :Json,          'postmark/response_parsers/json'
+    autoload :ActiveSupport, 'postmark/response_parsers/active_support'
+    autoload :Yajl,          'postmark/response_parsers/yajl'
+  end
+
   HEADERS = {
     'Content-type' => 'application/json',
     'Accept'       => 'application/json'
@@ -20,6 +25,12 @@ module Postmark
   class << self
     attr_accessor :host, :host_path, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
       :proxy_host, :proxy_port, :proxy_user, :proxy_pass
+
+    attr_writer :response_parser_class
+
+    def response_parser_class
+      @response_parser_class ||= Object.const_defined?(:ActiveSupport) ? :ActiveSupport : :Json
+    end
 
     # The port on which your Postmark server runs.
     def port
@@ -59,6 +70,7 @@ module Postmark
     end
 
     def send_through_postmark(message) #:nodoc:
+      ResponseParsers.const_get(response_parser_class) # loads JSON lib, defining #to_json
       http = Net::HTTP::Proxy(proxy_host,
                               proxy_port,
                               proxy_user,
@@ -87,7 +99,15 @@ module Postmark
     end
 
     def error_message(response_body)
-      JSON.parse(response_body)["Message"]
+      decode_json(response_body)["Message"]
+    end
+
+    def decode_json(data)
+      ResponseParsers.const_get(response_parser_class).decode(data)
+    end
+
+    def encode_json(data)
+      ResponseParsers.const_get(response_parser_class).encode(data)
     end
 
     def convert_tmail(message)
@@ -116,5 +136,7 @@ module Postmark
     end
 
   end
+
+  self.response_parser_class = nil
 
 end

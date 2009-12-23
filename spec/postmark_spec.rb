@@ -119,7 +119,20 @@ describe "Postmark" do
       result = Postmark.convert_tmail(message_with_headers)
       result.should == JSON.parse(json)
     end
+  end
 
+  context "JSON library support" do
+    [:Json, :ActiveSupport, :Yajl].each do |lib|
+      begin
+        original_parser_class = Postmark.response_parser_class
+        Postmark.response_parser_class = lib
+        it "parses error message with #{lib}" do
+          Postmark.error_message(%({"Message":"OK"})).should == "OK"
+        end
+        Postmark.response_parser_class = original_parser_class
+      rescue LoadError # No ActiveSupport or Yajl :(
+      end
+    end
   end
 
 end
