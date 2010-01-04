@@ -112,6 +112,11 @@ module Postmark
 
     def convert_tmail(message)
       options = { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject, "Headers" => extract_headers(message) }
+
+      if reply_to = message['reply-to']
+        options["ReplyTo"] = reply_to.to_s
+      end
+
       html = message.body_html
       text = message.body_text
       if message.multipart?
@@ -126,7 +131,7 @@ module Postmark
     end
 
     def extract_headers(message)
-      bogus_headers = %w[from to subject]
+      bogus_headers = %w[from to subject reply-to]
       headers = []
       message.each_header do |key, value|
         next if bogus_headers.include? key.downcase

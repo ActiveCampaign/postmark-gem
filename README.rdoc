@@ -31,6 +31,8 @@ Then
     message.body = "Hello my friend!"
     # set custom headers at will.
     message["CUSTOM-HEADER"] = "my custom header value"
+    # set reply to if you need; also, you can pass array of emails.
+    message.reply_to = "penny@bigbangtheory.com"
 
     p Postmark.send_through_postmark(message).body
 

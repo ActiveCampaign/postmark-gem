@@ -111,11 +111,12 @@ describe "Postmark" do
         mail.subject = "Hello!"
         mail.body = "Hello Sheldon!"
         mail['CUSTOM-HEADER'] = "header"
+        mail.reply_to = ['a@a.com', 'b@b.com']
       end
     end
 
     it "should encode headers properly" do
-      json = %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"CUSTOM-HEADER", "Value":"header"}]}]
+      json = %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"CUSTOM-HEADER", "Value":"header"}]}]
       result = Postmark.convert_tmail(message_with_headers)
       result.should == JSON.parse(json)
     end
