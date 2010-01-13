@@ -131,13 +131,28 @@ module Postmark
     end
 
     def extract_headers(message)
-      bogus_headers = %w[from to subject reply-to]
       headers = []
       message.each_header do |key, value|
         next if bogus_headers.include? key.downcase
         headers << { "Name" => key.upcase, "Value" => value.body }
       end
       headers
+    end
+
+    def bogus_headers
+      %q[
+        return-path
+        x-pm-rcpt
+        from
+        reply-to
+        sender
+        received
+        date
+        content-type
+        cc
+        bcc
+        subject
+      ]
     end
 
   end
