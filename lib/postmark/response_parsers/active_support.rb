@@ -3,7 +3,7 @@ module Postmark
   module ResponseParsers
     module ActiveSupport
       def self.decode(data)
-        ActiveSupport::JSON.decode(data)
+        ::ActiveSupport::JSON.decode(data)
       end
     end
   end

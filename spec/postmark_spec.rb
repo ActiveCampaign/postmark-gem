@@ -126,10 +126,12 @@ describe "Postmark" do
     [:Json, :ActiveSupport, :Yajl].each do |lib|
       begin
         original_parser_class = Postmark.response_parser_class
-        Postmark.response_parser_class = lib
-        it "parses error message with #{lib}" do
-          Postmark.error_message(%({"Message":"OK"})).should == "OK"
+
+        it "decodes json with #{lib}" do
+          Postmark.response_parser_class = lib
+          Postmark.decode_json(%({"Message":"OK"})).should == { "Message" => "OK" }
         end
+
         Postmark.response_parser_class = original_parser_class
       rescue LoadError # No ActiveSupport or Yajl :(
       end
