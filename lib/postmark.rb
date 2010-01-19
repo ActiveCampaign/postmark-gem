@@ -133,8 +133,8 @@ module Postmark
     def extract_headers(message)
       headers = []
       message.each_header do |key, value|
-        next if bogus_headers.include? key.downcase
-        headers << { "Name" => key.upcase, "Value" => value.body }
+        next if bogus_headers.include? key.dup.downcase
+        headers << { "Name" => key, "Value" => value.body }
       end
       headers
     end
