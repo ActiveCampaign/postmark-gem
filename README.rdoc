@@ -7,8 +7,6 @@ Ruby gem for sending emails through http://postmarkapp.com HTTP API
 The gem is hosted at gemcutter. If you don't have it, install it first:
 
     sudo gem install gemcutter
-    gem tumble
-
 Then
     sudo gem install postmark
 
