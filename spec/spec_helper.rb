@@ -5,6 +5,8 @@ require 'rubygems'
 require 'active_support'
 require 'json'
 require 'ruby-debug'
+require 'fakeweb'
+require 'fakeweb_matcher'
 require 'spec'
 require 'spec/autorun'
 

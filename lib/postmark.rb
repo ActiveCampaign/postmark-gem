@@ -80,7 +80,7 @@ module Postmark
       http.open_timeout = http_open_timeout
       http.use_ssl = !!secure
 
-      headers = HEADERS.merge({ "X-Postmark-Server-Token" => api_key })
+      headers = HEADERS.merge({ "X-Postmark-Server-Token" => api_key.to_s })
 
       response = http.post(url.path, convert_tmail(message).to_json, headers)
 
