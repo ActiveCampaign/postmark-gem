@@ -23,6 +23,10 @@ describe "Postmark" do
 
   context "service call" do
 
+    before do
+      Postmark.sleep_between_retries = 0
+    end
+
     it "should send email successfully" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {})
       Postmark.send_through_postmark(message)
@@ -47,6 +51,15 @@ describe "Postmark" do
     it "should warn when unknown stuff fails" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {:status => [ "485", "Custom HTTP response status" ]})
       lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::UnknownError)
+    end
+
+    it "should retry 3 times" do
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/",
+                           [ { :status => [ 500, "Internal Server Error" ] },
+                           { :status => [ 500, "Internal Server Error" ] },
+                           {  } ]
+                          )
+      lambda { Postmark.send_through_postmark(message) }.should_not raise_error
     end
   end
 

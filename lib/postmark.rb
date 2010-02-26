@@ -22,9 +22,11 @@ module Postmark
     'Accept'       => 'application/json'
   }
 
+  MAX_RETRIES = 2
+
   class << self
     attr_accessor :host, :host_path, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
-      :proxy_host, :proxy_port, :proxy_user, :proxy_pass
+      :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :max_retries, :sleep_between_retries
 
     attr_writer :response_parser_class
 
@@ -47,14 +49,20 @@ module Postmark
       @host_path ||= 'email'
     end
 
-    # The HTTP open timeout (defaults to 2 seconds).
     def http_open_timeout
       @http_open_timeout ||= 5
     end
 
-    # The HTTP read timeout (defaults to 15 seconds).
     def http_read_timeout
       @http_read_timeout ||= 15
+    end
+
+    def max_retries
+      @max_retries ||= 3
+    end
+
+    def sleep_between_retries
+      @sleep_between_retries ||= 10
     end
 
     def configure
@@ -70,6 +78,20 @@ module Postmark
     end
 
     def send_through_postmark(message) #:nodoc:
+      @retries = 0
+      begin
+        attempt_sending(message)
+      rescue Exception => e
+        if @retries < max_retries
+           @retries += 1
+           retry
+        else
+          raise
+        end
+      end
+    end
+
+    def attempt_sending(message)
       ResponseParsers.const_get(response_parser_class) # loads JSON lib, defining #to_json
       http = Net::HTTP::Proxy(proxy_host,
                               proxy_port,
