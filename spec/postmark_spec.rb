@@ -73,31 +73,35 @@ describe "Postmark" do
     end
   end
 
-  context "custom headers" do
-
-    let :message_with_headers do
-      TMail::Mail.new.tap do |mail|
-        mail.from = "sheldon@bigbangtheory.com"
-        mail.to = "lenard@bigbangtheory.com"
-        mail.subject = "Hello!"
-        mail.body = "Hello Sheldon!"
-        mail['CUSTOM-HEADER'] = "header"
-        mail.reply_to = ['a@a.com', 'b@b.com']
-      end
+  def be_serialized_to(json)
+    simple_matcher "be serialized to #{json}" do |message|
+      Postmark.convert_tmail(message).should == JSON.parse(json)
     end
+  end
 
-    it "should encode headers properly" do
-      json = %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
-      result = Postmark.convert_tmail(message_with_headers)
-      result.should == JSON.parse(json)
-    end
+  it "should encode custom headers headers properly" do
+    message["CUSTOM-HEADER"] = "header"
+    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
+  end
 
-    it "should include tag in the json" do
-      json = %q[{"Subject":"Hello!", "Tag":"invite", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
-      message_with_headers.tag = "invite"
-      result = Postmark.convert_tmail(message_with_headers)
-      result.should == JSON.parse(json)
-    end
+  it "should encode reply to" do
+    message.reply_to = ['a@a.com', 'b@b.com']
+    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+  end
+
+  it "should encode tag" do
+    message.tag = "invite"
+    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "Tag":"invite", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+  end
+
+  it "should encode multiple recepients (TO)" do
+    message.to = ['a@a.com', 'b@b.com']
+    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"a@a.com, b@b.com", "TextBody":"Hello Sheldon!"}]
+  end
+
+  it "should encode multiple recepients (CC)" do
+    message.cc = ['a@a.com', 'b@b.com']
+    message.should be_serialized_to %q[{"Cc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
   end
 
   context "JSON library support" do

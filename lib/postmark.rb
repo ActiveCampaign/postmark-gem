@@ -133,8 +133,14 @@ module Postmark
     end
 
     def convert_tmail(message)
-      options = { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject, "Headers" => extract_headers(message) }
+      options = { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject }
+
+      headers = extract_headers(message)
+      options["Headers"] = headers unless headers.length == 0
+
       options["Tag"] = message.tag.to_s unless message.tag.nil?
+
+      options["Cc"] = message['cc'].to_s unless message.cc.nil?
 
       if reply_to = message['reply-to']
         options["ReplyTo"] = reply_to.to_s
