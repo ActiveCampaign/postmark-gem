@@ -22,6 +22,7 @@ Then
 
     message = TMail::Mail.new
     # make sure you have a sender signature with that email
+    # from and to also accept arrays of emails.
     message.from = "leonard@bigbangtheory.com"
     message.to = "Sheldon Cooper <sheldon@bigbangtheory.com>"
     message.subject = "Hi Sheldon!"
@@ -29,6 +30,8 @@ Then
     message.body = "Hello my friend!"
     # set custom headers at will.
     message["CUSTOM-HEADER"] = "my custom header value"
+    # tag message
+    message.tag = "my-tracking-tag"
     # set reply to if you need; also, you can pass array of emails.
     message.reply_to = "penny@bigbangtheory.com"
 
@@ -46,7 +49,7 @@ You can also explicitly specify which one to be used, using
 
 == Limitations
 
-Currently postmark API does not support multiple recipients, or attachments. For more information, check the docs at:
+Currently postmark API does not support attachments. For more information, check the docs at:
 
 http://developer.postmarkapp.com
 
