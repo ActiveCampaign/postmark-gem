@@ -14,6 +14,14 @@
 module TMail
   class Mail
 
+    def tag
+      self["TAG"]
+    end
+
+    def tag=(value)
+      self["TAG"] = value
+    end
+
     #
     # returs an String with just the html part of the body
     # or nil if there is not any html part
@@ -57,7 +65,7 @@ module TMail
       end
       result
     end
-    
+
     #
     # This is only for develop.
     # print on output all the parts of the Mail with some details
@@ -67,14 +75,14 @@ module TMail
       puts "content_type: #{content_type}"
       puts "body: #{body}"
       puts "parts.size: #{parts.size}"
-    
+
       if multipart?
         parts.each_with_index do |part, index|
           puts ""
           puts "  parts[#{index}]"
           puts "    content_type: #{part.content_type}"
           puts "    multipart? #{part.multipart?}"
-          
+
           header = part["content-type"]
 
           if part.multipart?
@@ -94,16 +102,16 @@ module TMail
             puts "    --no multipart, no header nil, attachment--"
             puts "     content_type: #{part.content_type}"
           end
-        
+
         end
       else
         puts "  --no multipart--"
         puts "    content_type: #{content_type}"
         puts "    body: #{unquoted_body}"
       end
-      
+
       puts "END"
     end
-    
+
   end
 end

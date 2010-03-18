@@ -91,6 +91,13 @@ describe "Postmark" do
       result = Postmark.convert_tmail(message_with_headers)
       result.should == JSON.parse(json)
     end
+
+    it "should include tag in the json" do
+      json = %q[{"Subject":"Hello!", "Tag":"invite", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
+      message_with_headers.tag = "invite"
+      result = Postmark.convert_tmail(message_with_headers)
+      result.should == JSON.parse(json)
+    end
   end
 
   context "JSON library support" do
