@@ -37,6 +37,13 @@ Then
 
     p Postmark.send_through_postmark(message).body
 
+== Encryption
+
+To use SSL encryption when sending email configure the library as follows:
+    
+    Postmark.secure = true
+
+
 == Requirements
 
 The gem relies on TMail for building the message. You will also need postmark account, server and sender signature set up to use it.
