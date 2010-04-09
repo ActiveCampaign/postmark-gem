@@ -63,19 +63,32 @@ describe "Postmark" do
     end
   end
 
+  context "delivery stats" do
+    let(:response_body) { %{{"InactiveMails":1,"Bounces":[{"TypeCode":0,"Name":"All","Count":2},{"Type":"HardBounce","TypeCode":1,"Name":"Hard bounce","Count":1},{"Type":"SoftBounce","TypeCode":4096,"Name":"Soft bounce","Count":1}]}} }
+
+    it "should query the service for delivery stats" do
+      FakeWeb.register_uri(:get, "http://api.postmarkapp.com/deliverystats/", { :body => response_body })
+      results = Postmark.delivery_stats
+      results["InactiveMails"].should == 1
+      results["Bounces"].should be_an(Array)
+      results["Bounces"].should have(3).entries
+      FakeWeb.should have_requested(:get, "http://api.postmarkapp.com/deliverystats/")
+    end
+  end
+
   context "tmail parse" do
     it "should set text body for plain message" do
-      Postmark.convert_tmail(message)['TextBody'].should_not be_nil
+      Postmark.send(:convert_tmail, message)['TextBody'].should_not be_nil
     end
 
     it "should set html body for html message" do
-      Postmark.convert_tmail(html_message)['HtmlBody'].should_not be_nil
+      Postmark.send(:convert_tmail, html_message)['HtmlBody'].should_not be_nil
     end
   end
 
   def be_serialized_to(json)
     simple_matcher "be serialized to #{json}" do |message|
-      Postmark.convert_tmail(message).should == JSON.parse(json)
+      Postmark.send(:convert_tmail, message).should == JSON.parse(json)
     end
   end
 
@@ -111,7 +124,7 @@ describe "Postmark" do
 
         it "decodes json with #{lib}" do
           Postmark.response_parser_class = lib
-          Postmark.decode_json(%({"Message":"OK"})).should == { "Message" => "OK" }
+          Postmark.send(:decode_json, %({"Message":"OK"})).should == { "Message" => "OK" }
         end
 
         Postmark.response_parser_class = original_parser_class

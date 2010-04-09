@@ -25,7 +25,7 @@ module Postmark
   MAX_RETRIES = 2
 
   class << self
-    attr_accessor :host, :host_path, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
+    attr_accessor :host, :path_prefix, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
       :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :max_retries, :sleep_between_retries
 
     attr_writer :response_parser_class
@@ -45,8 +45,8 @@ module Postmark
     end
 
     # The path of the listener
-    def host_path
-      @host_path ||= 'email'
+    def path_prefix
+      @path_prefix ||= '/'
     end
 
     def http_open_timeout
@@ -74,13 +74,13 @@ module Postmark
     end
 
     def url #:nodoc:
-      URI.parse("#{protocol}://#{host}:#{port}/#{host_path}/")
+      URI.parse("#{protocol}://#{host}:#{port}/")
     end
 
     def send_through_postmark(message) #:nodoc:
       @retries = 0
       begin
-        attempt_sending(message)
+        post("email", encode_json(convert_tmail(message)))
       rescue Exception => e
         if @retries < max_retries
            @retries += 1
@@ -91,24 +91,24 @@ module Postmark
       end
     end
 
-    def attempt_sending(message)
-      ResponseParsers.const_get(response_parser_class) # loads JSON lib, defining #to_json
-      http = Net::HTTP::Proxy(proxy_host,
-                              proxy_port,
-                              proxy_user,
-                              proxy_pass).new(url.host, url.port)
+    def delivery_stats
+      get("deliverystats")
+    end
 
-      http.read_timeout = http_read_timeout
-      http.open_timeout = http_open_timeout
-      http.use_ssl = !!secure
+    protected
 
-      headers = HEADERS.merge({ "X-Postmark-Server-Token" => api_key.to_s })
+    def post(path, data)
+      handle_response(http.post(url_path(path), data, headers))
+    end
 
-      response = http.post(url.path, convert_tmail(message).to_json, headers)
+    def get(path)
+      handle_response(http.get(url_path(path), headers))
+    end
 
+    def handle_response(response)
       case response.code.to_i
       when 200
-        return response
+        return decode_json(response.body)
       when 401
         raise InvalidApiKeyError, error_message(response.body)
       when 422
@@ -120,16 +120,45 @@ module Postmark
       end
     end
 
+    def headers
+      @headers ||= HEADERS.merge({ "X-Postmark-Server-Token" => api_key.to_s })
+    end
+
+    def url_path(path)
+      File.join(path_prefix, path, "/")
+    end
+
+    def http
+      @http ||= build_http
+    end
+
+    def build_http
+      http = Net::HTTP::Proxy(proxy_host,
+                              proxy_port,
+                              proxy_user,
+                              proxy_pass).new(url.host, url.port)
+
+      http.read_timeout = http_read_timeout
+      http.open_timeout = http_open_timeout
+      http.use_ssl = !!secure
+      http
+    end
+
     def error_message(response_body)
       decode_json(response_body)["Message"]
     end
 
     def decode_json(data)
-      ResponseParsers.const_get(response_parser_class).decode(data)
+      json_parser.decode(data)
     end
 
     def encode_json(data)
-      ResponseParsers.const_get(response_parser_class).encode(data)
+      json_parser
+      data.to_json
+    end
+
+    def json_parser
+      ResponseParsers.const_get(response_parser_class)
     end
 
     def convert_tmail(message)
