@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 
 describe "Postmark" do
 
@@ -23,38 +23,38 @@ describe "Postmark" do
 
   context "service call" do
 
-    before do
+    before(:all) do
       Postmark.sleep_between_retries = 0
     end
 
     it "should send email successfully" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {})
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {})
       Postmark.send_through_postmark(message)
-      FakeWeb.should have_requested(:post, "http://api.postmarkapp.com/email/")
+      FakeWeb.should have_requested(:post, "http://api.postmarkapp.com/email")
     end
 
     it "should warn when header is invalid" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {:status => [ "401", "Unauthorized" ], :body => "Missing API token"})
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "401", "Unauthorized" ], :body => "Missing API token"})
       lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::InvalidApiKeyError)
     end
 
     it "should warn when json is not ok" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {:status => [ "422", "Invalid" ], :body => "Invalid JSON"})
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "422", "Invalid" ], :body => "Invalid JSON"})
       lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::InvalidMessageError)
     end
 
     it "should warn when server fails" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {:status => [ "500", "Internal Server Error" ]})
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "500", "Internal Server Error" ]})
       lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::InternalServerError)
     end
 
     it "should warn when unknown stuff fails" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/", {:status => [ "485", "Custom HTTP response status" ]})
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "485", "Custom HTTP response status" ]})
       lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::UnknownError)
     end
 
     it "should retry 3 times" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email/",
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email",
                            [ { :status => [ 500, "Internal Server Error" ] },
                            { :status => [ 500, "Internal Server Error" ] },
                            {  } ]
@@ -67,12 +67,12 @@ describe "Postmark" do
     let(:response_body) { %{{"InactiveMails":1,"Bounces":[{"TypeCode":0,"Name":"All","Count":2},{"Type":"HardBounce","TypeCode":1,"Name":"Hard bounce","Count":1},{"Type":"SoftBounce","TypeCode":4096,"Name":"Soft bounce","Count":1}]}} }
 
     it "should query the service for delivery stats" do
-      FakeWeb.register_uri(:get, "http://api.postmarkapp.com/deliverystats/", { :body => response_body })
+      FakeWeb.register_uri(:get, "http://api.postmarkapp.com/deliverystats", { :body => response_body })
       results = Postmark.delivery_stats
       results["InactiveMails"].should == 1
       results["Bounces"].should be_an(Array)
       results["Bounces"].should have(3).entries
-      FakeWeb.should have_requested(:get, "http://api.postmarkapp.com/deliverystats/")
+      FakeWeb.should have_requested(:get, "http://api.postmarkapp.com/deliverystats")
     end
   end
 
@@ -124,7 +124,7 @@ describe "Postmark" do
 
         it "decodes json with #{lib}" do
           Postmark.response_parser_class = lib
-          Postmark.send(:decode_json, %({"Message":"OK"})).should == { "Message" => "OK" }
+          Postmark::Json.decode(%({"Message":"OK"})).should == { "Message" => "OK" }
         end
 
         Postmark.response_parser_class = original_parser_class

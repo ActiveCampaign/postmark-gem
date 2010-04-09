@@ -7,6 +7,7 @@ require 'json'
 require 'ruby-debug'
 require 'fakeweb'
 require 'fakeweb_matcher'
+require 'timecop'
 require 'spec'
 require 'spec/autorun'
 

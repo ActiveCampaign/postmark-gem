@@ -3,6 +3,9 @@ require 'net/https'
 require 'rubygems'
 require 'tmail'
 require 'postmark/tmail_mail_extension'
+require 'postmark/bounce'
+require 'postmark/json'
+require 'postmark/http_client'
 
 module Postmark
 
@@ -69,18 +72,10 @@ module Postmark
       yield self
     end
 
-    def protocol #:nodoc:
-      secure ? "https" : "http"
-    end
-
-    def url #:nodoc:
-      URI.parse("#{protocol}://#{host}:#{port}/")
-    end
-
     def send_through_postmark(message) #:nodoc:
       @retries = 0
       begin
-        post("email", encode_json(convert_tmail(message)))
+        HttpClient.post("email", Postmark::Json.encode(convert_tmail(message)))
       rescue Exception => e
         if @retries < max_retries
            @retries += 1
@@ -92,74 +87,10 @@ module Postmark
     end
 
     def delivery_stats
-      get("deliverystats")
+      HttpClient.get("deliverystats")
     end
 
     protected
-
-    def post(path, data)
-      handle_response(http.post(url_path(path), data, headers))
-    end
-
-    def get(path)
-      handle_response(http.get(url_path(path), headers))
-    end
-
-    def handle_response(response)
-      case response.code.to_i
-      when 200
-        return decode_json(response.body)
-      when 401
-        raise InvalidApiKeyError, error_message(response.body)
-      when 422
-        raise InvalidMessageError, error_message(response.body)
-      when 500
-        raise InternalServerError, response.body
-      else
-        raise UnknownError, response
-      end
-    end
-
-    def headers
-      @headers ||= HEADERS.merge({ "X-Postmark-Server-Token" => api_key.to_s })
-    end
-
-    def url_path(path)
-      File.join(path_prefix, path, "/")
-    end
-
-    def http
-      @http ||= build_http
-    end
-
-    def build_http
-      http = Net::HTTP::Proxy(proxy_host,
-                              proxy_port,
-                              proxy_user,
-                              proxy_pass).new(url.host, url.port)
-
-      http.read_timeout = http_read_timeout
-      http.open_timeout = http_open_timeout
-      http.use_ssl = !!secure
-      http
-    end
-
-    def error_message(response_body)
-      decode_json(response_body)["Message"]
-    end
-
-    def decode_json(data)
-      json_parser.decode(data)
-    end
-
-    def encode_json(data)
-      json_parser
-      data.to_json
-    end
-
-    def json_parser
-      ResponseParsers.const_get(response_parser_class)
-    end
 
     def convert_tmail(message)
       options = { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject }
