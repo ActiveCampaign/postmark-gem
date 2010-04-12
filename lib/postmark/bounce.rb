@@ -48,18 +48,14 @@ module Postmark
         options[:offset] ||= 0
         Postmark::HttpClient.get("bounces", options).map { |bounce_json| Bounce.new(bounce_json) }
       end
+
+      def tags
+        Postmark::HttpClient.get("bounces/tags")
+      end
 =begin
       include Postmark::EngineConnection
       def reactivate(bounce)
         put("servers/#{bounce.server_id}/bounces/#{bounce.id}/activate")
-      end
-
-      def dump(bounce)
-        get("servers/#{bounce.server_id}/bounces/#{bounce.id}/dump")[:body]
-      end
-
-      def test_hook_url(url)
-        get("bounces/testhook", { :url => url })
       end
 =end
     end

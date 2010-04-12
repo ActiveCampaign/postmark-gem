@@ -36,4 +36,11 @@ describe "Bounce" do
     bounces.should have(2).entries
     bounces[0].should be_a(Postmark::Bounce)
   end
+
+  it "should retrieve bounce tags" do
+    FakeWeb.register_uri(:get, "http://api.postmarkapp.com/bounces/tags", { :body => '["Signup","Commit Notification"]' })
+    tags = Postmark::Bounce.tags
+    tags.should have(2).entries
+    tags.first.should == "Signup"
+  end
 end
