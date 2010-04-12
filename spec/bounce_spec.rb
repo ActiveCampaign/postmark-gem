@@ -28,6 +28,11 @@ describe "Bounce" do
       bounce.dump.should == "Some SMTP gibberish"
     end
 
+    it "should activate inactive bounce" do
+      FakeWeb.register_uri(:put, "http://api.postmarkapp.com/bounces/12/activate", { :body => %{{"Message":"OK","Bounce":#{bounce_json}}} } )
+      bounce.activate.should be_a(Postmark::Bounce)
+    end
+
   end
 
   it "should retrieve bounces" do

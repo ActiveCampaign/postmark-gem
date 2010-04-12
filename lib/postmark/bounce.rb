@@ -28,11 +28,9 @@ module Postmark
       Postmark::HttpClient.get("bounces/#{id}/dump")["Body"]
     end
 
-=begin
-  def reactivate!
-    Bounce.reactivate(self)
-  end
-=end
+    def activate
+      Bounce.new(Postmark::HttpClient.put("bounces/#{id}/activate")["Bounce"])
+    end
 
     def dump_available?
       !!@dump_available
@@ -43,7 +41,7 @@ module Postmark
         Bounce.new(Postmark::HttpClient.get("bounces/#{id}"))
       end
 
-      def all(options = {  })
+      def all(options = {})
         options[:count] ||= 30
         options[:offset] ||= 0
         Postmark::HttpClient.get("bounces", options).map { |bounce_json| Bounce.new(bounce_json) }
@@ -52,12 +50,6 @@ module Postmark
       def tags
         Postmark::HttpClient.get("bounces/tags")
       end
-=begin
-      include Postmark::EngineConnection
-      def reactivate(bounce)
-        put("servers/#{bounce.server_id}/bounces/#{bounce.id}/activate")
-      end
-=end
     end
 
   end

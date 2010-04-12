@@ -3,8 +3,12 @@ require 'cgi'
 module Postmark
   module HttpClient
     class << self
-      def post(path, data)
+      def post(path, data = '')
         handle_response(http.post(url_path(path), data, headers))
+      end
+
+      def put(path, data = '')
+        handle_response(http.put(url_path(path), data, headers))
       end
 
       def get(path, query = {})

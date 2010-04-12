@@ -37,10 +37,19 @@ Then
 
     p Postmark.send_through_postmark(message).body
 
+You can retrieve various information about your server state using the "Public bounces API":http://developer.postmarkapp.com/bounces
+
+    # get delivery stats
+    Postmark.delivery_stats # json
+    Postmark::Bounce.all # [ bounce, bounce ... ]
+    bounce = Postmark::Bounce.find(bounce_id) # Bounce
+    bounce.dump # string, containing raw SMTP data
+    bounce.reactivate # reactivate hard bounce
+
 == Encryption
 
 To use SSL encryption when sending email configure the library as follows:
-    
+
     Postmark.secure = true
 
 
