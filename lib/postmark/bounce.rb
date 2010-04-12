@@ -24,11 +24,9 @@ module Postmark
       !!@can_activate
     end
 
-=begin
-  def dump
-    Bounce.dump(self)
-  end
-=end
+    def dump
+      Postmark::HttpClient.get("bounces/#{id}/dump")["Body"]
+    end
 
 =begin
   def reactivate!
