@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Postmark
   module HttpClient
     class << self
@@ -5,11 +7,16 @@ module Postmark
         handle_response(http.post(url_path(path), data, headers))
       end
 
-      def get(path)
-        handle_response(http.get(url_path(path), headers))
+      def get(path, query = {})
+        handle_response(http.get(url_path(path + to_query_string(query)), headers))
       end
 
       protected
+
+      def to_query_string(hash)
+        return "" if hash.empty?
+        "?" + hash.map { |key, value| "#{CGI.escape(key.to_s)}=#{CGI.escape(value.to_s)}" }.join("&")
+      end
 
       def protocol
         Postmark.secure ? "https" : "http"

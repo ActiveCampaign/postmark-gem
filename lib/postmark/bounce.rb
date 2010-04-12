@@ -44,6 +44,12 @@ module Postmark
       def find(id)
         Bounce.new(Postmark::HttpClient.get("bounces/#{id}"))
       end
+
+      def all(options = {  })
+        options[:count] ||= 30
+        options[:offset] ||= 0
+        Postmark::HttpClient.get("bounces", options).map { |bounce_json| Bounce.new(bounce_json) }
+      end
 =begin
       include Postmark::EngineConnection
       def reactivate(bounce)
