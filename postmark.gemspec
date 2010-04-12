@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{postmark}
-  s.version = "0.6.0"
+  s.version = "0.7.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Petyo Ivanov"]
-  s.date = %q{2010-03-18}
+  s.date = %q{2010-04-12}
   s.description = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
   s.email = %q{underlog@gmail.com}
   s.extra_rdoc_files = [
@@ -28,11 +28,15 @@ Gem::Specification.new do |s|
      "features/step_definitions/postmark_steps.rb",
      "features/support/env.rb",
      "lib/postmark.rb",
+     "lib/postmark/bounce.rb",
+     "lib/postmark/http_client.rb",
+     "lib/postmark/json.rb",
      "lib/postmark/response_parsers/active_support.rb",
      "lib/postmark/response_parsers/json.rb",
      "lib/postmark/response_parsers/yajl.rb",
      "lib/postmark/tmail_mail_extension.rb",
      "postmark.gemspec",
+     "spec/bounce_spec.rb",
      "spec/postmark_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
@@ -49,7 +53,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API}
   s.test_files = [
-    "spec/postmark_spec.rb",
+    "spec/bounce_spec.rb",
+     "spec/postmark_spec.rb",
      "spec/spec_helper.rb"
   ]
 
