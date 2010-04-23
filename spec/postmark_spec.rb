@@ -117,6 +117,11 @@ describe "Postmark" do
     message.should be_serialized_to %q[{"Cc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
   end
 
+  it "should encode multiple recepients (BCC)" do
+    message.bcc = ['a@a.com', 'b@b.com']
+    message.should be_serialized_to %q[{"Bcc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+  end
+
   context "JSON library support" do
     [:Json, :ActiveSupport, :Yajl].each do |lib|
       begin
