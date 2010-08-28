@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Postmark" do
 
-  let :message do
+  let :tmail_message do
     TMail::Mail.new.tap do |mail|
       mail.from = "sheldon@bigbangtheory.com"
       mail.to = "lenard@bigbangtheory.com"
@@ -11,13 +11,47 @@ describe "Postmark" do
     end
   end
 
-  let :html_message do
+  let :tmail_html_message do
     TMail::Mail.new.tap do |mail|
       mail.from = "sheldon@bigbangtheory.com"
       mail.to = "lenard@bigbangtheory.com"
       mail.subject = "Hello!"
       mail.body = "<b>Hello Sheldon!</b>"
       mail.content_type = "text/html"
+    end
+  end
+  
+  let :mail_message do
+    Mail.new do
+      from    "sheldon@bigbangtheory.com"
+      to      "lenard@bigbangtheory.com"
+      subject "Hello!"
+      body    "Hello Sheldon!"
+    end
+  end
+
+  let :mail_html_message do
+    mail = Mail.new do
+      from          "sheldon@bigbangtheory.com"
+      to            "lenard@bigbangtheory.com"
+      subject       "Hello!"
+      html_part do
+        body        "<b>Hello Sheldon!</b>"
+      end
+    end
+  end
+  
+  let :mail_multipart_message do
+    mail = Mail.new do
+      from          "sheldon@bigbangtheory.com"
+      to            "lenard@bigbangtheory.com"
+      subject       "Hello!"
+      text_part do
+        body        "Hello Sheldon!"
+      end
+      html_part do
+        body        "<b>Hello Sheldon!</b>"
+      end
     end
   end
 
@@ -29,28 +63,28 @@ describe "Postmark" do
 
     it "should send email successfully" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {})
-      Postmark.send_through_postmark(message)
+      Postmark.send_through_postmark(tmail_message)
       FakeWeb.should have_requested(:post, "http://api.postmarkapp.com/email")
     end
 
     it "should warn when header is invalid" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "401", "Unauthorized" ], :body => "Missing API token"})
-      lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::InvalidApiKeyError)
+      lambda { Postmark.send_through_postmark(tmail_message) }.should raise_error(Postmark::InvalidApiKeyError)
     end
 
     it "should warn when json is not ok" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "422", "Invalid" ], :body => "Invalid JSON"})
-      lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::InvalidMessageError)
+      lambda { Postmark.send_through_postmark(tmail_message) }.should raise_error(Postmark::InvalidMessageError)
     end
 
     it "should warn when server fails" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "500", "Internal Server Error" ]})
-      lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::InternalServerError)
+      lambda { Postmark.send_through_postmark(tmail_message) }.should raise_error(Postmark::InternalServerError)
     end
 
     it "should warn when unknown stuff fails" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "485", "Custom HTTP response status" ]})
-      lambda { Postmark.send_through_postmark(message) }.should raise_error(Postmark::UnknownError)
+      lambda { Postmark.send_through_postmark(tmail_message) }.should raise_error(Postmark::UnknownError)
     end
 
     it "should retry 3 times" do
@@ -59,7 +93,7 @@ describe "Postmark" do
                            { :status => [ 500, "Internal Server Error" ] },
                            {  } ]
                           )
-      lambda { Postmark.send_through_postmark(message) }.should_not raise_error
+      lambda { Postmark.send_through_postmark(tmail_message) }.should_not raise_error
     end
   end
 
@@ -77,49 +111,100 @@ describe "Postmark" do
   end
 
   context "tmail parse" do
+    def be_serialized_to(json)
+      simple_matcher "be serialized to #{json}" do |message|
+        Postmark.send(:convert_tmail, tmail_message).should == JSON.parse(json)
+      end
+    end
+    
     it "should set text body for plain message" do
-      Postmark.send(:convert_tmail, message)['TextBody'].should_not be_nil
+      Postmark.send(:convert_tmail, tmail_message)['TextBody'].should_not be_nil
     end
 
     it "should set html body for html message" do
-      Postmark.send(:convert_tmail, html_message)['HtmlBody'].should_not be_nil
+      Postmark.send(:convert_tmail, tmail_html_message)['HtmlBody'].should_not be_nil
+    end
+    
+    it "should encode custom headers headers properly" do
+      tmail_message["CUSTOM-HEADER"] = "header"
+      tmail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
+    end
+
+    it "should encode reply to" do
+      tmail_message.reply_to = ['a@a.com', 'b@b.com']
+      tmail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+
+    it "should encode tag" do
+      tmail_message.tag = "invite"
+      tmail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "Tag":"invite", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+
+    it "should encode multiple recepients (TO)" do
+      tmail_message.to = ['a@a.com', 'b@b.com']
+      tmail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"a@a.com, b@b.com", "TextBody":"Hello Sheldon!"}]
+    end
+
+    it "should encode multiple recepients (CC)" do
+      tmail_message.cc = ['a@a.com', 'b@b.com']
+      tmail_message.should be_serialized_to %q[{"Cc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+
+    it "should encode multiple recepients (BCC)" do
+      tmail_message.bcc = ['a@a.com', 'b@b.com']
+      tmail_message.should be_serialized_to %q[{"Bcc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
     end
   end
-
-  def be_serialized_to(json)
-    simple_matcher "be serialized to #{json}" do |message|
-      Postmark.send(:convert_tmail, message).should == JSON.parse(json)
+  
+  context "mail parse" do
+    def be_serialized_to(json)
+      simple_matcher "be serialized to #{json}" do |message|
+        Postmark.send(:convert_mail, mail_message).should == JSON.parse(json)
+      end
     end
-  end
+    
+    it "should set text body for plain message" do
+      Postmark.send(:convert_mail, mail_message)['TextBody'].should_not be_nil
+    end
 
-  it "should encode custom headers headers properly" do
-    message["CUSTOM-HEADER"] = "header"
-    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
-  end
-
-  it "should encode reply to" do
-    message.reply_to = ['a@a.com', 'b@b.com']
-    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
-  end
-
-  it "should encode tag" do
-    message.tag = "invite"
-    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "Tag":"invite", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
-  end
-
-  it "should encode multiple recepients (TO)" do
-    message.to = ['a@a.com', 'b@b.com']
-    message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"a@a.com, b@b.com", "TextBody":"Hello Sheldon!"}]
-  end
-
-  it "should encode multiple recepients (CC)" do
-    message.cc = ['a@a.com', 'b@b.com']
-    message.should be_serialized_to %q[{"Cc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
-  end
-
-  it "should encode multiple recepients (BCC)" do
-    message.bcc = ['a@a.com', 'b@b.com']
-    message.should be_serialized_to %q[{"Bcc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    it "should set html body for html message" do
+      Postmark.send(:convert_mail, mail_html_message)['HtmlBody'].should_not be_nil
+    end
+    
+    it "should set html and text body for multipart message" do
+      Postmark.send(:convert_mail, mail_multipart_message)['HtmlBody'].should_not be_nil
+      Postmark.send(:convert_mail, mail_multipart_message)['TextBody'].should_not be_nil
+    end
+    
+    it "should encode custom headers properly" do
+      mail_message.header["CUSTOM-HEADER"] = "header"
+      mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
+    end
+    
+    it "should encode reply to" do
+      mail_message.reply_to = ['a@a.com', 'b@b.com']
+      mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+    
+    it "should encode tag" do
+      mail_message.tag = "invite"
+      mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "Tag":"invite", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+    
+    it "should encode multiple recepients (TO)" do
+      mail_message.to = ['a@a.com', 'b@b.com']
+      mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"a@a.com, b@b.com", "TextBody":"Hello Sheldon!"}]
+    end
+    
+    it "should encode multiple recepients (CC)" do
+      mail_message.cc = ['a@a.com', 'b@b.com']
+      mail_message.should be_serialized_to %q[{"Cc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+    
+    it "should encode multiple recepients (BCC)" do
+      mail_message.bcc = ['a@a.com', 'b@b.com']
+      mail_message.should be_serialized_to %q[{"Bcc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
   end
 
   context "JSON library support" do
