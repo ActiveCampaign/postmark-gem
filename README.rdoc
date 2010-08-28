@@ -35,7 +35,7 @@ Then
     # set reply to if you need; also, you can pass array of emails.
     message.reply_to = "penny@bigbangtheory.com"
 
-    p Postmark.send_through_postmark(message).body
+    p Postmark.send_through_postmark(message)
 
 You can retrieve various information about your server state using the Public bounces API - http://developer.postmarkapp.com/bounces
 
@@ -55,7 +55,7 @@ To use SSL encryption when sending email configure the library as follows:
 
 == Requirements
 
-The gem relies on TMail for building the message. You will also need postmark account, server and sender signature set up to use it.
+The gem relies on TMail or Mail for building the message. You will also need postmark account, server and sender signature set up to use it.
 If you plan using it in a rails project, check out the postmark-rails gem, which is meant to integrate with ActionMailer.
 
 The plugin will try to use ActiveSupport Json if it is already included. If not, it will attempt using the built-in ruby Json library.
