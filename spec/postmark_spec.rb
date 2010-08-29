@@ -206,6 +206,25 @@ describe "Postmark" do
       mail_message.should be_serialized_to %q[{"Bcc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
     end
   end
+  
+  context "mail delivery method" do
+    it "should be able to set delivery_method" do
+      mail_message.delivery_method Mail::Postmark
+      puts mail_message.delivery_method
+    end
+    
+    it "should wrap Postmark.send_through_postmark" do
+      message = mail_message
+      Postmark.should_receive(:send_through_postmark).with(message)
+      mail_message.delivery_method Mail::Postmark
+      mail_message.deliver
+    end
+    
+    it "should allow setting of api_key" do
+      mail_message.delivery_method Mail::Postmark, {:api_key => 'api-key'}
+      mail_message.delivery_method.settings[:api_key].should == 'api-key'
+    end
+  end
 
   context "JSON library support" do
     [:Json, :ActiveSupport, :Yajl].each do |lib|

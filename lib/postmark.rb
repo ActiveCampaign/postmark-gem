@@ -5,6 +5,7 @@ require 'postmark/json'
 require 'postmark/http_client'
 require 'postmark/tmail_mail_extension'
 require 'postmark/mail_message_extension'
+require 'mail/postmark'
 
 module Postmark
 
