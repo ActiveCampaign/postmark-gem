@@ -3,9 +3,15 @@ require 'net/https'
 require 'postmark/bounce'
 require 'postmark/json'
 require 'postmark/http_client'
-require 'postmark/tmail_mail_extension'
-require 'postmark/mail_message_extension'
-require 'mail/postmark'
+
+if defined? TMail
+  require 'postmark/tmail_mail_extension'
+end
+
+if defined? Mail
+  require 'postmark/mail_message_extension'
+  require 'mail/postmark'
+end
 
 module Postmark
 
