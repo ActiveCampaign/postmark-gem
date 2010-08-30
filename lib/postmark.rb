@@ -94,7 +94,7 @@ module Postmark
     end
     
     def convert(message)
-      if message.is_a?(TMail::Mail)
+      if defined?(TMail) && message.is_a?(TMail::Mail)
         convert_tmail(message)
       else
         convert_mail(message)
