@@ -35,7 +35,7 @@ Then
     # set reply to if you need; also, you can pass array of emails.
     message.reply_to = "penny@bigbangtheory.com"
 
-    p Postmark.send_through_postmark(message).body
+    Postmark.send_through_postmark(message)
 
 You can retrieve various information about your server state using the Public bounces API - http://developer.postmarkapp.com/bounces
 
