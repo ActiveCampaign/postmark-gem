@@ -1,11 +1,11 @@
 require 'net/http'
 require 'net/https'
-require 'rubygems'
-require 'tmail'
-require 'postmark/tmail_mail_extension'
 require 'postmark/bounce'
 require 'postmark/json'
 require 'postmark/http_client'
+require 'postmark/tmail_mail_extension'
+require 'postmark/mail_message_extension'
+require 'mail/postmark'
 
 module Postmark
 
@@ -13,6 +13,7 @@ module Postmark
   class UnknownError < StandardError; end
   class InvalidMessageError < StandardError; end
   class InternalServerError < StandardError; end
+  class UnknownMessageType < StandardError; end
 
   module ResponseParsers
     autoload :Json,          'postmark/response_parsers/json'
@@ -71,11 +72,11 @@ module Postmark
     def configure
       yield self
     end
-
+    
     def send_through_postmark(message) #:nodoc:
       @retries = 0
       begin
-        HttpClient.post("email", Postmark::Json.encode(convert_tmail(message)))
+        HttpClient.post("email", Postmark::Json.encode(convert(message)))
       rescue Exception => e
         if @retries < max_retries
            @retries += 1
@@ -85,17 +86,68 @@ module Postmark
         end
       end
     end
-
+    
+    def convert(message)
+      if defined?(TMail) && message.is_a?(TMail::Mail)
+        convert_tmail(message)
+      else
+        convert_mail(message)
+      end
+    end
+    
     def delivery_stats
       HttpClient.get("deliverystats")
     end
 
     protected
+    
+    def convert_mail(message)
+      options = { "From" => message.from.to_s, "Subject" => message.subject }
+
+      headers = extract_mail_headers(message)
+      options["Headers"] = headers unless headers.length == 0
+      
+      options["To"] = message.to.join(", ")
+
+      options["Tag"] = message.tag.to_s unless message.tag.nil?
+
+      options["Cc"] = message.cc.join(", ").to_s unless message.cc.nil?
+      
+      options["Bcc"] = message.bcc.join(", ").to_s unless message.bcc.nil?
+
+      if reply_to = message['reply-to']
+        options["ReplyTo"] = reply_to.to_s
+      end
+      
+      html = message.body_html
+      text = message.body_text
+      if message.multipart?
+        options["HtmlBody"] = html
+        options["TextBody"] = text
+      elsif html
+        options["HtmlBody"] = html
+      else
+        options["TextBody"] = text
+      end
+      options
+    end
+    
+    def extract_mail_headers(message)
+      headers = []
+      message.header.fields.each do |field|
+        key = field.name
+        value = field.value
+        next if bogus_headers.include? key.dup.downcase
+        name = key.split(/-/).map {|i| i.capitalize }.join('-')
+        headers << { "Name" => name, "Value" => value }
+      end
+      headers
+    end
 
     def convert_tmail(message)
       options = { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject }
 
-      headers = extract_headers(message)
+      headers = extract_tmail_headers(message)
       options["Headers"] = headers unless headers.length == 0
 
       options["Tag"] = message.tag.to_s unless message.tag.nil?
@@ -121,7 +173,7 @@ module Postmark
       options
     end
 
-    def extract_headers(message)
+    def extract_tmail_headers(message)
       headers = []
       message.each_header do |key, value|
         next if bogus_headers.include? key.dup.downcase
