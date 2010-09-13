@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{postmark}
-  s.version = "0.7.0"
+  s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Petyo Ivanov"]
-  s.date = %q{2010-04-12}
+  s.date = %q{2010-09-13}
   s.description = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
   s.email = %q{underlog@gmail.com}
   s.extra_rdoc_files = [
@@ -17,9 +17,12 @@ Gem::Specification.new do |s|
      "README.rdoc"
   ]
   s.files = [
-    ".document",
+    ".bundle/config",
+     ".document",
      ".gitignore",
      ".rake_tasks",
+     "Gemfile",
+     "Gemfile.lock",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
@@ -27,10 +30,13 @@ Gem::Specification.new do |s|
      "features/postmark.feature",
      "features/step_definitions/postmark_steps.rb",
      "features/support/env.rb",
+     "init.rb",
+     "lib/mail/postmark.rb",
      "lib/postmark.rb",
      "lib/postmark/bounce.rb",
      "lib/postmark/http_client.rb",
      "lib/postmark/json.rb",
+     "lib/postmark/mail_message_extension.rb",
      "lib/postmark/response_parsers/active_support.rb",
      "lib/postmark/response_parsers/json.rb",
      "lib/postmark/response_parsers/yajl.rb",
@@ -50,7 +56,7 @@ Gem::Specification.new do |s|
     }
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API}
   s.test_files = [
     "spec/bounce_spec.rb",

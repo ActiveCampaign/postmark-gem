@@ -58,7 +58,6 @@ To use SSL encryption when sending email configure the library as follows:
 
     Postmark.secure = true
 
-
 == Requirements
 
 The gem relies on TMail or Mail for building the message. You will also need postmark account, server and sender signature set up to use it.
@@ -86,4 +85,4 @@ http://developer.postmarkapp.com
 
 == Copyright
 
-Copyright (c) 2009 Wildbit LLC. See LICENSE for details.
+Copyright (c) 2010 Wildbit LLC. See LICENSE for details.
