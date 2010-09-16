@@ -35,9 +35,9 @@ Ruby gem for sending emails through http://postmarkapp.com HTTP API
 
 If you are using the Mail gem, you can also use Postmark as a delivery method like:
 
-		message = Mail.new
-		message.delivery_method Mail::Postmark, {:api_key => "your-api-key"}
-		message.deliver
+    message = Mail.new
+    message.delivery_method Mail::Postmark, {:api_key => "your-api-key"}
+    message.deliver
 
 You can retrieve various information about your server state using the Public bounces API - http://developer.postmarkapp.com/bounces
 
