@@ -2,11 +2,11 @@ module Postmark
   module SharedMessageExtensions
   
     def tag
-      @_tag
+      self['TAG']
     end
 
     def tag=(value)
-      @_tag = value
+      self['TAG'] = value
     end
   
     def postmark_attachments=(value)
