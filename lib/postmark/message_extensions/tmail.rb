@@ -7,20 +7,13 @@
 #
 # This is a patch to try to resolve this
 #
-# just require 'tmail_mail_extension'
+# just require 'extensions/tmail'
 # and every TMail::Mail object will have the .body_html method
 #
 
 module TMail
   class Mail
-
-    def tag
-      self["TAG"]
-    end
-
-    def tag=(value)
-      self["TAG"] = value
-    end
+    include Postmark::SharedMessageExtensions
 
     #
     # returs an String with just the html part of the body
@@ -86,7 +79,7 @@ module TMail
           header = part["content-type"]
 
           if part.multipart?
-            puts "    --multipartt--"
+            puts "    --multipart--"
             part.parts.each_with_index do |part2, index2|
               puts "    part[#{index}][#{index2}]"
               puts "      content_type: #{part2.content_type}"

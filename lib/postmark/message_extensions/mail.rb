@@ -1,12 +1,6 @@
 module Mail
   class Message
-    def tag
-      self["TAG"]
-    end
-
-    def tag=(value)
-      self["TAG"] = value
-    end
+    include Postmark::SharedMessageExtensions
     
     def body_html
       unless html_part.nil?
@@ -21,5 +15,6 @@ module Mail
         text_part.body.to_s
       end
     end
+    
   end
 end

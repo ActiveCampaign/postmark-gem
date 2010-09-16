@@ -1,10 +1,15 @@
+def require_local(file)
+  require File.join(File.dirname(__FILE__), 'postmark', file)
+end
+
 require 'net/http'
 require 'net/https'
-require 'postmark/bounce'
-require 'postmark/json'
-require 'postmark/http_client'
-require 'postmark/tmail_mail_extension'
-require 'postmark/mail_message_extension'
+require_local 'bounce'
+require_local 'json'
+require_local 'http_client'
+require_local 'message_extensions/shared'
+require_local 'message_extensions/tmail'
+require_local 'message_extensions/mail'
 require 'mail/postmark'
 
 module Postmark
@@ -114,6 +119,8 @@ module Postmark
       options["Cc"] = message.cc.join(", ").to_s unless message.cc.nil?
       
       options["Bcc"] = message.bcc.join(", ").to_s unless message.bcc.nil?
+      
+      options["Attachments"] = message.postmark_attachments unless message.postmark_attachments.nil?
 
       if reply_to = message['reply-to']
         options["ReplyTo"] = reply_to.to_s
@@ -155,6 +162,8 @@ module Postmark
       options["Cc"] = message['cc'].to_s unless message.cc.nil?
 
       options["Bcc"] = message['bcc'].to_s unless message.bcc.nil?
+      
+      options["Attachments"] = message.postmark_attachments unless message.postmark_attachments.nil?
 
       if reply_to = message['reply-to']
         options["ReplyTo"] = reply_to.to_s
@@ -197,6 +206,7 @@ module Postmark
         bcc
         subject
         tag
+        attachment
       ]
     end
 
