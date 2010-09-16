@@ -4,10 +4,6 @@ Ruby gem for sending emails through http://postmarkapp.com HTTP API
 
 == Install
 
-The gem is hosted at gemcutter. If you don't have it, install it first:
-
-    sudo gem install gemcutter
-Then
     sudo gem install postmark
 
 == Example
@@ -82,6 +78,14 @@ http://developer.postmarkapp.com
   future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
 * Send me a pull request. Bonus points for topic branches.
+
+== Authors & Contributors
+
+* Petyo Ivanov
+* Ilya Sabanin
+* Hristo Deshev
+* Randy Schmidt
+* Chris Williams
 
 == Copyright
 

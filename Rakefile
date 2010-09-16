@@ -9,7 +9,7 @@ begin
     gem.description = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
     gem.email = "underlog@gmail.com"
     gem.homepage = "http://postmarkapp.com"
-    gem.authors = ["Petyo Ivanov"]
+    gem.authors = ["Petyo Ivanov", "Ilya Sabanin"]
     gem.add_development_dependency "rspec"
     gem.add_development_dependency "cucumber"
     gem.add_dependency "tmail"

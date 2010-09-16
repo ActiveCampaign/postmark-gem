@@ -5,10 +5,10 @@
 
 Gem::Specification.new do |s|
   s.name = %q{postmark}
-  s.version = "0.8.0"
+  s.version = "0.9.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Petyo Ivanov"]
+  s.authors = ["Petyo Ivanov", "Ilya Sabanin"]
   s.date = %q{2010-09-16}
   s.description = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
   s.email = %q{underlog@gmail.com}
