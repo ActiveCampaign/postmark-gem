@@ -4,6 +4,8 @@ end
 
 require 'net/http'
 require 'net/https'
+# It's important to load mail before extensions.
+require 'mail'
 require_local 'bounce'
 require_local 'json'
 require_local 'http_client'
