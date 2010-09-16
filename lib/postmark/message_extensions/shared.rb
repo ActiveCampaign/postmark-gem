@@ -1,4 +1,3 @@
-raise "shared.rb loaded!"
 module Postmark
   module SharedMessageExtensions
   
