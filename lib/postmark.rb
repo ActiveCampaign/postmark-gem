@@ -4,15 +4,15 @@ end
 
 require 'net/http'
 require 'net/https'
-# It's important to load mail before extensions.
-require 'mail'
+
 require_local 'bounce'
 require_local 'json'
 require_local 'http_client'
 require_local 'message_extensions/shared'
 require_local 'message_extensions/tmail'
 require_local 'message_extensions/mail'
-require 'mail/postmark'
+require_local 'handlers/mail'
+require_local 'attachments_fix_for_mail'
 
 module Postmark
 
