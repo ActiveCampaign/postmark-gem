@@ -35,7 +35,7 @@ module Postmark
       field = self['POSTMARK-ATTACHMENTS']
       return if field.nil?
       self.postmark_attachments = field.value
-      self['POSTMARK-ATTACHMENTS'] = nil
+      header.fields.delete_if{|f| f.name == 'postmark-attachments'}
     end
     
   end

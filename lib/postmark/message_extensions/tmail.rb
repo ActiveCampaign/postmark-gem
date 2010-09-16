@@ -13,6 +13,7 @@
 
 module TMail
   class Mail
+    
     include Postmark::SharedMessageExtensions
 
     #

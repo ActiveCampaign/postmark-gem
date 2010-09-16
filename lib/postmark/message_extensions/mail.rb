@@ -1,5 +1,6 @@
 module Mail
   class Message
+    
     include Postmark::SharedMessageExtensions
     
     def body_html

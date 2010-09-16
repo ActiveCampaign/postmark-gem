@@ -105,8 +105,8 @@ module Postmark
     def delivery_stats
       HttpClient.get("deliverystats")
     end
-
-    protected
+    
+  protected
     
     def convert_mail(message)
       options = { "From" => message.from.to_s, "Subject" => message.subject }
@@ -211,7 +211,7 @@ module Postmark
         attachment
       ]
     end
-
+    
   end
 
   self.response_parser_class = nil
