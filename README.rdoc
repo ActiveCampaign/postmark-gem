@@ -17,18 +17,26 @@ Ruby gem for sending emails through http://postmarkapp.com HTTP API
     Postmark.api_key = "your-api-key"
 
     message = TMail::Mail.new
-    # make sure you have a sender signature with that email
-    # from and to also accept arrays of emails.
-    message.from = "leonard@bigbangtheory.com"
-    message.to = "Sheldon Cooper <sheldon@bigbangtheory.com>"
-    message.subject = "Hi Sheldon!"
-    message.content_type = "text/html"
-    message.body = "Hello my friend!"
-    # set custom headers at will.
+    
+    # Make sure you have a sender signature for every From email you specify.
+    # From can also accept array of addresses.   
+    message.from             = "leonard@bigbangtheory.com"
+    
+    message.to               = "Sheldon Cooper <sheldon@bigbangtheory.com>"
+    message.subject          = "Hi Sheldon!"
+    message.content_type     = "text/html"
+    message.body             = "Hello my friend!"
+    
+    # You can set customer headers if you like:
     message["CUSTOM-HEADER"] = "my custom header value"
-    # tag message
+    
+    # You can tag your message:
     message.tag = "my-tracking-tag"
-    # set reply to if you need; also, you can pass array of emails.
+    
+    # Add attachments if you like:
+    message.postmark_attachments = [File.open("/path"), File.open("/path")]
+    
+    # Or specify a reply-to address (can also be an array of addresses):
     message.reply_to = "penny@bigbangtheory.com"
 
     Postmark.send_through_postmark(message)
@@ -63,12 +71,6 @@ The plugin will try to use ActiveSupport Json if it is already included. If not,
 You can also explicitly specify which one to be used, using
 
     Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl is also supported.
-
-== Limitations
-
-Currently postmark API does not support attachments. For more information, check the docs at:
-
-http://developer.postmarkapp.com
 
 == Note on Patches/Pull Requests
 
