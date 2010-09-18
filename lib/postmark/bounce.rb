@@ -46,7 +46,7 @@ module Postmark
       def all(options = {})
         options[:count]  ||= 30
         options[:offset] ||= 0
-        Postmark::HttpClient.get("bounces", options).map { |bounce_json| Bounce.new(bounce_json) }
+        Postmark::HttpClient.get("bounces", options)['Bounces'].map { |bounce_json| Bounce.new(bounce_json) }
       end
 
       def tags
