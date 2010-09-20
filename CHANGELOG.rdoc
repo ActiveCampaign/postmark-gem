@@ -1,5 +1,10 @@
 = Changelog
 
+== 0.9.1
+
+* Fixed TypeError when calling Bounce.all.
+* Fixed NoMethodError when trying to read bounce info.
+
 == 0.9.0
 
 * Added support for attachments.
