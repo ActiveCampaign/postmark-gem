@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "Bounce" do
   let(:bounce_json) { %{{"Type":"HardBounce","TypeCode":1,"Details":"test bounce","Email":"jim@test.com","BouncedAt":"#{Time.now.to_s}","DumpAvailable":true,"Inactive":false,"CanActivate":true,"ID":12}} }
-  let(:bounces_json) { "[#{bounce_json},#{bounce_json}]" }
+  let(:bounces_json) { %{{"Bounces": [#{bounce_json},#{bounce_json}]}} }
 
   context "single bounce" do
     let(:bounce) { Postmark::Bounce.find(12) }

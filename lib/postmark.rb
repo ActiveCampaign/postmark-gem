@@ -83,7 +83,7 @@ module Postmark
     def send_through_postmark(message) #:nodoc:
       @retries = 0
       begin
-        HttpClient.post("email", Postmark::Json.encode(convert(message)))
+        HttpClient.post("email", Postmark::Json.encode(convert_message_to_options_hash(message)))
       rescue Exception => e
         if @retries < max_retries
            @retries += 1
@@ -94,42 +94,25 @@ module Postmark
       end
     end
     
-    def convert(message)
-      if defined?(TMail) && message.is_a?(TMail::Mail)
-        convert_tmail(message)
-      else
-        convert_mail(message)
-      end
-    end
+    def convert_message_to_options_hash(message)
+      options = Hash.new
+      headers = extract_headers_according_to_message_format(message)
     
-    def delivery_stats
-      HttpClient.get("deliverystats")
-    end
+      options["From"]        = message.from.try(:first)
+      options["ReplyTo"]     = message.reply_to.try(:join, ", ")
+      options["To"]          = message.to.try(:join, ", ")
+      options["Cc"]          = message.cc.try(:join, ", ")
+      options["Bcc"]         = message.bcc.try(:join, ", ")
+      options["Subject"]     = message.subject
+      options["Attachments"] = message.postmark_attachments
+      options["Tag"]         = message.tag.to_s if message.tag
+      options["Headers"]     = headers          if headers.size > 0
+      
+      options = options.delete_if{|k,v| v.nil?}
     
-  protected
-    
-    def convert_mail(message)
-      options = { "From" => message.from.to_s, "Subject" => message.subject }
-
-      headers = extract_mail_headers(message)
-      options["Headers"] = headers unless headers.length == 0
-      
-      options["To"] = message.to.join(", ")
-
-      options["Tag"] = message.tag.to_s unless message.tag.nil?
-
-      options["Cc"] = message.cc.join(", ").to_s unless message.cc.nil?
-      
-      options["Bcc"] = message.bcc.join(", ").to_s unless message.bcc.nil?
-      
-      options["Attachments"] = message.postmark_attachments unless message.postmark_attachments.nil?
-
-      if reply_to = message['reply-to']
-        options["ReplyTo"] = reply_to.to_s
-      end
-      
       html = message.body_html
       text = message.body_text
+      
       if message.multipart?
         options["HtmlBody"] = html
         options["TextBody"] = text
@@ -138,7 +121,24 @@ module Postmark
       else
         options["TextBody"] = text
       end
+      
       options
+    end
+    
+    def delivery_stats
+      HttpClient.get("deliverystats")
+    end
+    
+  protected
+  
+    def extract_headers_according_to_message_format(message)
+      if defined?(TMail) && message.is_a?(TMail::Mail)
+        headers = extract_tmail_headers(message)
+      elsif defined?(Mail) && message.kind_of?(Mail::Message)
+        headers = extract_mail_headers(message)
+      else
+        raise "Can't convert message to a valid hash of API options. Unknown message format."
+      end
     end
     
     def extract_mail_headers(message)
@@ -153,37 +153,6 @@ module Postmark
       headers
     end
 
-    def convert_tmail(message)
-      options = { "From" => message['from'].to_s, "To" => message['to'].to_s, "Subject" => message.subject }
-
-      headers = extract_tmail_headers(message)
-      options["Headers"] = headers unless headers.length == 0
-
-      options["Tag"] = message.tag.to_s unless message.tag.nil?
-
-      options["Cc"] = message['cc'].to_s unless message.cc.nil?
-
-      options["Bcc"] = message['bcc'].to_s unless message.bcc.nil?
-      
-      options["Attachments"] = message.postmark_attachments unless message.postmark_attachments.nil?
-
-      if reply_to = message['reply-to']
-        options["ReplyTo"] = reply_to.to_s
-      end
-
-      html = message.body_html
-      text = message.body_text
-      if message.multipart?
-        options["HtmlBody"] = html
-        options["TextBody"] = text
-      elsif html
-        options["HtmlBody"] = message.body_html
-      else
-        options["TextBody"] = text
-      end
-      options
-    end
-
     def extract_tmail_headers(message)
       headers = []
       message.each_header do |key, value|
@@ -196,18 +165,12 @@ module Postmark
 
     def bogus_headers
       %q[
-        return-path
-        x-pm-rcpt
-        from
-        reply-to
-        sender
-        received
-        date
-        content-type
-        cc
-        bcc
-        subject
-        tag
+        return-path  x-pm-rcpt
+        from         reply-to
+        sender       received
+        date         content-type
+        cc           bcc
+        subject      tag
         attachment
       ]
     end

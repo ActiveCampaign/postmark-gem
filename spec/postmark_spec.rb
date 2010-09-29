@@ -113,16 +113,16 @@ describe "Postmark" do
   context "tmail parse" do
     def be_serialized_to(json)
       simple_matcher "be serialized to #{json}" do |message|
-        Postmark.send(:convert_tmail, tmail_message).should == JSON.parse(json)
+        Postmark.send(:convert_message_to_options_hash, tmail_message).should == JSON.parse(json)
       end
     end
     
     it "should set text body for plain message" do
-      Postmark.send(:convert_tmail, tmail_message)['TextBody'].should_not be_nil
+      Postmark.send(:convert_message_to_options_hash, tmail_message)['TextBody'].should_not be_nil
     end
 
     it "should set html body for html message" do
-      Postmark.send(:convert_tmail, tmail_html_message)['HtmlBody'].should_not be_nil
+      Postmark.send(:convert_message_to_options_hash, tmail_html_message)['HtmlBody'].should_not be_nil
     end
     
     it "should encode custom headers headers properly" do
@@ -159,21 +159,21 @@ describe "Postmark" do
   context "mail parse" do
     def be_serialized_to(json)
       simple_matcher "be serialized to #{json}" do |message|
-        Postmark.send(:convert_mail, mail_message).should == JSON.parse(json)
+        Postmark.send(:convert_message_to_options_hash, mail_message).should == JSON.parse(json)
       end
     end
     
     it "should set text body for plain message" do
-      Postmark.send(:convert_mail, mail_message)['TextBody'].should_not be_nil
+      Postmark.send(:convert_message_to_options_hash, mail_message)['TextBody'].should_not be_nil
     end
 
     it "should set html body for html message" do
-      Postmark.send(:convert_mail, mail_html_message)['HtmlBody'].should_not be_nil
+      Postmark.send(:convert_message_to_options_hash, mail_html_message)['HtmlBody'].should_not be_nil
     end
     
     it "should set html and text body for multipart message" do
-      Postmark.send(:convert_mail, mail_multipart_message)['HtmlBody'].should_not be_nil
-      Postmark.send(:convert_mail, mail_multipart_message)['TextBody'].should_not be_nil
+      Postmark.send(:convert_message_to_options_hash, mail_multipart_message)['HtmlBody'].should_not be_nil
+      Postmark.send(:convert_message_to_options_hash, mail_multipart_message)['TextBody'].should_not be_nil
     end
     
     it "should encode custom headers properly" do
