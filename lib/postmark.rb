@@ -98,11 +98,11 @@ module Postmark
       options = Hash.new
       headers = extract_headers_according_to_message_format(message)
     
-      options["From"]        = message.from.try(:first)
-      options["ReplyTo"]     = message.reply_to.try(:join, ", ")
-      options["To"]          = message.to.try(:join, ", ")
-      options["Cc"]          = message.cc.try(:join, ", ")
-      options["Bcc"]         = message.bcc.try(:join, ", ")
+      options["From"]        = message.from.first          if message.from
+      options["ReplyTo"]     = message.reply_to.join(", ") if message.reply_to
+      options["To"]          = message.to.join(", ")       if message.to
+      options["Cc"]          = message.cc.join(", ")       if message.cc
+      options["Bcc"]         = message.bcc.join(", ")      if message.bcc
       options["Subject"]     = message.subject
       options["Attachments"] = message.postmark_attachments
       options["Tag"]         = message.tag.to_s if message.tag
