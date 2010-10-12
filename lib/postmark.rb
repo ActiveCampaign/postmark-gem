@@ -98,7 +98,7 @@ module Postmark
       options = Hash.new
       headers = extract_headers_according_to_message_format(message)
     
-      options["From"]        = message.from.first          if message.from
+      options["From"]        = message['from'].to_s
       options["ReplyTo"]     = message.reply_to.join(", ") if message.reply_to
       options["To"]          = message.to.join(", ")       if message.to
       options["Cc"]          = message.cc.join(", ")       if message.cc

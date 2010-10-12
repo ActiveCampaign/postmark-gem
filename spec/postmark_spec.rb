@@ -129,6 +129,12 @@ describe "Postmark" do
       tmail_message["CUSTOM-HEADER"] = "header"
       tmail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
     end
+    
+    it "should encode from properly when name is used" do
+      tmail_message.from = "Sheldon Lee Cooper <sheldon@bigbangtheory.com>"
+      tmail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"Sheldon Lee Cooper <sheldon@bigbangtheory.com>", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+    
 
     it "should encode reply to" do
       tmail_message.reply_to = ['a@a.com', 'b@b.com']
@@ -181,6 +187,11 @@ describe "Postmark" do
       mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
     end
     
+    it "should encode from properly when name is used" do
+      mail_message.from = "Sheldon Lee Cooper <sheldon@bigbangtheory.com>"
+      mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"Sheldon Lee Cooper <sheldon@bigbangtheory.com>", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
+    end
+        
     it "should encode reply to" do
       mail_message.reply_to = ['a@a.com', 'b@b.com']
       mail_message.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "ReplyTo":"a@a.com, b@b.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
