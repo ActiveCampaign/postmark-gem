@@ -2,7 +2,6 @@ source :gemcutter
 
 gem "rake"
 gem "jeweler"
-gem "tmail"
 gem "mail"
 
 group :test do
