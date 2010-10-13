@@ -6,14 +6,13 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "postmark"
     gem.summary = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API}
-    gem.description = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
+    gem.description = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API.}
     gem.email = "underlog@gmail.com"
     gem.homepage = "http://postmarkapp.com"
     gem.authors = ["Petyo Ivanov", "Ilya Sabanin"]
     gem.add_development_dependency "rspec"
     gem.add_development_dependency "cucumber"
-    gem.add_dependency "tmail"
-    gem.files << "lib/postmark/tmail_mail_extension.rb"
+    gem.add_dependency "mail"
     gem.post_install_message = %q[
       ==================
       Thanks for installing the postmark gem. If you don't have an account, please sign up at http://postmarkapp.com/.
