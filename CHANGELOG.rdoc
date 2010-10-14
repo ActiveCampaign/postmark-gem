@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.4
+
+* Fixed bug that caused full name to be dropped from From address.
+
 == 0.9.3
 
 * Removed all "try" calls from the code. It's not always available and not essential anyway.

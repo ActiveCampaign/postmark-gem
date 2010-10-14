@@ -91,6 +91,7 @@ You can also explicitly specify which one to be used, using
 * Hristo Deshev
 * Randy Schmidt
 * Chris Williams
+* Aitor García Rey
 
 == Copyright
 
