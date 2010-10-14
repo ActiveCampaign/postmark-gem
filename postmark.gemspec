@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Petyo Ivanov", "Ilya Sabanin"]
   s.date = %q{2010-10-14}
-  s.description = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
+  s.description = %q{Ruby gem for sending emails through http://postmarkapp.com HTTP API.}
   s.email = %q{underlog@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -40,7 +40,6 @@ Gem::Specification.new do |s|
      "lib/postmark/json.rb",
      "lib/postmark/message_extensions/mail.rb",
      "lib/postmark/message_extensions/shared.rb",
-     "lib/postmark/message_extensions/tmail.rb",
      "lib/postmark/response_parsers/active_support.rb",
      "lib/postmark/response_parsers/json.rb",
      "lib/postmark/response_parsers/yajl.rb",
@@ -74,16 +73,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
-      s.add_runtime_dependency(%q<tmail>, [">= 0"])
+      s.add_runtime_dependency(%q<mail>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<cucumber>, [">= 0"])
-      s.add_dependency(%q<tmail>, [">= 0"])
+      s.add_dependency(%q<mail>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<cucumber>, [">= 0"])
-    s.add_dependency(%q<tmail>, [">= 0"])
+    s.add_dependency(%q<mail>, [">= 0"])
   end
 end
 

@@ -43,7 +43,6 @@ GEM
       json_pure (>= 1.1.7)
     term-ansicolor (1.0.5)
     timecop (0.3.5)
-    tmail (1.2.7.1)
     treetop (1.4.8)
       polyglot (>= 0.3.1)
     trollop (1.16.2)
@@ -64,5 +63,4 @@ DEPENDENCIES
   rspec
   ruby-debug
   timecop
-  tmail
   yajl-ruby

@@ -2,7 +2,6 @@ source :gemcutter
 
 gem "rake"
 gem "jeweler"
-gem "tmail"
 gem "mail"
 
 group :test do
@@ -10,7 +9,7 @@ group :test do
   gem "cucumber"
   gem "activesupport"
   gem "json"
-  gem "ruby-debug"
+  gem "ruby-debug", :platforms => :ruby_18
   gem "fakeweb"
   gem "fakeweb-matcher"
   gem "timecop"

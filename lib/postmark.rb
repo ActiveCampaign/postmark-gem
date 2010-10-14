@@ -9,7 +9,6 @@ require_local 'bounce'
 require_local 'json'
 require_local 'http_client'
 require_local 'message_extensions/shared'
-require_local 'message_extensions/tmail'
 require_local 'message_extensions/mail'
 require_local 'handlers/mail'
 require_local 'attachments_fix_for_mail'
@@ -132,9 +131,7 @@ module Postmark
   protected
   
     def extract_headers_according_to_message_format(message)
-      if defined?(TMail) && message.is_a?(TMail::Mail)
-        headers = extract_tmail_headers(message)
-      elsif defined?(Mail) && message.kind_of?(Mail::Message)
+      if defined?(Mail) && message.kind_of?(Mail::Message)
         headers = extract_mail_headers(message)
       else
         raise "Can't convert message to a valid hash of API options. Unknown message format."
@@ -149,16 +146,6 @@ module Postmark
         next if bogus_headers.include? key.dup.downcase
         name = key.split(/-/).map {|i| i.capitalize }.join('-')
         headers << { "Name" => name, "Value" => value }
-      end
-      headers
-    end
-
-    def extract_tmail_headers(message)
-      headers = []
-      message.each_header do |key, value|
-        next if bogus_headers.include? key.dup.downcase
-        name = key.split(/-/).map {|i| i.capitalize }.join('-')
-        headers << { "Name" => name, "Value" => value.body }
       end
       headers
     end
