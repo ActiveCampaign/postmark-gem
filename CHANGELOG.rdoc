@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.5
+
+* Fixed a problem of HTML content detection when using Mail gem.
+
 == 0.9.4
 
 * Fixed bug that caused full name to be dropped from From address.
