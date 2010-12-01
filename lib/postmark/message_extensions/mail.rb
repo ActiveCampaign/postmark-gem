@@ -4,7 +4,11 @@ module Mail
     include Postmark::SharedMessageExtensions
     
     def html?
-      content_type.include?('text/html')
+      if content_type.nil?
+        false
+      else
+        content_type.include?('text/html')
+      end
     end
     
     def body_html
