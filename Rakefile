@@ -12,7 +12,6 @@ begin
     gem.authors     = ["Petyo Ivanov", "Ilya Sabanin"]
 
     gem.add_development_dependency "rspec"
-    gem.add_development_dependency "cucumber"
     gem.add_development_dependency "activesupport"
     gem.add_development_dependency "json"
     gem.add_development_dependency "ruby-debug"
@@ -46,17 +45,6 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
 end
 
 task :spec => :check_dependencies
-
-begin
-  require 'cucumber/rake/task'
-  Cucumber::Rake::Task.new(:features)
-
-  task :features => :check_dependencies
-rescue LoadError
-  task :features do
-    abort "Cucumber is not available. In order to run features, you must: sudo gem install cucumber"
-  end
-end
 
 task :default => :spec
 

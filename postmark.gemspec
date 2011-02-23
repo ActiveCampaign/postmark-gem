@@ -25,9 +25,6 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "features/postmark.feature",
-    "features/step_definitions/postmark_steps.rb",
-    "features/support/env.rb",
     "init.rb",
     "lib/postmark.rb",
     "lib/postmark/attachments_fix_for_mail.rb",
@@ -69,7 +66,6 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<activesupport>, [">= 0"])
       s.add_development_dependency(%q<json>, [">= 0"])
       s.add_development_dependency(%q<ruby-debug>, [">= 0"])
@@ -79,7 +75,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<yajl-ruby>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<ruby-debug>, [">= 0"])
@@ -90,7 +85,6 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<ruby-debug>, [">= 0"])
