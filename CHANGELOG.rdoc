@@ -1,5 +1,10 @@
 = Changelog
 
+== 0.9.6
+
+* Fixed exception when content-type wasn't explicitly specified.
+* Removed tmail from the list of dependencies.
+
 == 0.9.5
 
 * Fixed a problem of HTML content detection when using Mail gem.

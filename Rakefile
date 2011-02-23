@@ -4,23 +4,29 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "postmark"
-    gem.summary = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API}
-    gem.description = %Q{Ruby gem for sending emails through http://postmarkapp.com HTTP API. It relieas on TMail::Mail for message construction.}
-    gem.email = "underlog@gmail.com"
-    gem.homepage = "http://postmarkapp.com"
-    gem.authors = ["Petyo Ivanov", "Ilya Sabanin"]
+    gem.name        = "postmark"
+    gem.summary     = %Q{Official Postmark API wrapper.}
+    gem.description = %Q{Use this gem to send emails through Postmark HTTP API and retrieve info about bounces.}
+    gem.email       = "ilya@wildbit.com"
+    gem.homepage    = "http://postmarkapp.com"
+    gem.authors     = ["Petyo Ivanov", "Ilya Sabanin"]
+
     gem.add_development_dependency "rspec"
     gem.add_development_dependency "cucumber"
-    gem.add_dependency "tmail"
-    gem.files << "lib/postmark/tmail_mail_extension.rb"
+    gem.add_development_dependency "activesupport"
+    gem.add_development_dependency "json"
+    gem.add_development_dependency "ruby-debug"
+    gem.add_development_dependency "fakeweb"
+    gem.add_development_dependency "fakeweb-matcher"
+    gem.add_development_dependency "timecop"
+    gem.add_development_dependency "yajl-ruby"
+
     gem.post_install_message = %q[
       ==================
       Thanks for installing the postmark gem. If you don't have an account, please sign up at http://postmarkapp.com/.
       Review the README.rdoc for implementation details and examples.
       ==================
     ]
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

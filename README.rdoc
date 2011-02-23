@@ -1,14 +1,18 @@
-= Postmark gem
+= Postmark Gem
 
-Ruby gem for sending emails through http://postmarkapp.com HTTP API
+This gem is an official wrapper for Postmark HTTP API (http://postmarkapp.com). Use it to send emails and retrieve info about bounces.
 
 == Install
 
-    sudo gem install postmark
+    gem install postmark
+    
+In addition to the +postmark+ gem you also need to install +tmail+ or +mail+ gem. Pick the one you like most:
 
-== Example
+    gem install mail
+    - or -
+    gem install tmail
 
-    #!/usr/bin/env ruby
+== TMail Example
 
     require 'rubygems'
     require 'postmark'
@@ -39,12 +43,21 @@ Ruby gem for sending emails through http://postmarkapp.com HTTP API
     message.reply_to = "penny@bigbangtheory.com"
 
     Postmark.send_through_postmark(message)
+    
+== Mail Example
 
-If you are using the Mail gem, you can also use Postmark as a delivery method like:
-
+    require 'rubygems'
+    require 'postmark'
+    require 'mail'
+    
     message = Mail.new
-    message.delivery_method Mail::Postmark, {:api_key => "your-api-key"}
+    message.delivery_method(Mail::Postmark, :api_key => "your-api-key")
+    # ...
+    # same as in example above
+    # ...
     message.deliver
+
+== Other API Features
 
 You can retrieve various information about your server state using the Public bounces API - http://developer.postmarkapp.com/bounces
 
@@ -95,4 +108,4 @@ You can also explicitly specify which one to be used, using
 
 == Copyright
 
-Copyright (c) 2010 Wildbit LLC. See LICENSE for details.
+Copyright (c) 2011 Wildbit LLC. See LICENSE for details.
