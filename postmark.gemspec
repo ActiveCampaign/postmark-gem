@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
     ".document",
     ".rake_tasks",
     "CHANGELOG.rdoc",
-    "Gemfile",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
@@ -69,9 +68,6 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<postmark>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<activesupport>, [">= 0"])
@@ -82,9 +78,6 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<timecop>, [">= 0"])
       s.add_development_dependency(%q<yajl-ruby>, [">= 0"])
     else
-      s.add_dependency(%q<postmark>, [">= 0"])
-      s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<activesupport>, [">= 0"])
@@ -96,9 +89,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<yajl-ruby>, [">= 0"])
     end
   else
-    s.add_dependency(%q<postmark>, [">= 0"])
-    s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<activesupport>, [">= 0"])
