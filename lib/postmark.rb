@@ -100,8 +100,8 @@ module Postmark
     
       options["From"]        = message['from'].to_s        if message.from
       options["ReplyTo"]     = message.reply_to.join(", ") if message.reply_to
-      options["To"]          = message.to.join(", ")       if message.to
-      options["Cc"]          = message.cc.join(", ")       if message.cc
+      options["To"]          = message['to'].to_s          if message.to
+      options["Cc"]          = message['cc'].to_s          if message.cc
       options["Bcc"]         = message.bcc.join(", ")      if message.bcc
       options["Subject"]     = message.subject
       options["Attachments"] = message.postmark_attachments
