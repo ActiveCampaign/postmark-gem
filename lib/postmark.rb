@@ -93,6 +93,25 @@ module Postmark
         end
       end
     end
+
+    def send_bulk_through_postmark(messages)
+      @retries = 0
+      data = []
+      messages.seach do |message|
+        data << convert_message_to_options_hash(message)
+      end
+
+      begin
+        HttpClient.post("email/batch", Postmark::Json.encode(data))
+      rescue Exception => e
+        if @retries < max_retries
+          @retries += 1
+          retry
+        else
+          raise
+        end
+      end
+    end
     
     def convert_message_to_options_hash(message)
       options = Hash.new
