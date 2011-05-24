@@ -97,7 +97,7 @@ module Postmark
     def send_bulk_through_postmark(messages)
       @retries = 0
       data = []
-      messages.seach do |message|
+      messages.each do |message|
         data << convert_message_to_options_hash(message)
       end
 
