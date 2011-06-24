@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.7
+
+* All delivery exceptions are now childs of Postmark::DeliveryError. Easier to rescue that way.
+
 == 0.9.6
 
 * Fixed exception when content-type wasn't explicitly specified.
