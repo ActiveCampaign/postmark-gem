@@ -16,11 +16,12 @@ require_local 'attachments_fix_for_mail'
 
 module Postmark
 
-  class UnknownError        < StandardError; end
-  class InvalidApiKeyError  < StandardError; end
-  class InvalidMessageError < StandardError; end
-  class InternalServerError < StandardError; end
-  class UnknownMessageType  < StandardError; end
+  class DeliveryError       < StandardError; end
+  class UnknownError        < DeliveryError; end
+  class InvalidApiKeyError  < DeliveryError; end
+  class InvalidMessageError < DeliveryError; end
+  class InternalServerError < DeliveryError; end
+  class UnknownMessageType  < DeliveryError; end
 
   module ResponseParsers
     autoload :Json,          'postmark/response_parsers/json'
