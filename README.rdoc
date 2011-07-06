@@ -69,8 +69,8 @@ You can retrieve various information about your server state using the Public bo
     
     # Find specific bounce by id:    
     bounce = Postmark::Bounce.find(bounce_id)    
-    bounce.dump       # string, containing raw SMTP data
-    bounce.reactivate # reactivate hard bounce
+    bounce.dump     # string, containing raw SMTP data
+    bounce.activate # reactivate hard bounce
 
 == Encryption
 
