@@ -85,7 +85,7 @@ module Postmark
       @retries = 0
       begin
         HttpClient.post("email", Postmark::Json.encode(convert_message_to_options_hash(message)))
-      rescue Exception => e
+      rescue DeliveryError => e
         if @retries < max_retries
            @retries += 1
            retry
