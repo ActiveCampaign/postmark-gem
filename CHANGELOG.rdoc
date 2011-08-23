@@ -1,9 +1,12 @@
 = Changelog
 
+== 0.9.8
+
+* Fixed bug that caused unexpected multiple email deliveries on Ruby1.9.2/Rails3.0.7
+
 == 0.9.7
 
 * All delivery exceptions are now childs of Postmark::DeliveryError. Easier to rescue that way.
-* Fixed bug that caused unexpected multiple email deliveries on Ruby1.9.2/Rails3.0.7
 
 == 0.9.6
 
