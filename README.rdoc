@@ -38,6 +38,13 @@ In addition to the +postmark+ gem you also need to install +tmail+ or +mail+ gem
     
     # Add attachments:
     message.postmark_attachments = [File.open("/path"), File.open("/path")]
+
+    # Add attachments with content generated on the fly:
+    message.postmark_attachments = [{
+        "Name" => "September 2011.pdf",
+        "Content" => [pdf_content].pack("m"),
+        "ContentType" => "application/pdf"
+    }]
     
     # Or specify a reply-to address (can also be an array of addresses):
     message.reply_to = "penny@bigbangtheory.com"
