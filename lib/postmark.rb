@@ -8,8 +8,6 @@ require 'net/https'
 require_local 'bounce'
 require_local 'json'
 require_local 'http_client'
-require_local 'message_extensions/shared'
-require_local 'message_extensions/tmail'
 require_local 'message_extensions/mail'
 require_local 'handlers/mail'
 require_local 'attachments_fix_for_mail'
@@ -80,7 +78,7 @@ module Postmark
     def configure
       yield self
     end
-    
+
     def send_through_postmark(message) #:nodoc:
       @retries = 0
       begin
@@ -94,11 +92,11 @@ module Postmark
         end
       end
     end
-    
+
     def convert_message_to_options_hash(message)
       options = Hash.new
       headers = extract_headers_according_to_message_format(message)
-    
+
       options["From"]        = message['from'].to_s        if message.from
       options["ReplyTo"]     = message.reply_to.join(", ") if message.reply_to
       options["To"]          = message['to'].to_s          if message.to
@@ -108,12 +106,12 @@ module Postmark
       options["Attachments"] = message.postmark_attachments
       options["Tag"]         = message.tag.to_s            if message.tag
       options["Headers"]     = headers                     if headers.size > 0
-      
+
       options = options.delete_if{|k,v| v.nil?}
-    
+
       html = message.body_html
       text = message.body_text
-      
+
       if message.multipart?
         options["HtmlBody"] = html
         options["TextBody"] = text
@@ -122,26 +120,24 @@ module Postmark
       else
         options["TextBody"] = text
       end
-      
+
       options
     end
-    
+
     def delivery_stats
       HttpClient.get("deliverystats")
     end
-    
+
   protected
-  
+
     def extract_headers_according_to_message_format(message)
-      if defined?(TMail) && message.is_a?(TMail::Mail)
-        headers = extract_tmail_headers(message)
-      elsif defined?(Mail) && message.kind_of?(Mail::Message)
+      if defined?(Mail) && message.kind_of?(Mail::Message)
         headers = extract_mail_headers(message)
       else
         raise "Can't convert message to a valid hash of API options. Unknown message format."
       end
     end
-    
+
     def extract_mail_headers(message)
       headers = []
       message.header.fields.each do |field|
@@ -150,16 +146,6 @@ module Postmark
         next if bogus_headers.include? key.dup.downcase
         name = key.split(/-/).map {|i| i.capitalize }.join('-')
         headers << { "Name" => name, "Value" => value }
-      end
-      headers
-    end
-
-    def extract_tmail_headers(message)
-      headers = []
-      message.each_header do |key, value|
-        next if bogus_headers.include? key.dup.downcase
-        name = key.split(/-/).map {|i| i.capitalize }.join('-')
-        headers << { "Name" => name, "Value" => value.body }
       end
       headers
     end
@@ -175,7 +161,7 @@ module Postmark
         attachment
       ]
     end
-    
+
   end
 
   self.response_parser_class = nil
