@@ -18,6 +18,6 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.title    = "postmark #{Postmark::VERSION}"
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README.md')
-  rdoc.rdoc_files.include('lib/couch_potato.rb')
-  rdoc.rdoc_files.include('lib/couch_potato/**/*.rb')
+  rdoc.rdoc_files.include('lib/postmark.rb')
+  rdoc.rdoc_files.include('lib/postmark/**/*.rb')
 end
