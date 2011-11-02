@@ -4,7 +4,6 @@ PATH
     postmark (0.9.8)
       json
       mail
-      yajl-ruby
 
 GEM
   remote: http://rubygems.org/
@@ -51,3 +50,4 @@ DEPENDENCIES
   rake
   rspec
   timecop
+  yajl-ruby
