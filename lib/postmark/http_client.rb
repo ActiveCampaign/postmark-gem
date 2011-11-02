@@ -2,6 +2,8 @@ require 'cgi'
 
 module Postmark
   module HttpClient
+    EMAIL_REGEX = /[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/i
+
     class << self
       def post(path, data = '')
         handle_response(http.post(url_path(path), data, headers))
@@ -37,7 +39,9 @@ module Postmark
         when 401
           raise InvalidApiKeyError, error_message(response.body)
         when 422
-          raise InvalidMessageError, error_message(response.body)
+          error = InvalidMessageError.new(error_message(response.body))
+          error.emails = error_emails(response.body)
+          raise error
         when 500
           raise InternalServerError, response.body
         else
@@ -67,6 +71,15 @@ module Postmark
         http.open_timeout = Postmark.http_open_timeout
         http.use_ssl = !!Postmark.secure
         http
+      end
+
+      def error_emails(response_body)
+        json = Postmark::Json.decode(response_body)
+        if json['ErrorCode'] == 406
+          json['Message'].scan(EMAIL_REGEX)
+        else
+          []
+        end
       end
 
       def error_message(response_body)

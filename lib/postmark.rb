@@ -17,9 +17,11 @@ module Postmark
   class DeliveryError       < StandardError; end
   class UnknownError        < DeliveryError; end
   class InvalidApiKeyError  < DeliveryError; end
-  class InvalidMessageError < DeliveryError; end
   class InternalServerError < DeliveryError; end
   class UnknownMessageType  < DeliveryError; end
+  class InvalidMessageError < DeliveryError
+    attr_accessor :emails
+  end
 
   module ResponseParsers
     autoload :Json,          'postmark/response_parsers/json'

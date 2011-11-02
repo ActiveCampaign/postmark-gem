@@ -53,6 +53,18 @@ describe "Postmark" do
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InvalidApiKeyError)
     end
 
+    it 'should expose the inactive email addresses' do
+      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "422", "Unprocessable Entity" ],
+        :body => {:ErrorCode => 406, :Message => "You tried to send to a recipient that has been marked as inactive. " +
+          "Found inactive addresses: joe@doe.com. Inactive recipients are ones that have generated a hard bounce or a spam complaint."}.to_json})
+      begin
+        Postmark.send_through_postmark(mail_message)
+        raise 'should raise error but did not'
+      rescue Postmark::InvalidMessageError => e
+        e.emails.should == ['joe@doe.com']
+      end
+    end
+
     it "should warn when json is not ok" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", {:status => [ "422", "Invalid" ], :body => "{}"})
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InvalidMessageError)
@@ -144,7 +156,7 @@ describe "Postmark" do
   context "mail delivery method" do
     it "should be able to set delivery_method" do
       mail_message.delivery_method Mail::Postmark
-      puts mail_message.delivery_method
+      mail_message.delivery_method.should be_a(Mail::Postmark)
     end
 
     it "should wrap Postmark.send_through_postmark" do
