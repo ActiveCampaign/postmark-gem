@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.9
+
+* Added support for non-array reply_to addresses
+
 == 0.9.8
 
 * Fixed bug that caused unexpected multiple email deliveries on Ruby1.9.2/Rails3.0.7

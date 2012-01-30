@@ -99,15 +99,15 @@ module Postmark
       options = Hash.new
       headers = extract_headers_according_to_message_format(message)
     
-      options["From"]        = message['from'].to_s        if message.from
-      options["ReplyTo"]     = message.reply_to.join(", ") if message.reply_to
-      options["To"]          = message['to'].to_s          if message.to
-      options["Cc"]          = message['cc'].to_s          if message.cc
-      options["Bcc"]         = message.bcc.join(", ")      if message.bcc
+      options["From"]        = message['from'].to_s             if message.from
+      options["ReplyTo"]     = message.reply_to.to_a.join(", ") if message.reply_to
+      options["To"]          = message['to'].to_s               if message.to
+      options["Cc"]          = message['cc'].to_s               if message.cc
+      options["Bcc"]         = message.bcc.join(", ")           if message.bcc
       options["Subject"]     = message.subject
       options["Attachments"] = message.postmark_attachments
-      options["Tag"]         = message.tag.to_s            if message.tag
-      options["Headers"]     = headers                     if headers.size > 0
+      options["Tag"]         = message.tag.to_s                 if message.tag
+      options["Headers"]     = headers                          if headers.size > 0
       
       options = options.delete_if{|k,v| v.nil?}
     

@@ -109,6 +109,7 @@ You can also explicitly specify which one to be used, using
 * Petyo Ivanov
 * Ilya Sabanin
 * Hristo Deshev
+* Artem Chistyakov
 * Randy Schmidt
 * Chris Williams
 * Aitor García Rey
