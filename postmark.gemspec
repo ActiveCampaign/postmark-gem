@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{postmark}
-  s.version = "0.9.8"
+  s.version = "0.9.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = [%q{Petyo Ivanov}, %q{Ilya Sabanin}]
-  s.date = %q{2011-08-23}
+  s.authors = ["Petyo Ivanov", "Ilya Sabanin"]
+  s.date = %q{2012-01-31}
   s.description = %q{Use this gem to send emails through Postmark HTTP API and retrieve info about bounces.}
   s.email = %q{ilya@wildbit.com}
   s.extra_rdoc_files = [
@@ -51,11 +51,12 @@ Gem::Specification.new do |s|
       Review the README.rdoc for implementation details and examples.
       ==================
     }
-  s.require_paths = [%q{lib}]
-  s.rubygems_version = %q{1.8.6}
+  s.require_paths = ["lib"]
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Official Postmark API wrapper.}
 
   if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
