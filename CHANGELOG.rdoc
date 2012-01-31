@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.10
+
+* Fixed Ruby 1.9 compatibility issue
+
 == 0.9.9
 
 * Added support for non-array reply_to addresses

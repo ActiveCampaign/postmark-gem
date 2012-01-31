@@ -9,7 +9,7 @@ begin
     gem.description = %Q{Use this gem to send emails through Postmark HTTP API and retrieve info about bounces.}
     gem.email       = "ilya@wildbit.com"
     gem.homepage    = "http://postmarkapp.com"
-    gem.authors     = ["Petyo Ivanov", "Ilya Sabanin"]
+    gem.authors     = ["Petyo Ivanov", "Ilya Sabanin", "Artem Chistyakov"]
 
     gem.add_development_dependency "rspec"
     gem.add_development_dependency "activesupport"
