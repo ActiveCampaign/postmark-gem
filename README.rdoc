@@ -113,6 +113,7 @@ You can also explicitly specify which one to be used, using
 * Randy Schmidt
 * Chris Williams
 * Aitor García Rey
+* James Miller
 
 == Copyright
 
