@@ -3,40 +3,42 @@ $:.push File.expand_path("../lib", __FILE__)
 require "postmark/version"
 
 Gem::Specification.new do |s|
-  s.name        = "postmark"
-  s.version     = Postmark::VERSION
-  s.authors     = ["Artem Chistyakov"]
-  s.email       = ["tema@wildbit.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.name             = "postmark"
+  s.version          = Postmark::VERSION
+  s.homepage         = "http://postmarkapp.com"
+  s.platform         = Gem::Platform::RUBY
 
-  s.rubyforge_project = "postmark"
+  s.authors          = ["Petyo Ivanov", "Ilya Sabanin", "Artem Chistyakov"]
+  s.date             = "2012-01-31"
+  s.email            = "ilya@wildbit.com"
+  s.extra_rdoc_files = ["LICENSE", "README.rdoc"]
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.summary          = "Official Postmark API wrapper."
+  s.description      = "Use this gem to send emails through Postmark HTTP API and retrieve info about bounces."
 
-  # specify any dependencies here; for example:
-  # s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.files            = `git ls-files`.split("\n")
+  s.test_files       = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables      = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.require_paths    = ["lib"]
 
-  s.add_development_dependency(%q<tmail>, [">= 0"])
-  s.add_development_dependency(%q<mail>, [">= 0"])
-  s.add_development_dependency(%q<rspec>, [">= 0"])
-  s.add_development_dependency(%q<activesupport>, [">= 0"])
-  s.add_development_dependency(%q<json>, [">= 0"])
-  s.add_development_dependency(%q<fakeweb>, [">= 0"])
-  s.add_development_dependency(%q<fakeweb-matcher>, [">= 0"])
-  s.add_development_dependency(%q<timecop>, [">= 0"])
-  s.add_development_dependency(%q<yajl-ruby>, [">= 0"])
+  s.post_install_message = %q{
+    ==================
+    Thanks for installing the postmark gem. If you don't have an account, please sign up at http://postmarkapp.com/.
+    Review the README.rdoc for implementation details and examples.
+    ==================
+  }
 
-  if RUBY_VERSION < '1.9.0'
-    s.add_development_dependency(%q<ruby-debug>, [">= 0"])
-  else
-    s.add_development_dependency(%q<ruby-debug19>, [">= 0"])
-  end
+  s.required_rubygems_version = ">= 1.3.7"
 
+  s.add_dependency "rake"
+  s.add_dependency "json"
+  
+  s.add_development_dependency "tmail"
+  s.add_development_dependency "mail"
+  s.add_development_dependency "rspec-core", "~> 2.0"
+  s.add_development_dependency "activesupport", "~> 3.0"
+  s.add_development_dependency "fakeweb"
+  s.add_development_dependency "fakeweb-matcher"
+  s.add_development_dependency "timecop"
+  s.add_development_dependency "yajl-ruby"
 end
-

@@ -114,7 +114,9 @@ You can also explicitly specify which one to be used, using
 * Chris Williams
 * Aitor García Rey
 * James Miller
+* Yury Batenko
+* Pavel Maksimenko
 
 == Copyright
 
-Copyright (c) 2011 Wildbit LLC. See LICENSE for details.
+Copyright (c) 2012 Wildbit LLC. See LICENSE for details.
