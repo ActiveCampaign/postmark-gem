@@ -61,7 +61,7 @@ describe Postmark do
       Postmark.sleep_between_retries = 0
     end
 
-    def stub_web(data={})
+    def stub_web!(data={})
       data[:body] ||= response_body(data[:status].nil? ? 200 : data[:status].first)
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", data)
     end
@@ -71,28 +71,28 @@ describe Postmark do
     end
 
     it "should send email successfully" do
-      stub_web
+      stub_web!
       Postmark.send_through_postmark(mail_message)
       FakeWeb.should have_requested(:post, "http://api.postmarkapp.com/email")
     end
 
     it "should warn when header is invalid" do
-      stub_web({:status => [ "401", "Unauthorized" ]})
+      stub_web!({:status => [ "401", "Unauthorized" ]})
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InvalidApiKeyError)
     end
 
     it "should warn when json is not ok" do
-      stub_web({:status => [ "422", "Invalid" ]})
+      stub_web!({:status => [ "422", "Invalid" ]})
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InvalidMessageError)
     end
 
     it "should warn when server fails" do
-      stub_web({:status => [ "500", "Internal Server Error" ]})
+      stub_web!({:status => [ "500", "Internal Server Error" ]})
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InternalServerError)
     end
 
     it "should warn when unknown stuff fails" do
-      stub_web({:status => [ "485", "Custom HTTP response status" ]})
+      stub_web!({:status => [ "485", "Custom HTTP response status" ]})
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::UnknownError)
     end
 
@@ -131,7 +131,7 @@ describe Postmark do
 
     it "should set html body for html message" do
       Postmark.send(:convert_message_to_options_hash, mail_html_message)['HtmlBody'].should_not be_nil
-    end    
+    end
   end
   
   context "mail delivery method" do
