@@ -3,11 +3,6 @@ shared_examples :mail do
     Postmark.send(:convert_message_to_options_hash, subject)['TextBody'].should_not be_nil
   end
   
-  it "should encode custom headers properly" do
-    subject.header["CUSTOM-HEADER"] = "header"
-    subject.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
-  end
-  
   it "should encode from properly when name is used" do
     subject.from = "Sheldon Lee Cooper <sheldon@bigbangtheory.com>"
     subject.should be_serialized_to %q[{"Subject":"Hello!", "From":"Sheldon Lee Cooper <sheldon@bigbangtheory.com>", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
@@ -39,7 +34,8 @@ shared_examples :mail do
   end
 
   it "should accept string as reply_to field" do
-    subject.reply_to = 'b@b.com <b@b.com>'
+    subject.reply_to = ['Anton Astashov <b@b.com>']
+    puts subject.reply_to.inspect
     subject.should be_serialized_to %q[{"From": "sheldon@bigbangtheory.com", "ReplyTo": "b@b.com", "To": "lenard@bigbangtheory.com", "Subject": "Hello!", "TextBody": "Hello Sheldon!"}]
   end
 end

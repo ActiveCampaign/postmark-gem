@@ -121,6 +121,7 @@ describe Postmark do
   end
 
   context "tmail parse", :ruby => 1.8 do
+    require 'tmail'
     subject { tmail_message }
     it_behaves_like :mail    
   end
@@ -132,6 +133,11 @@ describe Postmark do
     it "should set html body for html message" do
       Postmark.send(:convert_message_to_options_hash, mail_html_message)['HtmlBody'].should_not be_nil
     end
+
+    it "should encode custom headers properly" do
+      subject.header["CUSTOM-HEADER"] = "header"
+      subject.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
+    end    
   end
   
   context "mail delivery method" do
