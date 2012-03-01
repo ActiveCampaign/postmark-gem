@@ -116,6 +116,7 @@ You can also explicitly specify which one to be used, using
 * James Miller
 * Yury Batenko
 * Pavel Maksimenko
+* Anton Astashov
 
 == Copyright
 
