@@ -37,4 +37,9 @@ shared_examples :mail do
     subject.bcc = ['a@a.com', 'b@b.com']
     subject.should be_serialized_to %q[{"Bcc":"a@a.com, b@b.com", "Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!"}]
   end
+
+  it "should accept string as reply_to field" do
+    subject.reply_to = 'b@b.com <b@b.com>'
+    subject.should be_serialized_to %q[{"From": "sheldon@bigbangtheory.com", "ReplyTo": "b@b.com", "To": "lenard@bigbangtheory.com", "Subject": "Hello!", "TextBody": "Hello Sheldon!"}]
+  end
 end

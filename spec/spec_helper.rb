@@ -29,6 +29,6 @@ end
 
 RSpec::Matchers.define :be_serialized_to do |json|
   match do |mail_message|
-  	Postmark.send(:convert_message_to_options_hash, mail_message).should == JSON.parse(json)
+    Postmark.convert_message_to_options_hash(mail_message).should == JSON.parse(json)
   end
 end
