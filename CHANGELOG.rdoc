@@ -1,23 +1,29 @@
 = Changelog
 
+== 0.9.12
+
+* Fixed a problem of attachments processing when using deliver! method on Mail object.
+* Removed activesupport dependency for Postmark::AttachmentsFixForMail.
+* Added specs for AttachmentFixForMail.
+
 == 0.9.11
 
-* Replaced Jeweler by Bundler
-* Updated RSpec to 2.8
-* Fixed specs
-* Refactored the codebase
+* Replaced Jeweler by Bundler.
+* Updated RSpec to 2.8.
+* Fixed specs.
+* Refactored the codebase.
 
 == 0.9.10
 
-* Fixed Ruby 1.9 compatibility issue
+* Fixed Ruby 1.9 compatibility issue.
 
 == 0.9.9
 
-* Added support for non-array reply_to addresses
+* Added support for non-array reply_to addresses.
 
 == 0.9.8
 
-* Fixed bug that caused unexpected multiple email deliveries on Ruby1.9.2/Rails3.0.7
+* Fixed bug that caused unexpected multiple email deliveries on Ruby 1.9.2/Rails 3.0.7.
 
 == 0.9.7
 

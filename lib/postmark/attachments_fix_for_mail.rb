@@ -19,25 +19,30 @@ module Postmark
   module AttachmentsFixForMail
     
     def self.included(base)
-      base.class_eval do      
-        alias_method_chain :deliver, :postmark_hook
+      base.class_eval do
+        alias_method :deliver_without_postmark_hook, :deliver
+        alias_method :deliver_without_postmark_hook!, :deliver!
+
+        def deliver!
+          remove_postmark_attachments_from_standard_fields
+          deliver_without_postmark_hook!
+        end
+        
+        def deliver
+          remove_postmark_attachments_from_standard_fields
+          deliver_without_postmark_hook
+        end
       end
     end
-    
-    def deliver_with_postmark_hook
-      remove_postmark_attachments_from_standard_fields
-      deliver_without_postmark_hook
-    end
-    
+
   private
-  
+
     def remove_postmark_attachments_from_standard_fields
       field = self['POSTMARK-ATTACHMENTS']
       return if field.nil?
       self.postmark_attachments = field.value
       header.fields.delete_if{|f| f.name == 'postmark-attachments'}
     end
-    
   end
   
 end

@@ -158,6 +158,26 @@ describe Postmark do
     end
   end
 
+  context "attachments hook", :ruby => 1.9 do
+    before(:all) { Mail::Message.send(:include, Postmark::AttachmentsFixForMail) }
+
+    before do
+      mail_message.delivery_method Mail::Postmark
+      mail_message.should_receive(:remove_postmark_attachments_from_standard_fields)
+      Postmark.should_receive(:send_through_postmark).with(mail_message)
+    end
+
+    it "should run postmark attachments hook when using deliver! method" do
+      mail_message.deliver!
+    end
+
+    it "should run postmark attachments hook when using deliver method" do      
+      mail_message.deliver
+    end
+
+    
+  end
+
   context "JSON library support" do
     [:Json, :ActiveSupport, :Yajl].each do |lib|
       begin
