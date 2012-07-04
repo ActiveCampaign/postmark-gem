@@ -1,5 +1,12 @@
 = Changelog
 
+== 0.9.11
+
+* Replaced Jeweler by Bundler
+* Updated RSpec to 2.8
+* Fixed specs
+* Refactored the codebase
+
 == 0.9.10
 
 * Fixed Ruby 1.9 compatibility issue

@@ -1,6 +1,6 @@
 module Postmark
   module SharedMessageExtensions
-  
+
     def tag
       self['TAG']
     end
@@ -8,15 +8,15 @@ module Postmark
     def tag=(value)
       self['TAG'] = value
     end
-  
+
     def postmark_attachments=(value)
-      @_attachments = value.is_a?(Array) ? value : [value]
+      @_attachments = Array.wrap(value)
     end
-  
+
     def postmark_attachments
       return if @_attachments.nil?
-          
-      @_attachments.collect do |item|
+
+      @_attachments.map do |item|
         if item.is_a?(Hash)
           item
         elsif item.is_a?(File)
@@ -28,6 +28,6 @@ module Postmark
         end
       end
     end
-  
+
   end
 end
