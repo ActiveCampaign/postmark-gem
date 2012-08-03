@@ -16,7 +16,15 @@ require_local 'attachments_fix_for_mail'
 
 module Postmark
 
-  class DeliveryError       < StandardError; end
+  class DeliveryError < StandardError
+    attr_accessor :error_code
+
+    def initialize(message = nil, error_code = nil)
+      super(message)
+      self.error_code = error_code
+    end
+  end
+
   class UnknownError        < DeliveryError; end
   class InvalidApiKeyError  < DeliveryError; end
   class InvalidMessageError < DeliveryError; end

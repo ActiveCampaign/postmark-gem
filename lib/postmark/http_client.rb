@@ -35,11 +35,11 @@ module Postmark
       when 200
         return Postmark::Json.decode(response.body)
       when 401
-        raise InvalidApiKeyError, error_message(response.body)
+        raise error(InvalidApiKeyError, response.body)
       when 422
-        raise InvalidMessageError, error_message(response.body)
+        raise error(InvalidMessageError, response.body)
       when 500
-        raise InternalServerError, response.body
+        raise error(InternalServerError, response.body)
       else
         raise UnknownError, response
       end
@@ -71,6 +71,15 @@ module Postmark
 
     def error_message(response_body)
       Postmark::Json.decode(response_body)["Message"]
+    end
+
+    def error_message_and_code(response_body)
+      reply = Postmark::Json.decode(response_body)
+      [reply["Message"], reply["ErrorCode"]]
+    end
+
+    def error(clazz, response_body)
+      clazz.send(:new, *error_message_and_code(response_body))
     end
   end
 end
