@@ -41,9 +41,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency "fakeweb-matcher"
   s.add_development_dependency "timecop"
   s.add_development_dependency "yajl-ruby"
-  if RUBY_VERSION < '1.9.0'
-    s.add_development_dependency(%q<ruby-debug>, [">= 0"])
-  else
-    s.add_development_dependency(%q<ruby-debug19>, [">= 0"])
-  end
 end
