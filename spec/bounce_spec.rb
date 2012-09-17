@@ -18,7 +18,7 @@ describe "Bounce" do
 
     it "should retrieve and parce bounce correctly" do
       bounce.type.should == "HardBounce"
-      bounce.bounced_at.should == Time.now
+      bounce.bounced_at.to_s.should == Time.now.to_s
       bounce.details.should == "test bounce"
       bounce.email.should == "jim@test.com"
     end
