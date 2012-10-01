@@ -105,6 +105,14 @@ describe Postmark do
                           ])
       lambda { Postmark.send_through_postmark(mail_message) }.should_not raise_error
     end
+
+    it "should retry on timeout" do
+      Postmark::HttpClient.should_receive(:post).exactly(4).times.and_raise(Timeout::Error)
+
+      expect {
+        Postmark.send_through_postmark(mail_message)
+      }.to raise_error(Timeout::Error)
+    end
   end
 
   context "delivery stats" do
