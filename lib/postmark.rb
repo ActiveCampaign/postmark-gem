@@ -30,6 +30,7 @@ module Postmark
   class InvalidMessageError < DeliveryError; end
   class InternalServerError < DeliveryError; end
   class UnknownMessageType  < DeliveryError; end
+  class TimeoutError        < DeliveryError; end
 
   module ResponseParsers
     autoload :Json,          'postmark/response_parsers/json'
@@ -100,6 +101,8 @@ module Postmark
         raise
       end
     end
+  rescue Timeout::Error
+    raise TimeoutError.new($!)
   end
 
   def convert_message_to_options_hash(message)

@@ -96,6 +96,11 @@ describe Postmark do
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::UnknownError)
     end
 
+    it "should warn when the request times out" do
+      Postmark::HttpClient.should_receive(:post).at_least(:once).and_raise(Timeout::Error)
+      lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::TimeoutError)
+    end
+
     it "should retry 3 times" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email",
                           [ 
@@ -107,11 +112,9 @@ describe Postmark do
     end
 
     it "should retry on timeout" do
-      Postmark::HttpClient.should_receive(:post).exactly(4).times.and_raise(Timeout::Error)
-
-      expect {
-        Postmark.send_through_postmark(mail_message)
-      }.to raise_error(Timeout::Error)
+      Postmark::HttpClient.should_receive(:post).and_raise(Timeout::Error)
+      Postmark::HttpClient.should_receive(:post).and_return('{}')
+      lambda { Postmark.send_through_postmark(mail_message) }.should_not raise_error
     end
   end
 
