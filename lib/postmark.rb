@@ -1,18 +1,14 @@
-def require_local(file)
-  require File.join(File.dirname(__FILE__), 'postmark', file)
-end
-
 require 'net/http'
 require 'net/https'
 
-require_local 'bounce'
-require_local 'json'
-require_local 'http_client'
-require_local 'message_extensions/shared'
-require_local 'message_extensions/tmail'
-require_local 'message_extensions/mail'
-require_local 'handlers/mail'
-require_local 'attachments_fix_for_mail'
+require 'postmark/bounce'
+require 'postmark/json'
+require 'postmark/http_client'
+require 'postmark/message_extensions/shared'
+require 'postmark/message_extensions/tmail'
+require 'postmark/message_extensions/mail'
+require 'postmark/handlers/mail'
+require 'postmark/attachments_fix_for_mail'
 
 module Postmark
 
