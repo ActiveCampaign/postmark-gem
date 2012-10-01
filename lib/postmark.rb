@@ -42,8 +42,6 @@ module Postmark
     'Accept'       => 'application/json'
   }
 
-  MAX_RETRIES = 2
-
   extend self
 
   attr_accessor :host, :path_prefix, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
