@@ -30,6 +30,7 @@ module Postmark
   class InvalidMessageError < DeliveryError; end
   class InternalServerError < DeliveryError; end
   class UnknownMessageType  < DeliveryError; end
+  class TimeoutError        < DeliveryError; end
 
   module ResponseParsers
     autoload :Json,          'postmark/response_parsers/json'
@@ -41,8 +42,6 @@ module Postmark
     'Content-type' => 'application/json',
     'Accept'       => 'application/json'
   }
-
-  MAX_RETRIES = 2
 
   extend self
 
@@ -94,7 +93,7 @@ module Postmark
     @retries = 0
     begin
       HttpClient.post("email", Postmark::Json.encode(convert_message_to_options_hash(message)))
-    rescue DeliveryError => e
+    rescue DeliveryError, Timeout::Error
       if @retries < max_retries
          @retries += 1
          retry
@@ -102,6 +101,8 @@ module Postmark
         raise
       end
     end
+  rescue Timeout::Error
+    raise TimeoutError.new($!)
   end
 
   def convert_message_to_options_hash(message)
