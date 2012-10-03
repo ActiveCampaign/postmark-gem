@@ -1,5 +1,10 @@
 = Changelog
 
+== 0.9.13
+
+* Added error_code to DeliveryError
+* Added retries for Timeout::Error
+
 == 0.9.12
 
 * Fixed a problem of attachments processing when using deliver! method on Mail object.

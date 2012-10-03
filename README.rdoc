@@ -5,7 +5,7 @@ This gem is an official wrapper for Postmark HTTP API (http://postmarkapp.com). 
 == Install
 
     gem install postmark
-    
+
 In addition to the +postmark+ gem you also need to install +tmail+ or +mail+ gem. Pick the one you like most:
 
     gem install mail
@@ -19,23 +19,23 @@ In addition to the +postmark+ gem you also need to install +tmail+ or +mail+ gem
     require 'tmail'
 
     Postmark.api_key = "your-api-key"
-    
+
     # Make sure you have a sender signature for every From email you specify.
-    # From can also accept array of addresses.   
-    
+    # From can also accept array of addresses.
+
     message              = TMail::Mail.new
     message.from         = "leonard@bigbangtheory.com"
     message.to           = "Sheldon Cooper <sheldon@bigbangtheory.com>"
     message.subject      = "Hi Sheldon!"
     message.content_type = "text/html"
     message.body         = "Hello my friend!"
-    
+
     # You can set customer headers if you like:
     message["CUSTOM-HEADER"] = "my custom header value"
-    
+
     # Added a tag:
     message.tag = "my-tracking-tag"
-    
+
     # Add attachments:
     message.postmark_attachments = [File.open("/path"), File.open("/path")]
 
@@ -45,18 +45,18 @@ In addition to the +postmark+ gem you also need to install +tmail+ or +mail+ gem
         "Content" => [pdf_content].pack("m"),
         "ContentType" => "application/pdf"
     }]
-    
+
     # Or specify a reply-to address (can also be an array of addresses):
     message.reply_to = "penny@bigbangtheory.com"
 
     Postmark.send_through_postmark(message)
-    
+
 == Mail Example
 
     require 'rubygems'
     require 'postmark'
     require 'mail'
-    
+
     message = Mail.new
     message.delivery_method(Mail::Postmark, :api_key => "your-api-key")
     # ...
@@ -70,12 +70,12 @@ You can retrieve various information about your server state using the Public bo
 
     # Get delivery stats: (JSON format)
     Postmark.delivery_stats
-    
-    # Get bounces information: (array of bounce objects)    
+
+    # Get bounces information: (array of bounce objects)
     Postmark::Bounce.all
-    
-    # Find specific bounce by id:    
-    bounce = Postmark::Bounce.find(bounce_id)    
+
+    # Find specific bounce by id:
+    bounce = Postmark::Bounce.find(bounce_id)
     bounce.dump     # string, containing raw SMTP data
     bounce.activate # reactivate hard bounce
 
@@ -118,6 +118,8 @@ You can also explicitly specify which one to be used, using
 * Yury Batenko
 * Pavel Maksimenko
 * Anton Astashov
+* Marcus Brito
+* Tyler Hunt
 
 == Copyright
 
