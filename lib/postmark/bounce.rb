@@ -3,7 +3,7 @@ require 'time'
 module Postmark
   class Bounce
 
-    attr_reader :email, :bounced_at, :type, :details, :name, :id, :server_id, :tag
+    attr_reader :email, :bounced_at, :type, :details, :name, :id, :server_id, :tag, :message_id, :subject
 
     def initialize(values = {})
       @id             = values["ID"]
@@ -16,6 +16,8 @@ module Postmark
       @dump_available = values["DumpAvailable"]
       @inactive       = values["Inactive"]
       @can_activate   = values["CanActivate"]
+      @message_id     = values["MessageID"]
+      @subject        = values["Subject"]
     end
 
     def inactive?

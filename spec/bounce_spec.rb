@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Bounce" do
-  let(:bounce_json) { %{{"Type":"HardBounce","TypeCode":1,"Details":"test bounce","Email":"jim@test.com","BouncedAt":"#{Time.now.to_s}","DumpAvailable":true,"Inactive":false,"CanActivate":true,"ID":12}} }
+  let(:bounce_json) { %{{"Type":"HardBounce","MessageID":"d12c2f1c-60f3-4258-b163-d17052546ae4","TypeCode":1,"Details":"test bounce","Email":"jim@test.com","BouncedAt":"#{Time.now.to_s}","DumpAvailable":true,"Inactive":false,"CanActivate":true,"ID":12,"Subject":"Hello from our app!"}} }
   let(:bounces_json) { %{{"Bounces": [#{bounce_json},#{bounce_json}]}} }
 
   context "single bounce" do
@@ -21,6 +21,8 @@ describe "Bounce" do
       bounce.bounced_at.to_s.should == Time.now.to_s
       bounce.details.should == "test bounce"
       bounce.email.should == "jim@test.com"
+      bounce.message_id.should == "d12c2f1c-60f3-4258-b163-d17052546ae4"
+      bounce.subject.should == "Hello from our app!"
     end
 
     it "should retrieve bounce dump" do
