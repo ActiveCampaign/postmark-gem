@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.14
+
+* Parse Subject and MessageID from the Bounce API response.
+
 == 0.9.13
 
 * Added error_code to DeliveryError
