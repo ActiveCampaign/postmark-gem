@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.15
+
+* Save a received MessageID in message headers.
+
 == 0.9.14
 
 * Parse Subject and MessageID from the Bounce API response.
