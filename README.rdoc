@@ -56,6 +56,7 @@ In addition to the +postmark+ gem you also need to install +tmail+ or +mail+ gem
     require 'rubygems'
     require 'postmark'
     require 'mail'
+    require 'active_support/core_ext'
 
     message = Mail.new
     message.delivery_method(Mail::Postmark, :api_key => "your-api-key")
