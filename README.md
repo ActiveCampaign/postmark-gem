@@ -136,7 +136,7 @@ require 'mail'
 require 'json'
 
 Postmark.response_parser_class = :Json
-Postmark.api_key = 'de4654d4-859e-4655-8125-fd944cbb9518'
+Postmark.api_key = 'your-postmark-api-key'
 
 # Delivery stats
 Postmark.delivery_stats
