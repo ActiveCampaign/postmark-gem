@@ -24,6 +24,9 @@ require 'postmark'
 require 'mail'
 require 'json'
 
+# Make sure you have a sender signature for every From email you specify.
+# From can also accept array of addresses.
+
 # Use json gem to parse response
 Postmark.response_parser_class = :Json
 
