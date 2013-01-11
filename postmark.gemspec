@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors          = ["Petyo Ivanov", "Ilya Sabanin", "Artem Chistyakov"]
   s.date             = "2012-01-31"
   s.email            = "ilya@wildbit.com"
-  s.extra_rdoc_files = ["LICENSE", "README.rdoc"]
+  s.extra_rdoc_files = ["LICENSE", "README.md"]
 
   s.summary          = "Official Postmark API wrapper."
   s.description      = "Use this gem to send emails through Postmark HTTP API and retrieve info about bounces."
@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.post_install_message = %q{
     ==================
     Thanks for installing the postmark gem. If you don't have an account, please sign up at http://postmarkapp.com/.
-    Review the README.rdoc for implementation details and examples.
+    Review the README.md for implementation details and examples.
     ==================
   }
 
@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rake"
   s.add_dependency "json"
-  
+
   s.add_development_dependency "tmail"
   s.add_development_dependency "mail"
   s.add_development_dependency "rspec-core", "~> 2.0"

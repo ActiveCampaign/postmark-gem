@@ -10,11 +10,13 @@ module Postmark
     end
 
     def postmark_attachments=(value)
-      @_attachments = Array.wrap(value)
+      @_attachments = Array[*value]
     end
 
     def postmark_attachments
       return if @_attachments.nil?
+
+      puts @_attachments.inspect
 
       @_attachments.map do |item|
         if item.is_a?(Hash)

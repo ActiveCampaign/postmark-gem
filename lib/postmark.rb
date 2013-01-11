@@ -47,7 +47,7 @@ module Postmark
   attr_writer :response_parser_class
 
   def response_parser_class
-    @response_parser_class ||= Object.const_defined?(:ActiveSupport) ? :ActiveSupport : :Json
+    @response_parser_class ||= defined?(ActiveSupport::JSON) ? :ActiveSupport : :Json
   end
 
   # The port on which your Postmark server runs.
@@ -86,16 +86,8 @@ module Postmark
   end
 
   def send_through_postmark(message) #:nodoc:
-    @retries = 0
-    begin
+    with_retries do
       HttpClient.post("email", Postmark::Json.encode(convert_message_to_options_hash(message)))
-    rescue DeliveryError, Timeout::Error
-      if @retries < max_retries
-         @retries += 1
-         retry
-      else
-        raise
-      end
     end
   rescue Timeout::Error
     raise TimeoutError.new($!)
@@ -137,6 +129,17 @@ module Postmark
   end
 
   protected
+
+  def with_retries
+    yield
+  rescue DeliveryError, Timeout::Error
+    retries = retries ? retries + 1 : 0
+    if retries < max_retries
+      retry
+    else
+      raise
+    end
+  end
 
   def extract_headers_according_to_message_format(message)
     if defined?(TMail) && message.is_a?(TMail::Mail)
@@ -181,8 +184,6 @@ module Postmark
       attachment
     ]
   end
-
-
 
   self.response_parser_class = nil
 

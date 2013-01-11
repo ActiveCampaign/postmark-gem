@@ -3,16 +3,20 @@ require 'cgi'
 module Postmark
   module HttpClient
     extend self
+
+    @@client_mutex = Mutex.new
+    @@request_mutex = Mutex.new
+
     def post(path, data = '')
-      handle_response(http.post(url_path(path), data, headers))
+      do_request { |client| client.post(url_path(path), data, headers) }
     end
 
     def put(path, data = '')
-      handle_response(http.put(url_path(path), data, headers))
+      do_request { |client| client.put(url_path(path), data, headers) }
     end
 
     def get(path, query = {})
-      handle_response(http.get(url_path(path + to_query_string(query)), headers))
+      do_request { |client| client.get(url_path(path + to_query_string(query)), headers) }
     end
 
     protected
@@ -53,8 +57,19 @@ module Postmark
       Postmark.path_prefix + path
     end
 
+    def do_request
+      @@request_mutex.synchronize do
+        handle_response(yield(http))
+      end
+    end
+
     def http
-      @http ||= build_http
+      return @http if @http
+
+      @@client_mutex.synchronize do
+        return @http if @http
+        @http = build_http
+      end
     end
 
     def build_http
