@@ -135,8 +135,7 @@ module Postmark
   rescue DeliveryError, Timeout::Error
     retries = retries ? retries + 1 : 0
     if retries < max_retries
-       retries += 1
-       retry
+      retry
     else
       raise
     end
