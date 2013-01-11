@@ -1,5 +1,13 @@
 = Changelog
 
+== 0.9.16
+
+* Thread-safe HTTP requests
+* Fixed inproper method of ActiveSupport::JSON detection
+* Removed unexpected ActiveSupport dependency from Postmark::SharedMessageExtensions#postmark_attachments= method
+* Used Markdown to format README
+* Updated README
+
 == 0.9.15
 
 * Save a received MessageID in message headers.
