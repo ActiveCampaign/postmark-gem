@@ -151,6 +151,33 @@ message.deliver
 # => #<Mail::Message:70355901588620, Multipart: true, Headers: <From: sheldon@bigbangtheory.com>, <To: leonard@bigbangtheory.com>, <Message-ID: cadba131-f6d6-4cfc-9892-16ee738ba54c>, <Subject: Re: Anything Can Happen Thursday>, <Content-Type: multipart/alternative; boundary=--==_mimepart_50ef7a6234a69_a4c73ffd01035adc207b8>>
 ```
 
+### Tagged message
+
+Postmark also lets you tag your messages.
+
+``` ruby
+require 'rubygems'
+require 'postmark'
+require 'mail'
+require 'json'
+
+message = Mail.new do
+  from           'sheldon@bigbangtheory.com'
+  to             'Penny <penny@bigbangtheory.com>'
+  subject        'Re: You cleaned my apartment???'
+  body           'I couldn\'t sleep knowing that just outside my bedroom is ' \
+                 'our living room and just outside our living room is that ' \
+                 'hallway and immediately adjacent to that hallway is this!'
+
+  delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
+end
+
+message.tag = 'confidential'
+
+message.deliver
+# => #<Mail::Message:70168327829580, Multipart: false, Headers: <From: sheldon@bigbangtheory.com>, <To: penny@bigbangtheory.com>, <Message-ID: af2570fd-3481-4b45-8b27-a249806d891a>, <Subject: Re: You cleaned my apartment???>, <TAG: confidential>>
+```
+
 ## Using with [TMail](http://rubygems.org/gems/tmail) library
 
 Postmark gem also supports `tmail` library, which can be used by Ruby 1.8.7
