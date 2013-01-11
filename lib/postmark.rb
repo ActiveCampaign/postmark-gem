@@ -47,7 +47,7 @@ module Postmark
   attr_writer :response_parser_class
 
   def response_parser_class
-    @response_parser_class ||= Object.const_defined?(:ActiveSupport) ? :ActiveSupport : :Json
+    @response_parser_class ||= defined?(ActiveSupport::JSON) ? :ActiveSupport : :Json
   end
 
   # The port on which your Postmark server runs.
