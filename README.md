@@ -2,15 +2,15 @@
 
 This gem is an official wrapper for [Postmark HTTP API](http://postmarkapp.com). Use it to send emails and retrieve info about bounces.
 
-## Install
+## Getting Started
 
-### Installing the gem
+### Install the gem
 
 ``` bash
 gem install postmark
 ```
 
-### Installing [Mail](http://rubygems.org/gems/mail) library
+### Install [Mail](http://rubygems.org/gems/mail) library
 
 In addition to the `postmark` gem you also need to install `mail` gem.
 
@@ -21,7 +21,7 @@ gem install mail
 You can also use the gem with `tmail` library. This is not recommended for any
 new projects, but may be useful for legacy Ruby 1.8.7 projects.
 
-### Getting Postmark API key
+### Get Postmark API key
 
 In order to send emails using Postmark ruby gem, you will need a
 [Postmark](http://postmarkapp.com) account. If you don't have one please
@@ -110,9 +110,6 @@ end
 
 message.postmark_attachments = [File.open("1.jpeg"), File.open("2.jpeg")]
 
-message.from = "sender@temochka.com"
-message.to = "tema@wildbit.com"
-
 message.deliver
 # => <Mail::Message:70235449249320, Multipart: false, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: 91cbdb90-9daa-455d-af24-e233711b02c2>, <Subject: Have you seen these pictures of yours?>>
 ```
@@ -178,6 +175,24 @@ message.deliver
 # => #<Mail::Message:70168327829580, Multipart: false, Headers: <From: sheldon@bigbangtheory.com>, <To: penny@bigbangtheory.com>, <Message-ID: af2570fd-3481-4b45-8b27-a249806d891a>, <Subject: Re: You cleaned my apartment???>, <TAG: confidential>>
 ```
 
+### Accessing Postmark Message-ID
+
+You might want to save identifiers of messages you send. Postmark provides you
+with unique Message-ID, which you can
+[use to retrieve bounces](http://blog.postmarkapp.com/post/24970994681/using-messageid-to-retrieve-bounces)
+later. This example shows you how to access Message-ID of a sent email message.
+
+``` ruby
+message = Mail.new
+# ...
+message.deliver
+
+message['Message-ID']
+# => cadba131-f6d6-4cfc-9892-16ee738ba54c
+message.message_id
+# => "cadba131-f6d6-4cfc-9892-16ee738ba54c"
+```
+
 ## Using with [TMail](http://rubygems.org/gems/tmail) library
 
 Postmark gem also supports `tmail` library, which can be used by Ruby 1.8.7
@@ -225,7 +240,7 @@ message.reply_to = "penny@bigbangtheory.com"
 Postmark.send_through_postmark(message)
 ```
 
-## Other API Features
+## Exploring Other API Features
 
 You can retrieve various information about your server state using the [Public
 bounces API](http://developer.postmarkapp.com/bounces).
@@ -258,7 +273,7 @@ bounce.activate # reactivate hard bounce
 # => #<Postmark::Bounce:0x007ff09c04ae18 @id=580516117, @email="sheldon@bigbangtheory.com", @bounced_at=2012-10-21 00:01:56 +0800, @type="HardBounce", @name=nil, @details="smtp;550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address for typos or unnecessary spaces. Learn more at http://support.google.com/mail/bin/answer.py?answer=6596 c13si5382730vcw.23", @tag=nil, @dump_available=false, @inactive=true, @can_activate=true, @message_id="876d40fe-ab2a-4925-9d6f-8d5e4f4926f5", @subject="Re: What, to you, is a large crowd?">
 ```
 
-## Encryption
+## Security
 
 To use SSL encryption when sending email configure the library as follows:
 
