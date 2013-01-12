@@ -1,12 +1,17 @@
 = Changelog
 
+== 0.9.17
+
+* Removed date from gemspec.
+* Removed unneeded debug output when sending attachments.
+
 == 0.9.16
 
-* Thread-safe HTTP requests
-* Fixed inproper method of ActiveSupport::JSON detection
-* Removed unexpected ActiveSupport dependency from Postmark::SharedMessageExtensions#postmark_attachments= method
-* Used Markdown to format README
-* Updated README
+* Thread-safe HTTP requests.
+* Fixed inproper method of ActiveSupport::JSON detection.
+* Removed unexpected ActiveSupport dependency from Postmark::SharedMessageExtensions#postmark_attachments= method.
+* Used Markdown to format README.
+* Updated README.
 
 == 0.9.15
 
@@ -18,8 +23,8 @@
 
 == 0.9.13
 
-* Added error_code to DeliveryError
-* Added retries for Timeout::Error
+* Added error_code to DeliveryError.
+* Added retries for Timeout::Error.
 
 == 0.9.12
 
