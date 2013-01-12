@@ -20,7 +20,7 @@ describe Postmark do
       mail.content_type = "text/html"
     end
   end
-  
+
   let :mail_message do
     Mail.new do
       from    "sheldon@bigbangtheory.com"
@@ -40,7 +40,7 @@ describe Postmark do
       end
     end
   end
-  
+
   let :mail_multipart_message do
     mail = Mail.new do
       from          "sheldon@bigbangtheory.com"
@@ -103,7 +103,7 @@ describe Postmark do
 
     it "should retry 3 times" do
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email",
-                          [ 
+                          [
                             { :status => [ 500, "Internal Server Error" ], :body => response_body(500, 'Internal Server Error') },
                             { :status => [ 500, "Internal Server Error" ], :body => response_body(500, 'Internal Server Error')  },
                             { :body => response_body(500, 'Internal Server Error')  }
@@ -134,9 +134,9 @@ describe Postmark do
   context "tmail parse", :ruby => 1.8 do
     require 'tmail'
     subject { tmail_message }
-    it_behaves_like :mail    
+    it_behaves_like :mail
   end
-  
+
   context "when mail parse" do
     subject { mail_message }
     it_behaves_like :mail
@@ -148,21 +148,21 @@ describe Postmark do
     it "should encode custom headers properly" do
       subject.header["CUSTOM-HEADER"] = "header"
       subject.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
-    end    
+    end
   end
-  
+
   context "mail delivery method" do
     it "should be able to set delivery_method" do
       mail_message.delivery_method Mail::Postmark
     end
-    
+
     it "should wrap Postmark.send_through_postmark" do
       message = mail_message
       Postmark.should_receive(:send_through_postmark).with(message)
       mail_message.delivery_method Mail::Postmark
       mail_message.deliver
     end
-    
+
     it "should allow setting of api_key" do
       mail_message.delivery_method Mail::Postmark, {:api_key => 'api-key'}
       mail_message.delivery_method.settings[:api_key].should == 'api-key'
@@ -182,11 +182,33 @@ describe Postmark do
       mail_message.deliver!
     end
 
-    it "should run postmark attachments hook when using deliver method" do      
+    it "should run postmark attachments hook when using deliver method" do
       mail_message.deliver
     end
+  end
 
-    
+  context "attachments setter", :ruby => 1.9 do
+    let(:attached_hash) { { "Name" => "picture.jpeg", "ContentType" => "image/jpeg" } }
+    let(:attached_file) { mock("file") }
+
+    it "should store attachments as array" do
+      mail_message.postmark_attachments = attached_hash
+      mail_message.postmark_attachments.should be_kind_of(Array)
+    end
+
+    it "should save the attachments in attachments array" do
+      mail_message.postmark_attachments = [attached_hash, attached_file]
+
+      attached_file.stub(:is_a?) { |arg| arg == File ? true : false }
+      attached_file.stub(:path) { '/tmp/file.jpeg' }
+      IO.should_receive(:read).with("/tmp/file.jpeg").and_return("")
+
+      mail_message.postmark_attachments = [attached_hash, attached_file]
+      attachments = mail_message.postmark_attachments.map { |a| a['Name'] }
+
+      attachments.should include('picture.jpeg')
+      attachments.should include('file.jpeg')
+    end
   end
 
   context "JSON library support" do
