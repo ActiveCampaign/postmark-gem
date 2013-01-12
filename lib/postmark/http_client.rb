@@ -1,3 +1,4 @@
+require 'thread' unless defined? Mutex # For Ruby 1.8.7
 require 'cgi'
 
 module Postmark
