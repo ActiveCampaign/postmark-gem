@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.platform         = Gem::Platform::RUBY
 
   s.authors          = ["Petyo Ivanov", "Ilya Sabanin", "Artem Chistyakov"]
-  s.date             = "2012-01-31"
   s.email            = "ilya@wildbit.com"
   s.extra_rdoc_files = ["LICENSE", "README.md"]
+  s.rdoc_options     = ["--charset=UTF-8"]
 
   s.summary          = "Official Postmark API wrapper."
   s.description      = "Use this gem to send emails through Postmark HTTP API and retrieve info about bounces."
