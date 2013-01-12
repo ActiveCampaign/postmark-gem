@@ -1,5 +1,12 @@
 = Changelog
 
+== 0.9.18
+
+* Fixed regression introduced by removing ActiveSupport#wrap in case when a Hash instance is passed.
+* Fixed broken Ruby 1.8.7 support (uninitialized constant Postmark::HttpClient::Mutex (NameError)).
+* Added unit tests for attachments handling.
+* Removed unneeded debug output from shared RSpec examples.
+
 == 0.9.17
 
 * Removed date from gemspec.
