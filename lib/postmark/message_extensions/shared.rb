@@ -14,7 +14,7 @@ module Postmark
     end
 
     def postmark_attachments
-      return if @_attachments.nil?
+      return [] if @_attachments.nil?
 
       @_attachments.map do |item|
         if item.is_a?(Hash)
@@ -22,7 +22,7 @@ module Postmark
         elsif item.is_a?(File)
           {
             "Name"        => item.path.split("/")[-1],
-            "Content"     => [ IO.read(item.path) ].pack("m"),
+            "Content"     => pack_attachment_data(IO.read(item.path)),
             "ContentType" => "application/octet-stream"
           }
         end
@@ -30,6 +30,10 @@ module Postmark
     end
 
     protected
+
+    def pack_attachment_data(data)
+      [data].pack('m')
+    end
 
     # From ActiveSupport (Array#wrap)
     def wrap_in_array(object)

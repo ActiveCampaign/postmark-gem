@@ -22,6 +22,20 @@ module Mail
         text_part.body.to_s
       end
     end
+
+    def export_attachments
+      export_native_attachments + postmark_attachments
+    end
+
+  protected
+
+    def export_native_attachments
+      attachments.map do |attachment|
+        {"Name" => attachment.filename,
+         "Content" => pack_attachment_data(attachment.body.decoded),
+         "ContentType" => attachment.mime_type}
+      end
+    end
     
   end
 end

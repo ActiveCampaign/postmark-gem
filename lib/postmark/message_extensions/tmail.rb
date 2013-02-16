@@ -107,5 +107,9 @@ module TMail
       puts "END"
     end
 
+    def export_attachments
+      postmark_attachments
+    end
+
   end
 end

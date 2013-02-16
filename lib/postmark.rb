@@ -96,6 +96,7 @@ module Postmark
   def convert_message_to_options_hash(message)
     options = Hash.new
     headers = extract_headers_according_to_message_format(message)
+    attachments = message.export_attachments
 
     options["From"]        = message['from'].to_s                       if message.from
     options["ReplyTo"]     = Array[message.reply_to].flatten.join(", ") if message.reply_to
@@ -103,11 +104,11 @@ module Postmark
     options["Cc"]          = message['cc'].to_s                         if message.cc
     options["Bcc"]         = Array[message.bcc].flatten.join(", ")      if message.bcc
     options["Subject"]     = message.subject
-    options["Attachments"] = message.postmark_attachments
+    options["Attachments"] = attachments                                unless attachments.empty?
     options["Tag"]         = message.tag.to_s                           if message.tag
     options["Headers"]     = headers                                    if headers.size > 0
 
-    options = options.delete_if{|k,v| v.nil?}
+    options = options.delete_if { |k,v| v.nil? }
 
     html = message.body_html
     text = message.body_text

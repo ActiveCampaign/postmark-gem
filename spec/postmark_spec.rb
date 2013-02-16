@@ -188,8 +188,17 @@ describe Postmark do
   end
 
   context "attachments setter", :ruby => 1.9 do
-    let(:attached_hash) { { "Name" => "picture.jpeg", "ContentType" => "image/jpeg" } }
     let(:attached_file) { mock("file") }
+    let(:attached_hash) { {'Name' => 'picture.jpeg',
+                           'ContentType' => 'image/jpeg'} }
+    let(:exported_file) { {'Name' => 'file.jpeg',
+                           'ContentType' => 'application/octet-stream',
+                           'Content' => ''} }
+
+    before do
+      attached_file.stub(:is_a?) { |arg| arg == File ? true : false }
+      attached_file.stub(:path) { '/tmp/file.jpeg' }
+    end
 
     it "should store attachments as array" do
       mail_message.postmark_attachments = attached_hash
@@ -197,17 +206,31 @@ describe Postmark do
     end
 
     it "should save the attachments in attachments array" do
-      mail_message.postmark_attachments = [attached_hash, attached_file]
-
-      attached_file.stub(:is_a?) { |arg| arg == File ? true : false }
-      attached_file.stub(:path) { '/tmp/file.jpeg' }
       IO.should_receive(:read).with("/tmp/file.jpeg").and_return("")
 
       mail_message.postmark_attachments = [attached_hash, attached_file]
-      attachments = mail_message.postmark_attachments.map { |a| a['Name'] }
+      attachments = mail_message.export_attachments
 
-      attachments.should include('picture.jpeg')
-      attachments.should include('file.jpeg')
+      attachments.should include(attached_hash)
+      attachments.should include(exported_file)
+    end
+  end
+
+  context "native attachments", :ruby => 1.9 do
+    let(:file_data) { 'binarydatahere' }
+    let(:exported_data) do
+      {'Name' => 'face.jpeg',
+       'Content' => "YmluYXJ5ZGF0YWhlcmU=\n",
+       'ContentType' => 'image/jpeg'}
+    end
+
+    before do
+      mail_message.attachments["face.jpeg"] = file_data
+    end
+
+    it "exports native attachments" do
+      attachments = mail_message.export_attachments
+      attachments.should include(exported_data)
     end
   end
 
