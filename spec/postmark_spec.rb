@@ -187,7 +187,7 @@ describe Postmark do
     end
   end
 
-  context "attachments setter", :ruby => 1.9 do
+  context "attachments setter" do
     let(:attached_file) { mock("file") }
     let(:attached_hash) { {'Name' => 'picture.jpeg',
                            'ContentType' => 'image/jpeg'} }
@@ -216,7 +216,7 @@ describe Postmark do
     end
   end
 
-  context "native attachments", :ruby => 1.9 do
+  context "native attachments" do
     let(:file_data) { 'binarydatahere' }
     let(:exported_data) do
       {'Name' => 'face.jpeg',
