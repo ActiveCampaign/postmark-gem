@@ -84,34 +84,21 @@ message.deliver
 
 ### Message with attachments
 
-You can use postmark gem to send messages with attachments. Please note that:
-
-* Only allowed file types can be sent as attachments. The message will be rejected (or you will get an SMTP API bounce if using SMTP) with a description of the rejected file, if you try to send a file with a disallowed extension.
-* Attachment size can be 10 MB at most. That means you can send three attachments weighing at three megabytes each, but you won't be able to send a single 11MB attachment. Don't worry about base64 encoding making your data larger than it really is. Attachment size is calculated using the real binary data (after base64-decoding it).
-* Many applications can get away with sending email as a response to a user action and do that right in the same web request handler. Sending attachments changes that. Message size can and will get bigger and the time to submit it to the Postmark servers will get longer. That is why we recommend that you send email with attachments from a background job. Your users will love you for that!
-
-Check out our [special documentation section](http://developer.postmarkapp.com/developer-build.html#attachments)
-for detailed information.
-
 ``` ruby
-require 'rubygems'
-require 'postmark'
-require 'mail'
-require 'json'
-
 message = Mail.new do
   from            'leonard@bigbangtheory.com'
   to              'Dr. Sheldon Cooper <sheldon@bigbangtheory.com>'
   subject         'Have you seen these pictures of yours?'
   body            'You look like a real geek!'
+  add_file        '1.jpeg'
 
   delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
 end
 
-message.postmark_attachments = [File.open("1.jpeg"), File.open("2.jpeg")]
+message.attachments['sheldon.jpeg'] = File.read('2.jpeg')
 
 message.deliver
-# => <Mail::Message:70235449249320, Multipart: false, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: 91cbdb90-9daa-455d-af24-e233711b02c2>, <Subject: Have you seen these pictures of yours?>>
+# => #<Mail::Message:70185826686240, Multipart: true, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: ba644cc1-b5b1-4bcb-aaf8-2f290b5aad80>, <Subject: Have you seen these pictures of yours?>, <Content-Type: multipart/mixed; boundary=--==_mimepart_5121f9f1ec653_12c53fd569035ad817726>> 
 ```
 
 ### Multipart message
