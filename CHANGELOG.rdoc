@@ -1,5 +1,9 @@
 = Changelog
 
+== 0.9.19
+
+* Added support for native attachments API provided by Ruby Mail library.
+
 == 0.9.18
 
 * Fixed regression introduced by removing ActiveSupport#wrap in case when a Hash instance is passed.
