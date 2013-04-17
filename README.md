@@ -1,4 +1,5 @@
 # Postmark Gem
+[![Build Status](https://travis-ci.org/wildbit/postmark-gem.png?branch=master)](https://travis-ci.org/wildbit/postmark-gem) [![Code Climate](https://codeclimate.com/github/wildbit/postmark-gem.png)](https://codeclimate.com/github/wildbit/postmark-gem)
 
 This gem is an official wrapper for [Postmark HTTP API](http://postmarkapp.com). Use it to send emails and retrieve info about bounces.
 
