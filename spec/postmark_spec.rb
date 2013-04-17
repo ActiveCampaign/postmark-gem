@@ -132,7 +132,7 @@ describe Postmark do
   end
 
   context "tmail parse", :ruby => 1.8 do
-    require 'tmail'
+    require 'tmail' if RUBY_VERSION < "1.9.0"
     subject { tmail_message }
     it_behaves_like :mail
   end
