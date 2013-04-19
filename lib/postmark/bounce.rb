@@ -29,11 +29,11 @@ module Postmark
     end
 
     def dump
-      Postmark::HttpClient.get("bounces/#{id}/dump")["Body"]
+      Postmark.api_client.dump_bounce(id)["Body"]
     end
 
     def activate
-      Bounce.new(Postmark::HttpClient.put("bounces/#{id}/activate")["Bounce"])
+      Bounce.new(Postmark.api_client.activate_bounce(id)["Bounce"])
     end
 
     def dump_available?
@@ -42,17 +42,19 @@ module Postmark
 
     class << self
       def find(id)
-        Bounce.new(Postmark::HttpClient.get("bounces/#{id}"))
+        Bounce.new(Postmark.api_client.get_bounce(id))
       end
 
       def all(options = {})
         options[:count]  ||= 30
         options[:offset] ||= 0
-        Postmark::HttpClient.get("bounces", options)['Bounces'].map { |bounce_json| Bounce.new(bounce_json) }
+        Postmark.api_client.get_bounces(options)['Bounces'].map do |bounce_json|
+          Bounce.new(bounce_json)
+        end
       end
 
       def tags
-        Postmark::HttpClient.get("bounces/tags")
+        Postmark.api_client.get_bounced_tags
       end
     end
 

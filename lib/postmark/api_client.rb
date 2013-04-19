@@ -1,9 +1,10 @@
 module Postmark
   class ApiClient
-    attr_reader :http_client
+    attr_reader :http_client, :max_retries
 
-    def initialize(api_key)
-      @http_client = HttpClient.new(api_key)
+    def initialize(api_key, options = {})
+      @max_retries = options.delete(:max_retries) || 3
+      @http_client = HttpClient.new(api_key, options)
     end
 
     def send_through_postmark(message)
@@ -18,13 +19,33 @@ module Postmark
       http_client.get("deliverystats")
     end
 
+    def get_bounces(options = {})
+      http_client.get("bounces", options)
+    end
+
+    def get_bounced_tags
+      http_client.get("bounces/tags")
+    end
+
+    def get_bounce(id)
+      http_client.get("bounces/#{id}")
+    end
+
+    def dump_bounce(id)
+      http_client.get("bounces/#{id}/dump")
+    end
+
+    def activate_bounce(id)
+      http_client.put("bounces/#{id}/activate")
+    end
+
     protected
 
     def with_retries
       yield
     rescue DeliveryError, Timeout::Error
       retries = retries ? retries + 1 : 0
-      if retries < Postmark.max_retries
+      if retries < self.max_retries
         retry
       else
         raise

@@ -45,40 +45,14 @@ module Postmark
 
   @@api_client_mutex = Mutex.new
 
-  attr_accessor :host, :path_prefix, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
-    :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :max_retries
+  attr_accessor :secure, :api_key, :proxy_host, :proxy_port, :proxy_user,
+                :proxy_pass, :host, :port, :path_prefix,
+                :http_open_timeout, :http_read_timeout, :max_retries
 
-  attr_writer :response_parser_class
+  attr_writer :response_parser_class, :api_client
 
   def response_parser_class
     @response_parser_class ||= defined?(ActiveSupport::JSON) ? :ActiveSupport : :Json
-  end
-
-  # The port on which your Postmark server runs.
-  def port
-    @port || (secure ? 443 : 80)
-  end
-
-  # The host to connect to.
-  def host
-    @host ||= 'api.postmarkapp.com'
-  end
-
-  # The path of the listener
-  def path_prefix
-    @path_prefix ||= '/'
-  end
-
-  def http_open_timeout
-    @http_open_timeout ||= 5
-  end
-
-  def http_read_timeout
-    @http_read_timeout ||= 15
-  end
-
-  def max_retries
-    @max_retries ||= 3
   end
 
   def configure
@@ -89,7 +63,18 @@ module Postmark
     return @api_client if @api_client
 
     @@api_client_mutex.synchronize do
-      @api_client ||= Postmark::ApiClient.new(self.api_key)
+      @api_client ||= Postmark::ApiClient.new(
+                        self.api_key,
+                        :secure => self.secure,
+                        :proxy_host => self.proxy_host,
+                        :proxy_port => self.proxy_port,
+                        :proxy_user => self.proxy_user,
+                        :proxy_pass => self.proxy_pass,
+                        :host => self.host,
+                        :port => self.port,
+                        :path_prefix => self.path_prefix,
+                        :max_retries => self.max_retries
+                      )
     end
   end
 
