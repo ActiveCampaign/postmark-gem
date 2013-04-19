@@ -1,10 +1,12 @@
 require 'net/http'
 require 'net/https'
+require 'thread' unless defined? Mutex # For Ruby 1.8.7
 
 require 'postmark/inflector'
 require 'postmark/bounce'
 require 'postmark/json'
 require 'postmark/http_client'
+require 'postmark/api_client'
 require 'postmark/message_extensions/shared'
 require 'postmark/message_extensions/mail'
 require 'postmark/handlers/mail'
@@ -41,8 +43,10 @@ module Postmark
 
   extend self
 
+  @@api_client_mutex = Mutex.new
+
   attr_accessor :host, :path_prefix, :port, :secure, :api_key, :http_open_timeout, :http_read_timeout,
-    :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :max_retries, :sleep_between_retries
+    :proxy_host, :proxy_port, :proxy_user, :proxy_pass, :max_retries
 
   attr_writer :response_parser_class
 
@@ -77,60 +81,26 @@ module Postmark
     @max_retries ||= 3
   end
 
-  def sleep_between_retries
-    @sleep_between_retries ||= 10
-  end
-
   def configure
     yield self
   end
 
-  def send_through_postmark(message) #:nodoc:
-    with_retries do
-      HttpClient.post("email", Postmark::Json.encode(convert_message_to_options_hash(message)))
-    end
-  rescue Timeout::Error
-    raise TimeoutError.new($!)
-  end
+  def api_client
+    return @api_client if @api_client
 
-  def convert_message_to_options_hash(message)
-    options = Hash.new
-    headers = message.export_headers
-    attachments = message.export_attachments
-
-    options["From"] = message['from'].to_s if message.from
-    options["Subject"] = message.subject
-    options["Attachments"] = attachments unless attachments.empty?
-    options["Headers"] = headers if headers.size > 0
-    options["HtmlBody"] = message.body_html
-    options["TextBody"] = message.body_text
-    options["Tag"] = message.tag.to_s if message.tag
-
-    %w(to reply_to cc bcc).each do |field|
-      next unless value = message.send(field)
-      options[Inflector.to_postmark(field)] = Array[value].flatten.join(", ")
-    end
-
-    options.delete_if { |k,v| v.nil? }
-  end
-
-  def delivery_stats
-    HttpClient.get("deliverystats")
-  end
-
-  protected
-
-  def with_retries
-    yield
-  rescue DeliveryError, Timeout::Error
-    retries = retries ? retries + 1 : 0
-    if retries < max_retries
-      retry
-    else
-      raise
+    @@api_client_mutex.synchronize do
+      @api_client ||= Postmark::ApiClient.new(self.api_key)
     end
   end
 
-  self.response_parser_class = nil
+  def send_through_postmark(*args)
+    api_client.send_through_postmark(*args)
+  end
+
+  def delivery_stats(*args)
+    api_client.delivery_stats(*args)
+  end
 
 end
+
+Postmark.response_parser_class = nil

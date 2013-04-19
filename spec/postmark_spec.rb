@@ -38,10 +38,6 @@ describe Postmark do
 
   context "service call" do
 
-    before(:all) do
-      Postmark.sleep_between_retries = 0
-    end
-
     def stub_web!(data={})
       data[:body] ||= response_body(data[:status].nil? ? 200 : data[:status].first)
       FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", data)
@@ -78,7 +74,7 @@ describe Postmark do
     end
 
     it "should warn when the request times out" do
-      Postmark::HttpClient.should_receive(:post).at_least(:once).and_raise(Timeout::Error)
+      Postmark::HttpClient.any_instance.should_receive(:post).at_least(:once).and_raise(Timeout::Error)
       lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::TimeoutError)
     end
 
@@ -93,8 +89,8 @@ describe Postmark do
     end
 
     it "should retry on timeout" do
-      Postmark::HttpClient.should_receive(:post).and_raise(Timeout::Error)
-      Postmark::HttpClient.should_receive(:post).and_return('{}')
+      Postmark::HttpClient.any_instance.should_receive(:post).and_raise(Timeout::Error)
+      Postmark::HttpClient.any_instance.should_receive(:post).and_return('{}')
       lambda { Postmark.send_through_postmark(mail_message) }.should_not raise_error
     end
   end

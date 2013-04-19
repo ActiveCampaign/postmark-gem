@@ -5,13 +5,13 @@ module Postmark
   class HttpClient
     @@client_mutex = Mutex.new
 
-    attr_reader :http
+    attr_reader :http, :api_key
 
     def self.client
       return @client if @client
 
       @@client_mutex.synchronize do
-        @client ||= self.new
+        @client ||= self.new(Postmark.api_key)
       end
     end
 
@@ -27,7 +27,8 @@ module Postmark
       client.get(*args)
     end
 
-    def initialize
+    def initialize(api_key)
+      @api_key = api_key
       @request_mutex = Mutex.new
       @http = build_http
     end
@@ -75,7 +76,7 @@ module Postmark
     end
 
     def headers
-      @headers ||= HEADERS.merge({ "X-Postmark-Server-Token" => Postmark.api_key.to_s })
+      @headers ||= HEADERS.merge({ "X-Postmark-Server-Token" => @api_key.to_s })
     end
 
     def url_path(path)
