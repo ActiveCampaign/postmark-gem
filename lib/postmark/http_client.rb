@@ -2,11 +2,35 @@ require 'thread' unless defined? Mutex # For Ruby 1.8.7
 require 'cgi'
 
 module Postmark
-  module HttpClient
-    extend self
-
+  class HttpClient
     @@client_mutex = Mutex.new
-    @@request_mutex = Mutex.new
+
+    attr_reader :http
+
+    def self.client
+      return @client if @client
+
+      @@client_mutex.synchronize do
+        @client ||= self.new
+      end
+    end
+
+    def self.post(*args)
+      client.post(*args)
+    end
+
+    def self.put(*args)
+      client.put(*args)
+    end
+
+    def self.get(*args)
+      client.get(*args)
+    end
+
+    def initialize
+      @request_mutex = Mutex.new
+      @http = build_http
+    end
 
     def post(path, data = '')
       do_request { |client| client.post(url_path(path), data, headers) }
@@ -59,17 +83,8 @@ module Postmark
     end
 
     def do_request
-      @@request_mutex.synchronize do
+      @request_mutex.synchronize do
         handle_response(yield(http))
-      end
-    end
-
-    def http
-      return @http if @http
-
-      @@client_mutex.synchronize do
-        return @http if @http
-        @http = build_http
       end
     end
 
