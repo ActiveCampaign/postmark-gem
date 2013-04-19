@@ -1,11 +1,11 @@
 require 'net/http'
 require 'net/https'
 
+require 'postmark/inflector'
 require 'postmark/bounce'
 require 'postmark/json'
 require 'postmark/http_client'
 require 'postmark/message_extensions/shared'
-require 'postmark/message_extensions/tmail'
 require 'postmark/message_extensions/mail'
 require 'postmark/handlers/mail'
 require 'postmark/attachments_fix_for_mail'
@@ -95,34 +95,23 @@ module Postmark
 
   def convert_message_to_options_hash(message)
     options = Hash.new
-    headers = extract_headers_according_to_message_format(message)
+    headers = message.export_headers
     attachments = message.export_attachments
 
-    options["From"]        = message['from'].to_s                       if message.from
-    options["ReplyTo"]     = Array[message.reply_to].flatten.join(", ") if message.reply_to
-    options["To"]          = message['to'].to_s                         if message.to
-    options["Cc"]          = message['cc'].to_s                         if message.cc
-    options["Bcc"]         = Array[message.bcc].flatten.join(", ")      if message.bcc
-    options["Subject"]     = message.subject
-    options["Attachments"] = attachments                                unless attachments.empty?
-    options["Tag"]         = message.tag.to_s                           if message.tag
-    options["Headers"]     = headers                                    if headers.size > 0
+    options["From"] = message['from'].to_s if message.from
+    options["Subject"] = message.subject
+    options["Attachments"] = attachments unless attachments.empty?
+    options["Headers"] = headers if headers.size > 0
+    options["HtmlBody"] = message.body_html
+    options["TextBody"] = message.body_text
+    options["Tag"] = message.tag.to_s if message.tag
 
-    options = options.delete_if { |k,v| v.nil? }
-
-    html = message.body_html
-    text = message.body_text
-
-    if message.multipart?
-      options["HtmlBody"] = html
-      options["TextBody"] = text
-    elsif html
-      options["HtmlBody"] = html
-    else
-      options["TextBody"] = text
+    %w(to reply_to cc bcc).each do |field|
+      next unless value = message.send(field)
+      options[Inflector.to_postmark(field)] = Array[value].flatten.join(", ")
     end
 
-    options
+    options.delete_if { |k,v| v.nil? }
   end
 
   def delivery_stats
@@ -140,50 +129,6 @@ module Postmark
     else
       raise
     end
-  end
-
-  def extract_headers_according_to_message_format(message)
-    if defined?(TMail) && message.is_a?(TMail::Mail)
-      headers = extract_tmail_headers(message)
-    elsif defined?(Mail) && message.kind_of?(Mail::Message)
-      headers = extract_mail_headers(message)
-    else
-      raise "Can't convert message to a valid hash of API options. Unknown message format."
-    end
-  end
-
-  def extract_mail_headers(message)
-    headers = []
-    message.header.fields.each do |field|
-      key = field.name
-      value = field.value
-      next if bogus_headers.include? key.downcase
-      name = key.split(/-/).map {|i| i.capitalize }.join('-')
-      headers << { "Name" => name, "Value" => value }
-    end
-    headers
-  end
-
-  def extract_tmail_headers(message)
-    headers = []
-    message.each_header do |key, value|
-      next if bogus_headers.include? key.downcase
-      name = key.split(/-/).map {|i| i.capitalize }.join('-')
-      headers << { "Name" => name, "Value" => value.body }
-    end
-    headers
-  end
-
-  def bogus_headers
-    %q[
-      return-path  x-pm-rcpt
-      from         reply-to
-      sender       received
-      date         content-type
-      cc           bcc
-      subject      tag
-      attachment
-    ]
   end
 
   self.response_parser_class = nil

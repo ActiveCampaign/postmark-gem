@@ -4,7 +4,6 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup(:development)
 require 'mail'
-#require 'tmail'
 require 'postmark'
 require 'active_support'
 require 'json'

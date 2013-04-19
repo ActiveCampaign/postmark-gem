@@ -2,25 +2,6 @@ require 'spec_helper'
 
 describe Postmark do
 
-  let :tmail_message do
-    TMail::Mail.new.tap do |mail|
-      mail.from = "sheldon@bigbangtheory.com"
-      mail.to = "lenard@bigbangtheory.com"
-      mail.subject = "Hello!"
-      mail.body = "Hello Sheldon!"
-    end
-  end
-
-  let :tmail_html_message do
-    TMail::Mail.new.tap do |mail|
-      mail.from = "sheldon@bigbangtheory.com"
-      mail.to = "lenard@bigbangtheory.com"
-      mail.subject = "Hello!"
-      mail.body = "<b>Hello Sheldon!</b>"
-      mail.content_type = "text/html"
-    end
-  end
-
   let :mail_message do
     Mail.new do
       from    "sheldon@bigbangtheory.com"
@@ -128,26 +109,6 @@ describe Postmark do
       results["Bounces"].should be_an(Array)
       results["Bounces"].should have(3).entries
       FakeWeb.should have_requested(:get, "http://api.postmarkapp.com/deliverystats")
-    end
-  end
-
-  context "tmail parse", :ruby => 1.8 do
-    require 'tmail' if RUBY_VERSION < "1.9.0"
-    subject { tmail_message }
-    it_behaves_like :mail
-  end
-
-  context "when mail parse" do
-    subject { mail_message }
-    it_behaves_like :mail
-
-    it "should set html body for html message" do
-      Postmark.send(:convert_message_to_options_hash, mail_html_message)['HtmlBody'].should_not be_nil
-    end
-
-    it "should encode custom headers properly" do
-      subject.header["CUSTOM-HEADER"] = "header"
-      subject.should be_serialized_to %q[{"Subject":"Hello!", "From":"sheldon@bigbangtheory.com", "To":"lenard@bigbangtheory.com", "TextBody":"Hello Sheldon!", "Headers":[{"Name":"Custom-Header", "Value":"header"}]}]
     end
   end
 

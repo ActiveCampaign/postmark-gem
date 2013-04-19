@@ -99,7 +99,7 @@ end
 message.attachments['sheldon.jpeg'] = File.read('2.jpeg')
 
 message.deliver
-# => #<Mail::Message:70185826686240, Multipart: true, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: ba644cc1-b5b1-4bcb-aaf8-2f290b5aad80>, <Subject: Have you seen these pictures of yours?>, <Content-Type: multipart/mixed; boundary=--==_mimepart_5121f9f1ec653_12c53fd569035ad817726>> 
+# => #<Mail::Message:70185826686240, Multipart: true, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: ba644cc1-b5b1-4bcb-aaf8-2f290b5aad80>, <Subject: Have you seen these pictures of yours?>, <Content-Type: multipart/mixed; boundary=--==_mimepart_5121f9f1ec653_12c53fd569035ad817726>>
 ```
 
 ### Multipart message
@@ -179,53 +179,6 @@ message['Message-ID']
 # => cadba131-f6d6-4cfc-9892-16ee738ba54c
 message.message_id
 # => "cadba131-f6d6-4cfc-9892-16ee738ba54c"
-```
-
-## Using with [TMail](http://rubygems.org/gems/tmail) library
-
-Postmark gem also supports `tmail` library, which can be used by Ruby 1.8.7
-users working on legacy projects. Please note that TMail is not supported since
-2010, so please consider using new ruby [mail](http://rubygems.org/gems/mail)
-library for all your new projects.
-
-Make sure you have a [sender signature](https://postmarkapp.com/signatures) for
-every From email you specify. From can also accept array of addresses.
-
-``` ruby
-require 'rubygems'
-require 'postmark'
-require 'tmail'
-require 'json'
-
-Postmark.api_key = 'your-postmark-api-key'
-
-message              = TMail::Mail.new
-message.from         = "leonard@bigbangtheory.com"
-message.to           = "Sheldon Cooper <sheldon@bigbangtheory.com>"
-message.subject      = "Hi Sheldon!"
-message.content_type = "text/html"
-message.body         = "Hello my friend!"
-
-# You can set customer headers if you like:
-message["CUSTOM-HEADER"] = "my custom header value"
-
-# Added a tag:
-message.tag = "my-tracking-tag"
-
-# Add attachments:
-message.postmark_attachments = [File.open("/path"), File.open("/path")]
-
-# Add attachments with content generated on the fly:
-message.postmark_attachments = [{
-  "Name" => "September 2011.pdf",
-  "Content" => [pdf_content].pack("m"),
-  "ContentType" => "application/pdf"
-}]
-
-# Or specify a reply-to address (can also be an array of addresses):
-message.reply_to = "penny@bigbangtheory.com"
-
-Postmark.send_through_postmark(message)
 ```
 
 ## Exploring Other API Features
