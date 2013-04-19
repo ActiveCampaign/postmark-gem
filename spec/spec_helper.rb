@@ -12,7 +12,7 @@ require 'fakeweb_matcher'
 require 'timecop'
 require 'rspec'
 require 'rspec/autorun'
-require File.join(File.expand_path(File.dirname(__FILE__)), 'shared_examples.rb')
+require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'shared_examples.rb')
 
 if ENV['JSONGEM']
   # `JSONGEM=Yajl rake spec`
