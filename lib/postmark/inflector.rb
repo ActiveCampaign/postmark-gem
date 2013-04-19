@@ -4,11 +4,11 @@ module Postmark
     extend self
 
     def to_postmark(name)
-      name.split('_').map { |part| part.capitalize }.join('')
+      name.to_s.split('_').map { |part| part.capitalize }.join('')
     end
 
     def to_ruby(name)
-      name.scan(/[A-Z][a-z]+/).join('_').downcase
+      name.scan(/[A-Z][a-z]+/).join('_').downcase.to_sym
     end
   end
 end
