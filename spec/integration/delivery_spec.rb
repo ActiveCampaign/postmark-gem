@@ -8,7 +8,7 @@ describe "Sending emails with Postmark" do
       Mail.new do
         from "sender@postmarkapp.com"
         to "recipient@postmarkapp.com"
-        subject "Delivers a Mail::Message object"
+        subject "Mail::Message object"
         body "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
              "eiusmod tempor incididunt ut labore et dolore magna aliqua."
       end
@@ -20,12 +20,34 @@ describe "Sending emails with Postmark" do
       end
     }
 
+    let(:message_with_no_body) {
+      Mail.new do
+        from "sender@postmarkapp.com"
+        to "recipient@postmarkapp.com"
+      end
+    }
+
+    let(:message_with_invalid_to) {
+      Mail.new do
+        from "sender@postmarkapp.com"
+        to "@postmarkapp.com"
+      end
+    }
+
     it 'should deliver a Mail::Message object' do
       subject.deliver_message(message).should be
     end
 
     it 'should deliver a Mail::Message object with attachment' do
       subject.deliver_message(message_with_attachment).should be
+    end
+
+    it 'should fail to deliver a Mail::Message without body' do
+      expect { subject.deliver_message(message_with_no_body) }.to raise_error(Postmark::InvalidMessageError)
+    end
+
+    it 'should fail to deliver a Mail::Message with invalid To address' do
+      expect { subject.deliver_message(message_with_invalid_to) }.to raise_error(Postmark::InvalidMessageError)
     end
 
     it 'should deliver a batch of Mail::Message objects' do
