@@ -7,14 +7,14 @@ module Postmark
       @http_client = HttpClient.new(api_key, options)
     end
 
-    def send_through_postmark(message)
+    def deliver_message(message)
       with_retries do
         http_client.post("email", Postmark::Json.encode(message.to_postmark_hash))
       end
     rescue Timeout::Error
       raise TimeoutError.new($!)
     end
-    alias_method :deliver_message, :send_through_postmark
+    alias_method :send_through_postmark, :deliver_message
 
     def deliver_messages(messages)
       data = Postmark::Json.encode(messages.map { |m| m.to_postmark_hash })
