@@ -14,6 +14,16 @@ module Postmark
     rescue Timeout::Error
       raise TimeoutError.new($!)
     end
+    alias_method :deliver_message, :send_through_postmark
+
+    def deliver_messages(messages)
+      data = Postmark::Json.encode(messages.map { |m| m.to_postmark_hash })
+      with_retries do
+        http_client.post("email/batch", data)
+      end
+    rescue Timeout::Error
+      raise TimeoutError.new($!)
+    end
 
     def delivery_stats
       http_client.get("deliverystats")
