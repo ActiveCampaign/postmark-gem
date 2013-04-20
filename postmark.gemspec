@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency "json"
 
   s.add_development_dependency "mail"
-  s.add_development_dependency "rspec-core", "~> 2.0"
+  s.add_development_dependency "rspec-core", "~> 2.13"
   s.add_development_dependency "activesupport", "~> 3.0"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "fakeweb-matcher"
