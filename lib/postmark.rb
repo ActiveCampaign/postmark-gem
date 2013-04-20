@@ -78,8 +78,13 @@ module Postmark
     end
   end
 
-  def send_through_postmark(*args)
-    api_client.send_through_postmark(*args)
+  def deliver_message(*args)
+    api_client.deliver_message(*args)
+  end
+  alias_method :send_through_postmark, :deliver_message
+
+  def deliver_messages(*args)
+    api_client.deliver_messages(*args)
   end
 
   def delivery_stats(*args)
