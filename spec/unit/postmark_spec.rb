@@ -1,209 +1,164 @@
 require 'spec_helper'
 
 describe Postmark do
+  let(:api_key) { mock }
+  let(:secure) { mock }
+  let(:proxy_host) { mock }
+  let(:proxy_port) { mock }
+  let(:proxy_user) { mock }
+  let(:proxy_pass) { mock }
+  let(:host) { mock }
+  let(:port) { mock }
+  let(:path_prefix) { mock }
+  let(:max_retries) { mock }
 
-  let :mail_message do
-    Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
-      subject "Hello!"
-      body    "Hello Sheldon!"
-    end
+  before do
+    subject.api_key = api_key
+    subject.secure = secure
+    subject.proxy_host = proxy_host
+    subject.proxy_port = proxy_port
+    subject.proxy_user = proxy_user
+    subject.proxy_pass = proxy_pass
+    subject.host = host
+    subject.port = port
+    subject.path_prefix = path_prefix
+    subject.max_retries = max_retries
   end
 
-  let :mail_html_message do
-    mail = Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
-      html_part do
-        body        "<b>Hello Sheldon!</b>"
+  context "attr readers" do
+    it { should respond_to(:secure) }
+    it { should respond_to(:api_key) }
+    it { should respond_to(:proxy_host) }
+    it { should respond_to(:proxy_port) }
+    it { should respond_to(:proxy_user) }
+    it { should respond_to(:proxy_pass) }
+    it { should respond_to(:host) }
+    it { should respond_to(:port) }
+    it { should respond_to(:path_prefix) }
+    it { should respond_to(:http_open_timeout) }
+    it { should respond_to(:http_read_timeout) }
+    it { should respond_to(:max_retries) }
+  end
+
+  context "attr writers" do
+    it { should respond_to(:secure=) }
+    it { should respond_to(:api_key=) }
+    it { should respond_to(:proxy_host=) }
+    it { should respond_to(:proxy_port=) }
+    it { should respond_to(:proxy_user=) }
+    it { should respond_to(:proxy_pass=) }
+    it { should respond_to(:host=) }
+    it { should respond_to(:port=) }
+    it { should respond_to(:path_prefix=) }
+    it { should respond_to(:http_open_timeout=) }
+    it { should respond_to(:http_read_timeout=) }
+    it { should respond_to(:max_retries=) }
+    it { should respond_to(:response_parser_class=) }
+    it { should respond_to(:api_client=) }
+  end
+
+  describe ".response_parser_class" do
+
+    after do
+      subject.instance_variable_set(:@response_parser_class, nil)
+    end
+
+    it "returns :ActiveSupport when ActiveSupport::JSON is available" do
+      subject.response_parser_class.should == :ActiveSupport
+    end
+
+    it "returns :Json when ActiveSupport::JSON is not available" do
+      hide_const("ActiveSupport::JSON")
+      subject.response_parser_class.should == :Json
+    end
+
+  end
+
+  describe ".configure" do
+
+    it 'yields itself to the block' do
+      expect { |b| subject.configure(&b) }.to yield_with_args(subject)
+    end
+
+  end
+
+  describe ".api_client" do
+    let(:api_client) { mock }
+
+    context "when shared client instance already exists" do
+
+      it 'returns the existing instance' do
+        subject.instance_variable_set(:@api_client, api_client)
+        subject.api_client.should == api_client
       end
-    end
-  end
 
-  let :mail_multipart_message do
-    mail = Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
-      text_part do
-        body        "Hello Sheldon!"
+    end
+
+    context "when shared client instance does not exist" do
+
+      it 'creates a new instance of Postmark::ApiClient' do
+        Postmark::ApiClient.should_receive(:new).
+                            with(api_key,
+                                 :secure => secure,
+                                 :proxy_host => proxy_host,
+                                 :proxy_port => proxy_port,
+                                 :proxy_user => proxy_user,
+                                 :proxy_pass => proxy_pass,
+                                 :host => host,
+                                 :port => port,
+                                 :path_prefix => path_prefix,
+                                 :max_retries => max_retries).
+                            and_return(api_client)
+        subject.api_client.should == api_client
       end
-      html_part do
-        body        "<b>Hello Sheldon!</b>"
-      end
+
     end
+
   end
 
-  context "service call" do
-    def stub_web!(data={})
-      data[:body] ||= response_body(data[:status].nil? ? 200 : data[:status].first)
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email", data)
-    end
-
-    def response_body(status, message="")
-      body = {"ErrorCode" => status, "Message" => message}.to_json
-    end
-
-    it "should send email successfully" do
-      stub_web!
-      Postmark.send_through_postmark(mail_message)
-      FakeWeb.should have_requested(:post, "http://api.postmarkapp.com/email")
-    end
-
-    it "should warn when header is invalid" do
-      stub_web!({:status => [ "401", "Unauthorized" ]})
-      lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InvalidApiKeyError)
-    end
-
-    it "should warn when json is not ok" do
-      stub_web!({:status => [ "422", "Invalid" ]})
-      lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InvalidMessageError)
-    end
-
-    it "should warn when server fails" do
-      stub_web!({:status => [ "500", "Internal Server Error" ]})
-      lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::InternalServerError)
-    end
-
-    it "should warn when unknown stuff fails" do
-      stub_web!({:status => [ "485", "Custom HTTP response status" ]})
-      lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::UnknownError)
-    end
-
-    it "should warn when the request times out" do
-      Postmark.api_client.http_client.should_receive(:post).at_least(:once).and_raise(Timeout::Error)
-      lambda { Postmark.send_through_postmark(mail_message) }.should raise_error(Postmark::TimeoutError)
-    end
-
-    it "should retry 3 times" do
-      FakeWeb.register_uri(:post, "http://api.postmarkapp.com/email",
-                          [
-                            { :status => [ 500, "Internal Server Error" ], :body => response_body(500, 'Internal Server Error') },
-                            { :status => [ 500, "Internal Server Error" ], :body => response_body(500, 'Internal Server Error')  },
-                            { :body => response_body(500, 'Internal Server Error')  }
-                          ])
-      lambda { Postmark.send_through_postmark(mail_message) }.should_not raise_error
-    end
-
-    it "should retry on timeout" do
-      Postmark.api_client.http_client.should_receive(:post).and_raise(Timeout::Error)
-      Postmark.api_client.http_client.should_receive(:post).and_return('{}')
-      lambda { Postmark.send_through_postmark(mail_message) }.should_not raise_error
-    end
-  end
-
-  context "delivery stats" do
-    let(:response_body) { %{{"InactiveMails":1,"Bounces":[{"TypeCode":0,"Name":"All","Count":2},{"Type":"HardBounce","TypeCode":1,"Name":"Hard bounce","Count":1},{"Type":"SoftBounce","TypeCode":4096,"Name":"Soft bounce","Count":1}]}} }
-
-    it "should query the service for delivery stats" do
-      FakeWeb.register_uri(:get, "http://api.postmarkapp.com/deliverystats", { :body => response_body })
-      results = Postmark.delivery_stats
-      results["InactiveMails"].should == 1
-      results["Bounces"].should be_an(Array)
-      results["Bounces"].should have(3).entries
-      FakeWeb.should have_requested(:get, "http://api.postmarkapp.com/deliverystats")
-    end
-  end
-
-  context "mail delivery method" do
-    it "should be able to set delivery_method" do
-      mail_message.delivery_method Mail::Postmark
-    end
-
-    it "should wrap Postmark.send_through_postmark" do
-      message = mail_message
-      Postmark.should_receive(:send_through_postmark).with(message)
-      mail_message.delivery_method Mail::Postmark
-      mail_message.deliver
-    end
-
-    it "should allow setting of api_key" do
-      mail_message.delivery_method Mail::Postmark, {:api_key => 'api-key'}
-      mail_message.delivery_method.settings[:api_key].should == 'api-key'
-    end
-  end
-
-  context "attachments hook", :ruby => 1.9 do
-    before(:all) { Mail::Message.send(:include, Postmark::AttachmentsFixForMail) }
+  describe ".deliver_message" do
+    let(:api_client) { mock }
+    let(:message) { mock }
 
     before do
-      mail_message.delivery_method Mail::Postmark
-      mail_message.should_receive(:remove_postmark_attachments_from_standard_fields)
-      Postmark.should_receive(:send_through_postmark).with(mail_message)
+      subject.api_client = api_client
     end
 
-    it "should run postmark attachments hook when using deliver! method" do
-      mail_message.deliver!
+    it 'delegates the method to the shared api client instance' do
+      api_client.should_receive(:deliver_message).with(message)
+      subject.deliver_message(message)
     end
 
-    it "should run postmark attachments hook when using deliver method" do
-      mail_message.deliver
+    it 'is also accessible as .send_through_postmark' do
+      api_client.should_receive(:deliver_message).with(message)
+      subject.send_through_postmark(message)
     end
   end
 
-  context "attachments setter" do
-    let(:attached_file) { mock("file") }
-    let(:attached_hash) { {'Name' => 'picture.jpeg',
-                           'ContentType' => 'image/jpeg'} }
-    let(:exported_file) { {'Name' => 'file.jpeg',
-                           'ContentType' => 'application/octet-stream',
-                           'Content' => ''} }
+  describe ".deliver_messages" do
+    let(:api_client) { mock }
+    let(:message) { mock }
 
     before do
-      attached_file.stub(:is_a?) { |arg| arg == File ? true : false }
-      attached_file.stub(:path) { '/tmp/file.jpeg' }
+      subject.api_client = api_client
     end
 
-    it "should store attachments as array" do
-      mail_message.postmark_attachments = attached_hash
-      mail_message.postmark_attachments.should be_kind_of(Array)
-    end
-
-    it "should save the attachments in attachments array" do
-      IO.should_receive(:read).with("/tmp/file.jpeg").and_return("")
-
-      mail_message.postmark_attachments = [attached_hash, attached_file]
-      attachments = mail_message.export_attachments
-
-      attachments.should include(attached_hash)
-      attachments.should include(exported_file)
+    it 'delegates the method to the shared api client instance' do
+      api_client.should_receive(:deliver_messages).with(message)
+      subject.deliver_messages(message)
     end
   end
 
-  context "native attachments" do
-    let(:file_data) { 'binarydatahere' }
-    let(:exported_data) do
-      {'Name' => 'face.jpeg',
-       'Content' => "YmluYXJ5ZGF0YWhlcmU=\n",
-       'ContentType' => 'image/jpeg'}
-    end
+  describe ".delivery_stats" do
+    let(:api_client) { mock }
 
     before do
-      mail_message.attachments["face.jpeg"] = file_data
+      subject.api_client = api_client
     end
 
-    it "exports native attachments" do
-      attachments = mail_message.export_attachments
-      attachments.should include(exported_data)
+    it 'delegates the method to the shared api client instance' do
+      api_client.should_receive(:delivery_stats)
+      subject.delivery_stats
     end
-  end
-
-  context "JSON library support" do
-    [:Json, :ActiveSupport, :Yajl].each do |lib|
-      begin
-        original_parser_class = Postmark.response_parser_class
-
-        it "decodes json with #{lib}" do
-          Postmark.response_parser_class = lib
-          Postmark::Json.decode(%({"Message":"OK"})).should == { "Message" => "OK" }
-        end
-
-        Postmark.response_parser_class = original_parser_class
-      rescue LoadError # No ActiveSupport or Yajl :(
-      end
-    end
-  end
-
+  end  
 end
