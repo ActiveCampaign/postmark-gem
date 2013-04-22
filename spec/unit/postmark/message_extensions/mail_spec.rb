@@ -44,7 +44,7 @@ describe Mail::Message do
       to      "lenard@bigbangtheory.com"
       subject "Hello!"
       body    "Hello Sheldon!"
-      add_file File.join(File.dirname(__FILE__), '..', '..', 'data', 'empty.gif')
+      add_file File.join(File.dirname(__FILE__), '..', '..', '..', 'data', 'empty.gif')
     end
   end
 

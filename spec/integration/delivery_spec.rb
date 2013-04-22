@@ -16,7 +16,7 @@ describe "Sending emails with Postmark" do
 
     let(:message_with_attachment) {
       message.tap do |msg|
-        msg.attachments["test.gif"] = "\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\xf0\x01\x00\xff\xff\xff\x00\x00\x00\x21\xf9\x04\x01\x0a\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b"
+        msg.attachments["test.gif"] = File.read(File.join(File.dirname(__FILE__), '..', 'data', 'empty.gif'))
       end
     }
 
