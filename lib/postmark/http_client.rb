@@ -84,6 +84,8 @@ module Postmark
       @request_mutex.synchronize do
         handle_response(yield(http))
       end
+    rescue Timeout::Error
+      raise TimeoutError.new($!)
     end
 
     def build_http
