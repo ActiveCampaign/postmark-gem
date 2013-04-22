@@ -10,10 +10,16 @@ module Postmark
     end
 
     def postmark_attachments=(value)
+      Kernel.warn("Mail::Message#postmark_attachments= is deprecated and will " \
+                  "be removed in the future. Please consider using the native " \
+                  "attachments API provided by Mail library.")
       @_attachments = wrap_in_array(value)
     end
 
     def postmark_attachments
+      Kernel.warn("Mail::Message#postmark_attachments is deprecated and will " \
+                  "be removed in the future. Please consider using the native " \
+                  "attachments API provided by Mail library.")
       return [] if @_attachments.nil?
 
       @_attachments.map do |item|
