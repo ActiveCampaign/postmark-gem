@@ -54,7 +54,7 @@ module Postmark
     def with_retries
       yield
     rescue DeliveryError, Timeout::Error
-      retries = retries ? retries + 1 : 0
+      retries = retries ? retries + 1 : 1
       if retries < self.max_retries
         retry
       else
