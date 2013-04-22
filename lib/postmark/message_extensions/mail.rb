@@ -17,7 +17,7 @@ module Mail
 
     def body_text
       if text_part.nil?
-        body.to_s
+        body.to_s unless html?
       else
         text_part.body.to_s
       end
