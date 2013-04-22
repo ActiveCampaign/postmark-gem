@@ -8,7 +8,7 @@ module Postmark
     end
 
     def to_ruby(name)
-      name.scan(/[A-Z][a-z]+/).join('_').downcase.to_sym
+      name.scan(/[A-Z][a-z]*/).join('_').downcase.to_sym
     end
   end
 end
