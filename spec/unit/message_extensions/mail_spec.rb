@@ -38,6 +38,16 @@ describe Mail::Message do
     end
   end
 
+  let(:mail_message_with_attachment) do
+    Mail.new do
+      from    "sheldon@bigbangtheory.com"
+      to      "lenard@bigbangtheory.com"
+      subject "Hello!"
+      body    "Hello Sheldon!"
+      add_file File.join(File.dirname(__FILE__), '..', '..', 'data', 'empty.gif')
+    end
+  end
+
   describe "#html?" do
     it 'is true for html only email' do
       mail_html_message.should be_html
@@ -95,6 +105,7 @@ describe Mail::Message do
     end
 
     it "is deprecated" do
+      mail_message.postmark_attachments = attached_hash
       Kernel.should_receive(:warn).with(/deprecated/)
       mail_message.postmark_attachments
     end
@@ -113,7 +124,11 @@ describe Mail::Message do
       mail_message.export_attachments.should include(exported_data)
     end
 
-    it "still the deprecated attachments API"
+    it "still supports the deprecated attachments API" do
+      mail_message.attachments["face.jpeg"] = file_data
+      mail_message.postmark_attachments = exported_data
+      mail_message.export_attachments.should == [exported_data, exported_data]
+    end
   end
 
   describe "#to_postmark_hash" do
@@ -140,6 +155,17 @@ describe Mail::Message do
           "HtmlBody" => "<b>Hello Sheldon!</b>",
           "TextBody" => "Hello Sheldon!",
           "To" => "lenard@bigbangtheory.com"}
+    end
+
+    it 'converts messages with attachments correctly' do
+      mail_message_with_attachment.to_postmark_hash.should == {
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
+          "Attachments" => [{"Name"=>"empty.gif",
+                             "Content"=>"R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==\n",
+                             "ContentType"=>"image/gif"}],
+          "TextBody"=>"Hello Sheldon!",
+          "To"=>"lenard@bigbangtheory.com"}
     end
   end
 end
