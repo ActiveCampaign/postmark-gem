@@ -32,7 +32,7 @@ describe Postmark::Json do
     end
   end
 
-  context "given response parser is Yahl" do
+  context "given response parser is Yajl" do
     before do
       Postmark.response_parser_class = :Yajl
     end
