@@ -8,9 +8,10 @@ module Mail
     end
 
     def deliver!(mail)
-      ::Postmark.api_key = settings[:api_key]
-      response = ::Postmark.send_through_postmark(mail)
-      mail["Message-ID"] = response["MessageID"] if response.kind_of?(Hash)
+      settings = self.settings.dup
+      api_key = settings.delete(:api_key)
+      api_client = ::Postmark::ApiClient.new(api_key, settings)
+      api_client.deliver_message(mail)
     end
 
   end
