@@ -9,12 +9,13 @@ module Postmark
 
     def deliver_message(message)
       with_retries do
-        http_client.post("email", Postmark::Json.encode(message.to_postmark_hash))
+        http_client.post("email", serialize(message.to_postmark_hash))
       end
     end
 
     def deliver_messages(messages)
-      data = Postmark::Json.encode(messages.map { |m| m.to_postmark_hash })
+      data = serialize(messages.map { |m| m.to_postmark_hash })
+
       with_retries do
         http_client.post("email/batch", data)
       end
@@ -55,6 +56,10 @@ module Postmark
       else
         raise
       end
+    end
+
+    def serialize(data)
+      Postmark::Json.encode(data)
     end
 
   end
