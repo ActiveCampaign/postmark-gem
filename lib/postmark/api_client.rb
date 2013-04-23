@@ -7,6 +7,10 @@ module Postmark
       @http_client = HttpClient.new(api_key, options)
     end
 
+    def api_key=(api_key)
+      http_client.api_key = api_key
+    end
+
     def deliver_message(message)
       with_retries do
         http_client.post("email", serialize(message.to_postmark_hash))

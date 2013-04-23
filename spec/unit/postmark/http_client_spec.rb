@@ -21,6 +21,10 @@ describe Postmark::HttpClient do
   let(:http_client) { Postmark::HttpClient.new(api_key) }
   subject { http_client }
 
+  context "attr writers" do
+    it { should respond_to(:api_key=) }
+  end
+
   context "attr readers" do
     it { should respond_to(:http) }
     it { should respond_to(:secure) }

@@ -3,7 +3,8 @@ require 'cgi'
 
 module Postmark
   class HttpClient
-    attr_reader :http, :secure, :api_key, :proxy_host, :proxy_port, :proxy_user,
+    attr_accessor :api_key
+    attr_reader :http, :secure, :proxy_host, :proxy_port, :proxy_user,
                 :proxy_pass, :host, :port, :path_prefix,
                 :http_open_timeout, :http_read_timeout
 
@@ -73,7 +74,7 @@ module Postmark
     end
 
     def headers
-      @headers ||= HEADERS.merge({ "X-Postmark-Server-Token" => @api_key.to_s })
+      HEADERS.merge({ "X-Postmark-Server-Token" => self.api_key.to_s })
     end
 
     def url_path(path)

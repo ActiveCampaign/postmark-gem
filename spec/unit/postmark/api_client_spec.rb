@@ -33,6 +33,17 @@ describe Postmark::ApiClient do
 
   end
 
+  describe "#api_key=" do
+
+    let(:api_key) { "new-api-key-value" }
+
+    it 'assigns the api key to the http client instance' do
+      subject.api_key = api_key
+      subject.http_client.api_key.should == api_key
+    end
+
+  end
+
   describe "#deliver_message" do
 
     let(:email) { {"From" => "admin@wildbit.com"} }
