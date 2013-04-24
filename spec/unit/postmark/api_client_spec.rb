@@ -4,6 +4,12 @@ describe Postmark::ApiClient do
 
   let(:api_key) { "provided-api-key" }
   let(:max_retries) { 42 }
+  let(:message) {
+    Mail.new do
+      from "support@postmarkapp.com"
+      delivery_method Mail::Postmark
+    end
+  }
 
   let(:api_client) { Postmark::ApiClient.new(api_key) }
   subject { api_client }
@@ -45,10 +51,8 @@ describe Postmark::ApiClient do
   end
 
   describe "#deliver_message" do
-
-    let(:email) { {"From" => "admin@wildbit.com"} }
+    let(:email) { message.to_postmark_hash }
     let(:email_json) { JSON.dump(email) }
-    let(:message) { mock(:to_postmark_hash => email) }
     let(:http_client) { subject.http_client }
 
     it 'turns message into a JSON document and posts it to /email' do
@@ -65,7 +69,7 @@ describe Postmark::ApiClient do
     end
 
     it "should retry on timeout" do
-      http_client.should_receive(:post).and_raise(Timeout::Error)
+      http_client.should_receive(:post).and_raise(Postmark::TimeoutError)
       http_client.should_receive(:post)
       expect { subject.deliver_message(message) }.not_to raise_error
     end
@@ -74,14 +78,13 @@ describe Postmark::ApiClient do
 
   describe "#deliver_messages" do
 
-    let(:email) { {"From" => "admin@wildbit.com"} }
+    let(:email) { message.to_postmark_hash }
     let(:emails) { [email, email, email] }
     let(:emails_json) { JSON.dump(emails) }
-    let(:message) { mock(:to_postmark_hash => email) }
     let(:http_client) { subject.http_client }
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
-      http_client.should_receive(:post).with('email/batch', emails_json)
+      http_client.should_receive(:post).with('email/batch', emails_json) { [{}, {}, {}] }
       subject.deliver_messages([message, message, message])
     end
 
@@ -94,7 +97,7 @@ describe Postmark::ApiClient do
     end
 
     it "should retry on timeout" do
-      http_client.should_receive(:post).and_raise(Timeout::Error)
+      http_client.should_receive(:post).and_raise(Postmark::TimeoutError)
       http_client.should_receive(:post)
       expect { subject.deliver_messages([message, message, message]) }.not_to raise_error
     end

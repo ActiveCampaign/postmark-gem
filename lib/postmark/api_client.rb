@@ -26,7 +26,7 @@ module Postmark
 
       with_retries do
         http_client.post("email/batch", data).tap do |response|
-          messages.each_with_index { |m| update_message(m, response[m]) }
+          messages.each_with_index { |m, i| update_message(m, response[i]) }
         end
       end
     end
