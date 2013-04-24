@@ -71,7 +71,7 @@ module Postmark
     def update_message(message, response)
       response ||= {}
       message['Message-ID'] = response['MessageID']
-      message.delivered = !!response['Message-ID']
+      message.delivered = !!response['MessageID']
       message.postmark_response = response
     end
 
