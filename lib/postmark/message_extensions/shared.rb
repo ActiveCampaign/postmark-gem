@@ -1,6 +1,16 @@
 module Postmark
   module SharedMessageExtensions
 
+    def self.included(klass)
+      klass.instance_eval do
+        attr_accessor :delivered, :postmark_response
+      end
+    end
+
+    def delivered?
+      self.delivered
+    end
+
     def tag
       self['TAG']
     end
