@@ -12,8 +12,12 @@ module Postmark
     end
 
     def deliver_message(message)
+      data = serialize(message.to_postmark_hash)
+
       with_retries do
-        http_client.post("email", serialize(message.to_postmark_hash))
+        hold_on_errors { http_client.post("email", data) }.to do |r|
+          update_message(message, r)
+        end
       end
     end
 
@@ -21,7 +25,9 @@ module Postmark
       data = serialize(messages.map { |m| m.to_postmark_hash })
 
       with_retries do
-        http_client.post("email/batch", data)
+        http_client.post("email/batch", data).tap do |response|
+          messages.each_with_index { |m| update_message(m, response[m]) }
+        end
       end
     end
 
@@ -53,7 +59,7 @@ module Postmark
 
     def with_retries
       yield
-    rescue DeliveryError, Timeout::Error
+    rescue DeliveryError
       retries = retries ? retries + 1 : 1
       if retries < self.max_retries
         retry
@@ -62,8 +68,32 @@ module Postmark
       end
     end
 
+    def update_message(message, response)
+      response ||= {}
+      message['Message-ID'] = response['MessageID']
+      message.delivered = !!response['Message-ID']
+      message.postmark_response = response
+    end
+
     def serialize(data)
       Postmark::Json.encode(data)
+    end
+
+    def hold_on_errors
+      define_singleton_method(:to, yield)
+    rescue DeliveryError => e
+      define_singleton_method(:to, e.full_response || {}) do
+        raise e
+      end
+    end
+
+    def define_singleton_method(name, object)
+      singleton_class = class << object; self; end
+      singleton_class.send(:define_method, name) do |&b|
+        b.call(self)
+        yield if block_given?
+      end
+      object
     end
 
   end
