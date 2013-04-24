@@ -38,6 +38,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "activesupport", "~> 3.0"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "fakeweb-matcher"
-  s.add_development_dependency "timecop"
   s.add_development_dependency "yajl-ruby"
 end
