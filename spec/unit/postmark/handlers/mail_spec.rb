@@ -15,7 +15,7 @@ describe Mail::Postmark do
   end
 
   it "wraps Postmark.send_through_postmark" do
-    Postmark.should_receive(:send_through_postmark).with(message)
+    Postmark::ApiClient.any_instance.should_receive(:deliver_message).with(message)
     message.delivery_method Mail::Postmark
     message.deliver
   end

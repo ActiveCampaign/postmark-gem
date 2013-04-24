@@ -14,11 +14,12 @@ require 'postmark/handlers/mail'
 module Postmark
 
   class DeliveryError < StandardError
-    attr_accessor :error_code
+    attr_accessor :error_code, :full_response
 
-    def initialize(message = nil, error_code = nil)
+    def initialize(message = nil, error_code = nil, full_response = nil)
       super(message)
       self.error_code = error_code
+      self.full_response = full_response
     end
   end
 
