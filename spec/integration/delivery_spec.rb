@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe "Sending emails with Postmark" do
-  subject { Postmark::ApiClient.new("POSTMARK_API_TEST") }
+  let(:postmark_message_id_format) { /\w{8}\-\w{4}-\w{4}-\w{4}-\w{12}/ }
 
-  context "Mail::Message delivery" do
+  context "Mail::Postmark delivery method" do
     let(:message) {
       Mail.new do
         from "sender@postmarkapp.com"
@@ -11,6 +11,7 @@ describe "Sending emails with Postmark" do
         subject "Mail::Message object"
         body "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
              "eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST"
       end
     }
 
@@ -24,6 +25,7 @@ describe "Sending emails with Postmark" do
       Mail.new do
         from "sender@postmarkapp.com"
         to "recipient@postmarkapp.com"
+        delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST"
       end
     }
 
@@ -31,27 +33,46 @@ describe "Sending emails with Postmark" do
       Mail.new do
         from "sender@postmarkapp.com"
         to "@postmarkapp.com"
+        delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST"
       end
     }
 
-    it 'should deliver a Mail::Message object' do
-      subject.deliver_message(message).should be
+    it 'delivers a plain text message' do
+      expect { message.deliver }.to change{message.delivered?}.to(true)
     end
 
-    it 'should deliver a Mail::Message object with attachment' do
-      subject.deliver_message(message_with_attachment).should be
+    it 'updates a message object with Message-ID' do
+      expect { message.deliver }.
+          to change{message['Message-ID'].to_s}.to(postmark_message_id_format)
     end
 
-    it 'should fail to deliver a Mail::Message without body' do
-      expect { subject.deliver_message(message_with_no_body) }.to raise_error(Postmark::InvalidMessageError)
+    it 'updates a message object with full postmark response' do
+      expect { message.deliver }.
+          to change{message.postmark_response}.from(nil)
     end
 
-    it 'should fail to deliver a Mail::Message with invalid To address' do
-      expect { subject.deliver_message(message_with_invalid_to) }.to raise_error(Postmark::InvalidMessageError)
+    it 'delivers a message with attachment' do
+      expect { message_with_attachment.deliver }.
+          to change{message_with_attachment.delivered?}.to(true)
     end
 
+    it 'fails to deliver a message without body' do
+      expect { message_with_no_body.deliver! }.
+          to raise_error(Postmark::InvalidMessageError)
+      message_with_no_body.should_not be_delivered
+    end
+
+    it 'fails to deliver a message with invalid To address' do
+      expect { message_with_invalid_to.deliver! }.
+          to raise_error(Postmark::InvalidMessageError)
+      message_with_no_body.should_not be_delivered
+    end
+  end
+
+  context "batch delivery" do
     it 'should deliver a batch of Mail::Message objects' do
-      subject.deliver_messages([message, message_with_attachment, message]).should be
+      pending
+      # subject.deliver_messages([message, message_with_attachment, message]).should be
     end
   end
 end
