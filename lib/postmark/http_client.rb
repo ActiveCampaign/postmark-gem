@@ -107,7 +107,7 @@ module Postmark
 
     def error_message_and_code(response_body)
       reply = Postmark::Json.decode(response_body)
-      [reply["Message"], reply["ErrorCode"]]
+      [reply["Message"], reply["ErrorCode"], reply]
     end
 
     def error(clazz, response_body)
