@@ -14,6 +14,14 @@ describe Mail::Message do
     end
   end
 
+  let(:mail_message_without_body) do
+    Mail.new do
+      from    "sheldon@bigbangtheory.com"
+      to      "lenard@bigbangtheory.com"
+      subject "Hello!"
+    end
+  end
+
   let(:mail_html_message) do
     mail = Mail.new do
       from          "sheldon@bigbangtheory.com"
@@ -137,6 +145,13 @@ describe Mail::Message do
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
           "TextBody" => "Hello Sheldon!",
+          "To" => "lenard@bigbangtheory.com"}
+    end
+
+    it 'converts plain text messages without body correctly' do
+      mail_message_without_body.to_postmark_hash.should == {
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
           "To" => "lenard@bigbangtheory.com"}
     end
 

@@ -57,7 +57,7 @@ module Mail
         options[::Postmark::Inflector.to_postmark(field)] = Array[value].flatten.join(", ")
       end
 
-      options.delete_if { |k,v| v.nil? }
+      options.delete_if { |k,v| v.nil? || v.empty? }
     end
 
   protected
