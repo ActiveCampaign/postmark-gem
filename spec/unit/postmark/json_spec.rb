@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Postmark::Json do
-  let(:json_dump) { "{\"foo\":\"bar\",\"bar\":\"foo\"}" }
-  let(:data) { {"foo" => "bar", "bar" => "foo"} }
+  let(:json_dump) { "{\"bar\":\"foo\",\"foo\":\"bar\"}" }
+  let(:data) { {"bar" => "foo", "foo" => "bar"} }
 
   context "given response parser is JSON" do
     before do
