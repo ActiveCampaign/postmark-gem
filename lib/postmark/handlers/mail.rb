@@ -12,6 +12,7 @@ module Mail
       api_key = settings.delete(:api_key)
       api_client = ::Postmark::ApiClient.new(api_key, settings)
       api_client.deliver_message(mail)
+      self
     end
 
   end
