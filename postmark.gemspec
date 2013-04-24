@@ -38,5 +38,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "activesupport", "~> 3.0"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "fakeweb-matcher"
-  s.add_development_dependency "yajl-ruby"
+  s.add_development_dependency "yajl-ruby" unless RUBY_PLATFORM == "java"
 end
