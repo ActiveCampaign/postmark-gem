@@ -15,7 +15,7 @@ module Postmark
 
     def capitalize_first_letter(str)
       if str.length > 0
-        str.slice(0).capitalize + str.slice(1..-1)
+        str.slice(0..0).capitalize + str.slice(1..-1)
       else
         str
       end
