@@ -1,6 +1,7 @@
 module Postmark
   class ApiClient
     attr_reader :http_client, :max_retries
+    attr_writer :max_batch_size
 
     def initialize(api_key, options = {})
       @max_retries = options.delete(:max_retries) || 3
@@ -9,6 +10,24 @@ module Postmark
 
     def api_key=(api_key)
       http_client.api_key = api_key
+    end
+
+    def deliver(message_hash = {})
+      data = serialize(MessageHelper.to_postmark(message_hash))
+
+      with_retries do
+        Postmark::HashHelper.to_ruby(http_client.post("email", data))
+      end
+    end
+
+    def deliver_in_batches(message_hashes)
+      in_batches(message_hashes) do |batch, offset|
+        data = serialize(batch.map { |h| MessageHelper.to_postmark(h) })
+
+        with_retries do
+          http_client.post("email/batch", data)
+        end
+      end
     end
 
     def deliver_message(message)
@@ -55,6 +74,10 @@ module Postmark
       http_client.put("bounces/#{id}/activate")
     end
 
+    def max_batch_size
+      @max_batch_size ||= 500
+    end
+
     protected
 
     def with_retries
@@ -66,6 +89,14 @@ module Postmark
       else
         raise
       end
+    end
+
+    def in_batches(messages)
+      r = messages.each_slice(max_batch_size).each_with_index.map do |batch, i|
+        yield batch, i * max_batch_size
+      end
+
+      r.flatten.map { |h| Postmark::HashHelper.to_ruby(h) }
     end
 
     def update_message(message, response)

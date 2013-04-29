@@ -4,6 +4,11 @@ describe Postmark::ApiClient do
 
   let(:api_key) { "provided-api-key" }
   let(:max_retries) { 42 }
+  let(:message_hash) {
+    {
+      :from => "support@postmarkapp.com"
+    }
+  }
   let(:message) {
     Mail.new do
       from "support@postmarkapp.com"
@@ -48,6 +53,51 @@ describe Postmark::ApiClient do
       subject.http_client.api_key.should == api_key
     end
 
+  end
+
+  describe "#deliver" do
+    let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
+    let(:email_json) { JSON.dump(email) }
+    let(:http_client) { subject.http_client }
+    let(:response) { {"MessageID" => 42} }
+
+    it 'converts message hash to Postmark format and posts it to /email' do
+      http_client.should_receive(:post).with('email', email_json) { response }
+      subject.deliver(message_hash)
+    end
+
+    it 'retries 3 times' do
+      2.times do
+        http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
+      end
+      http_client.should_receive(:post) { response }
+      expect { subject.deliver(message_hash) }.not_to raise_error
+    end
+
+    it 'converts response to ruby format' do
+      http_client.should_receive(:post).with('email', email_json) { response }
+      r = subject.deliver(message_hash)
+      r.should have_key(:message_id)
+    end
+  end
+
+  describe "#deliver_in_batches" do
+    let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
+    let(:emails) { [email, email, email] }
+    let(:emails_json) { JSON.dump(emails) }
+    let(:http_client) { subject.http_client }
+    let(:response) { [{'ErrorCode' => 0}, {'ErrorCode' => 0}, {'ErrorCode' => 0}] }
+
+    it 'turns array of messages into a JSON document and posts it to /email/batch' do
+      http_client.should_receive(:post).with('email/batch', emails_json) { response }
+      subject.deliver_in_batches([message_hash, message_hash, message_hash])
+    end
+
+    it 'converts response to ruby format' do
+      http_client.should_receive(:post).with('email/batch', emails_json) { response }
+      response = subject.deliver_in_batches([message_hash, message_hash, message_hash])
+      response.first.should have_key(:error_code)
+    end
   end
 
   describe "#deliver_message" do
