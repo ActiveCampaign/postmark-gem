@@ -127,6 +127,7 @@ module Postmark
       singleton_class.send(:define_method, name) do |&b|
         b.call(self)
         yield if block_given?
+        object
       end
       object
     end
