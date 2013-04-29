@@ -14,6 +14,16 @@ describe Mail::Message do
     end
   end
 
+  let(:tagged_mail_message) do
+    Mail.new do
+      from    "sheldon@bigbangtheory.com"
+      to      "lenard@bigbangtheory.com"
+      subject "Hello!"
+      body    "Hello Sheldon!"
+      tag     "sheldon"
+    end
+  end
+
   let(:mail_message_without_body) do
     Mail.new do
       from    "sheldon@bigbangtheory.com"
@@ -146,6 +156,15 @@ describe Mail::Message do
           "Subject" => "Hello!",
           "TextBody" => "Hello Sheldon!",
           "To" => "lenard@bigbangtheory.com"}
+    end
+
+    it 'converts tagged text messages correctly' do
+      tagged_mail_message.to_postmark_hash.should == {
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
+          "TextBody" => "Hello Sheldon!",
+          "Tag" => "sheldon",
+          "To"=>"lenard@bigbangtheory.com"}
     end
 
     it 'converts plain text messages without body correctly' do

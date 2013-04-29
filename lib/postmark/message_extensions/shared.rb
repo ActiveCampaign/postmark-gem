@@ -11,12 +11,12 @@ module Postmark
       self.delivered
     end
 
-    def tag
-      self['TAG']
+    def tag(val = nil)
+      default 'TAG', val
     end
 
-    def tag=(value)
-      self['TAG'] = value
+    def tag=(val)
+      header['TAG'] = val
     end
 
     def postmark_attachments=(value)
