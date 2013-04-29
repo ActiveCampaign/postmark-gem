@@ -18,7 +18,7 @@ describe Postmark::Inflector do
     it 'converts camel cased symbols returned by the Postmark API to underscored Ruby symbols' do
       subject.to_ruby('FooBar').should == :foo_bar
       subject.to_ruby('LongTimeAgoInAFarFarGalaxy').should == :long_time_ago_in_a_far_far_galaxy
-      subject.to_ruby('ABCDEFG').should == :a_b_c_d_e_f_g
+      subject.to_ruby('MessageID').should == :message_id
     end
   end
 end
