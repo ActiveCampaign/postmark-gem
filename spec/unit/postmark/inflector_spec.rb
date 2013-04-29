@@ -12,6 +12,10 @@ describe Postmark::Inflector do
     it 'accepts strings as well' do
       subject.to_postmark('foo_bar').should == 'FooBar'
     end
+
+    it 'acts idempotentely' do
+      subject.to_postmark('FooBar').should == 'FooBar'
+    end
   end
 
   describe ".to_ruby" do
@@ -21,4 +25,5 @@ describe Postmark::Inflector do
       subject.to_ruby('MessageID').should == :message_id
     end
   end
+
 end
