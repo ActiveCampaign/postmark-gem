@@ -196,7 +196,7 @@ describe Mail::Message do
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
           "Attachments" => [{"Name"=>"empty.gif",
-                             "Content"=>"R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==\n",
+                             "Content"=>File.read(empty_gif_path),
                              "ContentType"=>"image/gif"}],
           "TextBody"=>"Hello Sheldon!",
           "To"=>"lenard@bigbangtheory.com"}
