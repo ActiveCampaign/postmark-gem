@@ -12,6 +12,7 @@ require 'fakeweb_matcher'
 require 'rspec'
 require 'rspec/autorun'
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'shared_examples.rb')
+require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'helpers.rb')
 
 if ENV['JSONGEM']
   # `JSONGEM=Yajl rake spec`
@@ -20,6 +21,8 @@ if ENV['JSONGEM']
 end
 
 RSpec.configure do |config|
+  include Postmark::RSpecHelpers
+
 	config.filter_run_excluding :skip_for_platform => lambda { |platform|
     RUBY_PLATFORM.to_s =~ /^#{platform.to_s}/
   }
