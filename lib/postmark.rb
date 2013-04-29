@@ -3,6 +3,8 @@ require 'net/https'
 require 'thread' unless defined? Mutex # For Ruby 1.8.7
 
 require 'postmark/inflector'
+require 'postmark/helpers/hash_helper'
+require 'postmark/helpers/message_helper'
 require 'postmark/bounce'
 require 'postmark/json'
 require 'postmark/http_client'
