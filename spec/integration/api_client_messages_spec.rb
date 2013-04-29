@@ -89,6 +89,27 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
           to be_true
     end
 
+    it 'returns as many responses as many messages were sent' do
+      api_client.deliver_messages(valid_messages).count.should == valid_messages.count
+    end
+
+    context "given custom max_batch_size" do
+      before do
+        api_client.max_batch_size = 1
+      end
+
+      it 'updates delivered messages with related Postmark responses' do
+        api_client.deliver_messages(valid_messages)
+
+        expect(valid_messages.all? { |m| m.postmark_response["To"] == m.to[0] }).
+            to be_true
+      end
+
+      it 'returns as many responses as many messages were sent' do
+        api_client.deliver_messages(valid_messages).count.should == valid_messages.count
+      end
+    end
+
     it 'partially delivers a batch of partially valid Mail::Message objects' do
       expect { api_client.deliver_messages(partially_valid_messages) }.
           to change{partially_valid_messages.select { |m| m.delivered? }.count}.
