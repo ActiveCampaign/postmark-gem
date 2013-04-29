@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Sending emails with Postmark" do
+describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
   let(:postmark_message_id_format) { /\w{8}\-\w{4}-\w{4}-\w{4}-\w{12}/ }
 
   let(:message) {
