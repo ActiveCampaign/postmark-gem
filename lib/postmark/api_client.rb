@@ -41,11 +41,15 @@ module Postmark
     end
 
     def deliver_messages(messages)
-      data = serialize(messages.map { |m| m.to_postmark_hash })
+      in_batches(messages) do |batch, offset|
+        data = serialize(messages.map { |m| m.to_postmark_hash })
 
-      with_retries do
-        http_client.post("email/batch", data).tap do |response|
-          messages.each_with_index { |m, i| update_message(m, response[i]) }
+        with_retries do
+          http_client.post("email/batch", data).tap do |response|
+            response.each_with_index do |r, i|
+              update_message(messages[offset + i], r)
+            end
+          end
         end
       end
     end
