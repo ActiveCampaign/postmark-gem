@@ -42,7 +42,7 @@ module Postmark
 
     def deliver_messages(messages)
       in_batches(messages) do |batch, offset|
-        data = serialize(messages.map { |m| m.to_postmark_hash })
+        data = serialize(batch.map { |m| m.to_postmark_hash })
 
         with_retries do
           http_client.post("email/batch", data).tap do |response|
