@@ -20,6 +20,18 @@ describe Mail::Postmark do
     message.deliver
   end
 
+  it "returns self by default" do
+    Postmark::ApiClient.any_instance.should_receive(:deliver_message).with(message)
+    message.delivery_method Mail::Postmark
+    message.deliver.should eq message
+  end
+
+  it "returns the actual response if :return_response setting is present" do
+    Postmark::ApiClient.any_instance.should_receive(:deliver_message).with(message)
+    message.delivery_method Mail::Postmark, :return_response => true
+    message.deliver.should eq message
+  end
+
   it "allows to set the api key" do
     message.delivery_method Mail::Postmark, {:api_key => 'api-key'}
     message.delivery_method.settings[:api_key].should == 'api-key'
