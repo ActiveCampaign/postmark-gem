@@ -62,7 +62,7 @@ describe Mail::Message do
       to      "lenard@bigbangtheory.com"
       subject "Hello!"
       body    "Hello Sheldon!"
-      add_file File.join(File.dirname(__FILE__), '..', '..', '..', 'data', 'empty.gif')
+      add_file empty_gif_path
     end
   end
 
@@ -196,7 +196,7 @@ describe Mail::Message do
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
           "Attachments" => [{"Name"=>"empty.gif",
-                             "Content"=>File.read(empty_gif_path),
+                             "Content"=>encoded_empty_gif_data,
                              "ContentType"=>"image/gif"}],
           "TextBody"=>"Hello Sheldon!",
           "To"=>"lenard@bigbangtheory.com"}
