@@ -8,7 +8,11 @@ module Postmark
     end
 
     def to_ruby(name)
-      name.scan(/(?:[A-Z](?:(?:[A-Z]+(?![a-z]))|[a-z]*))/).join('_').downcase.to_sym
+      name.to_s.scan(camel_case_regexp).join('_').downcase.to_sym
+    end
+
+    def camel_case_regexp
+      /(?:[[[:upper:]]](?:(?:[[[:upper:]]]+(?![[[:lower:]]\d]))|[[[:lower:]]\d]*))|[[[:lower:]]\d\_]+/
     end
 
     protected
