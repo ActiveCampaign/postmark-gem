@@ -167,9 +167,10 @@ describe Postmark::ApiClient do
   describe "#get_bounces" do
     let(:http_client) { subject.http_client }
     let(:options) { {:foo => :bar} }
+    let(:response) { {"Bounces" => []} }
 
-    it 'requests data at /deliverystats' do
-      http_client.should_receive(:get).with("bounces", options)
+    it 'requests data at /bounces' do
+      http_client.should_receive(:get).with("bounces", options) { response }
       subject.get_bounces(options)
     end
   end
@@ -206,9 +207,10 @@ describe Postmark::ApiClient do
   describe "#activate_bounce" do
     let(:http_client) { subject.http_client }
     let(:id) { 42 }
+    let(:response) { {"Bounce" => {}} }
 
     it 'activates a specific bounce by sending a PUT request to /bounces/:id/activate' do
-      http_client.should_receive(:put).with("bounces/#{id}/activate")
+      http_client.should_receive(:put).with("bounces/#{id}/activate") { response }
       subject.activate_bounce(id)
     end
   end
