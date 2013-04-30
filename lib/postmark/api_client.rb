@@ -34,7 +34,7 @@ module Postmark
       data = serialize(message.to_postmark_hash)
 
       with_retries do
-        hold_on_errors { http_client.post("email", data) }.to do |r|
+        take_response_of { http_client.post("email", data) }.to do |r|
           update_message(message, r)
         end
       end
@@ -114,7 +114,7 @@ module Postmark
       Postmark::Json.encode(data)
     end
 
-    def hold_on_errors
+    def take_response_of
       define_singleton_method(:to, yield)
     rescue DeliveryError => e
       define_singleton_method(:to, e.full_response || {}) do
