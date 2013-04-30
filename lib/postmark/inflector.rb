@@ -12,7 +12,7 @@ module Postmark
     end
 
     def camel_case_regexp
-      /(?:[[[:upper:]]](?:(?:[[[:upper:]]]+(?![[[:lower:]]\d]))|[[[:lower:]]\d]*))|[[[:lower:]]\d\_]+/
+      /(?:[A-Z](?:(?:[A-Z]+(?![a-z\d]))|[a-z\d]*))|[a-z\d\_]+/
     end
 
     protected
