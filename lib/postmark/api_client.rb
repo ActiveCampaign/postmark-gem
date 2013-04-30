@@ -16,7 +16,7 @@ module Postmark
       data = serialize(MessageHelper.to_postmark(message_hash))
 
       with_retries do
-        Postmark::HashHelper.to_ruby(http_client.post("email", data))
+        format_response http_client.post("email", data)
       end
     end
 
@@ -34,8 +34,9 @@ module Postmark
       data = serialize(message.to_postmark_hash)
 
       with_retries do
-        take_response_of { http_client.post("email", data) }.to do |r|
-          update_message(message, r)
+        take_response_of { http_client.post("email", data) }.to do |response|
+          update_message(message, response)
+          format_response response, true
         end
       end
     end
@@ -55,27 +56,27 @@ module Postmark
     end
 
     def delivery_stats
-      http_client.get("deliverystats")
+      format_response http_client.get("deliverystats"), true
     end
 
     def get_bounces(options = {})
-      http_client.get("bounces", options)
+      format_response http_client.get("bounces", options)
     end
 
     def get_bounced_tags
-      http_client.get("bounces/tags")
+      format_response http_client.get("bounces/tags")
     end
 
     def get_bounce(id)
-      http_client.get("bounces/#{id}")
+      format_response http_client.get("bounces/#{id}")
     end
 
     def dump_bounce(id)
-      http_client.get("bounces/#{id}/dump")
+      format_response http_client.get("bounces/#{id}/dump")
     end
 
     def activate_bounce(id)
-      http_client.put("bounces/#{id}/activate")
+      format_response http_client.put("bounces/#{id}/activate")
     end
 
     def max_batch_size
@@ -100,7 +101,7 @@ module Postmark
         yield batch, i * max_batch_size
       end
 
-      r.flatten.map { |h| Postmark::HashHelper.to_ruby(h) }
+      format_response r.flatten
     end
 
     def update_message(message, response)
@@ -125,11 +126,21 @@ module Postmark
     def define_singleton_method(name, object)
       singleton_class = class << object; self; end
       singleton_class.send(:define_method, name) do |&b|
-        b.call(self)
+        ret = b.call(self) if b
         yield if block_given?
-        object
+        ret
       end
       object
+    end
+
+    def format_response(response, compatible = false)
+      return {} unless response
+
+      if response.kind_of? Array
+        response.map { |entry| Postmark::HashHelper.to_ruby(entry, compatible) }
+      else
+        Postmark::HashHelper.to_ruby(response, compatible)
+      end
     end
 
   end

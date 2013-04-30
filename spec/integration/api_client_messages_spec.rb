@@ -40,11 +40,11 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
 
   context "message by message" do
     it 'delivers a plain text message' do
-      api_client.deliver_message(message).should have_key("MessageID")
+      api_client.deliver_message(message).should have_key(:message_id)
     end
 
     it 'updates a message object with Message-ID' do
-      api_client.deliver_message(message)['MessageID'].
+      api_client.deliver_message(message)[:message_id].
           should =~ postmark_message_id_format
     end
 
@@ -54,7 +54,7 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
 
     it 'delivers a message with attachment' do
       api_client.deliver_message(message_with_attachment).
-          should have_key("MessageID")
+          should have_key(:message_id)
     end
 
     it 'fails to deliver a message without body' do
