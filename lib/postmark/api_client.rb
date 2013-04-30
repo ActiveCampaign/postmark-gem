@@ -60,11 +60,11 @@ module Postmark
     end
 
     def get_bounces(options = {})
-      format_response http_client.get("bounces", options)
+      format_response http_client.get("bounces", options)["Bounces"]
     end
 
     def get_bounced_tags
-      format_response http_client.get("bounces/tags")
+      http_client.get("bounces/tags")
     end
 
     def get_bounce(id)
@@ -76,7 +76,7 @@ module Postmark
     end
 
     def activate_bounce(id)
-      format_response http_client.put("bounces/#{id}/activate")
+      format_response http_client.put("bounces/#{id}/activate")["Bounce"]
     end
 
     def max_batch_size
