@@ -105,6 +105,7 @@ describe Postmark::Bounce do
 
   describe ".tags" do
 
+    let(:api_client) { Postmark.api_client }
     let(:tags) { ["tag1", "tag2"] }
 
     it "calls #get_bounced_tags on shared api_client instance" do
