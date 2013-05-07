@@ -6,18 +6,19 @@ module Postmark
     attr_reader :email, :bounced_at, :type, :details, :name, :id, :server_id, :tag, :message_id, :subject
 
     def initialize(values = {})
-      @id             = values[:id]
-      @email          = values[:email]
-      @bounced_at     = Time.parse(values[:bounced_at])
-      @type           = values[:type]
-      @name           = values[:name]
-      @details        = values[:details]
-      @tag            = values[:tag]
+      values = Postmark::HashHelper.to_ruby(values)
+      @id = values[:id]
+      @email = values[:email]
+      @bounced_at = Time.parse(values[:bounced_at])
+      @type = values[:type]
+      @name = values[:name]
+      @details = values[:details]
+      @tag = values[:tag]
       @dump_available = values[:dump_available]
-      @inactive       = values[:inactive]
-      @can_activate   = values[:can_activate]
-      @message_id     = values[:message_id]
-      @subject        = values[:subject]
+      @inactive = values[:inactive]
+      @can_activate = values[:can_activate]
+      @message_id = values[:message_id]
+      @subject = values[:subject]
     end
 
     def inactive?

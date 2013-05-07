@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Postmark::Bounce do
-
   let(:bounce_data) { {:type => "HardBounce",
                        :message_id => "d12c2f1c-60f3-4258-b163-d17052546ae4",
                        :type_code => 1,
@@ -13,6 +12,7 @@ describe Postmark::Bounce do
                        :can_activate => true,
                        :id => 42,
                        :subject => "Hello from our app!"} }
+  let(:bounce_data_postmark) { Postmark::HashHelper.to_postmark(bounce_data) }
   let(:bounces_data) { [bounce_data, bounce_data, bounce_data] }
 
   let(:bounce) { Postmark::Bounce.new(bounce_data) }
@@ -35,6 +35,31 @@ describe Postmark::Bounce do
   end
 
   context "given a bounce created from bounce_data" do
+
+    it 'is not inactive' do
+      should_not be_inactive
+    end
+
+    it 'allows to activate the bounce' do
+      subject.can_activate?.should be_true
+    end
+
+    it 'has an available dump' do
+      subject.dump_available?.should be_true
+    end
+
+    its(:type) { should eq bounce_data[:type] }
+    its(:message_id) { should eq bounce_data[:message_id] }
+    its(:details) { should eq bounce_data[:details] }
+    its(:email) { should eq bounce_data[:email] }
+    its(:bounced_at) { should == Time.parse(bounce_data[:bounced_at]) }
+    its(:id) { should eq bounce_data[:id] }
+    its(:subject) { should eq bounce_data[:subject] }
+
+  end
+
+  context "given a bounce created from bounce_data_postmark" do
+    subject { Postmark::Bounce.new(bounce_data_postmark) }
 
     it 'is not inactive' do
       should_not be_inactive
