@@ -79,6 +79,15 @@ module Postmark
       format_response http_client.put("bounces/#{id}/activate")["Bounce"]
     end
 
+    def server_info
+      format_response http_client.get("server")
+    end
+
+    def update_server_info(attributes = {})
+      data = HashHelper.to_postmark(attributes)
+      format_response http_client.post("server", serialize(data))
+    end
+
     def max_batch_size
       @max_batch_size ||= 500
     end

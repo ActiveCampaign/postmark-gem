@@ -215,4 +215,31 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe "#server_info" do
+    let(:http_client) { subject.http_client }
+    let(:response) { {"Name" => "Testing",
+                      "Color" => "blue",
+                      "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
+                      "SmtpApiActivated" => true} }
+
+    it 'requests server info from Postmark and converts it to ruby format' do
+      http_client.should_receive(:get).with('server') { response }
+      subject.server_info.should have_key(:inbound_hash)
+    end
+  end
+
+  describe "#update_server_info" do
+    let(:http_client) { subject.http_client }
+    let(:response) { {"Name" => "Testing",
+                      "Color" => "blue",
+                      "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
+                      "SmtpApiActivated" => false} }
+    let(:update) { {:smtp_api_activated => false} }
+
+    it 'updates server info in Postmark and converts it to ruby format' do
+      http_client.should_receive(:post).with('server', anything) { response }
+      subject.update_server_info(update)[:smtp_api_activated].should be_false
+    end
+  end
+
 end
