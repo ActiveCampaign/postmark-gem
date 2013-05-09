@@ -56,7 +56,13 @@ module Postmark
     end
 
     def delivery_stats
-      format_response http_client.get("deliverystats"), true
+      response = format_response(http_client.get("deliverystats"), true)
+
+      if response[:bounces]
+        response[:bounces] = format_response(response[:bounces])
+      end
+
+      response
     end
 
     def get_bounces(options = {})
