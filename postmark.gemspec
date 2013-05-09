@@ -33,12 +33,10 @@ Gem::Specification.new do |s|
   s.add_dependency "rake"
   s.add_dependency "json"
 
-  s.add_development_dependency "tmail"
   s.add_development_dependency "mail"
-  s.add_development_dependency "rspec-core", "~> 2.0"
+  s.add_development_dependency "rspec-core", "~> 2.13"
   s.add_development_dependency "activesupport", "~> 3.0"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "fakeweb-matcher"
-  s.add_development_dependency "timecop"
-  s.add_development_dependency "yajl-ruby"
+  s.add_development_dependency "yajl-ruby" unless RUBY_PLATFORM == "java"
 end

@@ -4,16 +4,15 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup(:development)
 require 'mail'
-#require 'tmail'
 require 'postmark'
 require 'active_support'
 require 'json'
 require 'fakeweb'
 require 'fakeweb_matcher'
-require 'timecop'
 require 'rspec'
 require 'rspec/autorun'
-require File.join(File.expand_path(File.dirname(__FILE__)), 'shared_examples.rb')
+require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'shared_examples.rb')
+require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'helpers.rb')
 
 if ENV['JSONGEM']
   # `JSONGEM=Yajl rake spec`
@@ -22,9 +21,19 @@ if ENV['JSONGEM']
 end
 
 RSpec.configure do |config|
-	config.filter_run_excluding :ruby => lambda { |version|
-    RUBY_VERSION.to_s !~ /^#{version.to_s}/
+  include Postmark::RSpecHelpers
+
+	config.filter_run_excluding :skip_for_platform => lambda { |platform|
+    RUBY_PLATFORM.to_s =~ /^#{platform.to_s}/
   }
+
+  config.before(:each) do
+    %w(api_client response_parser_class secure api_key proxy_host proxy_port
+       proxy_user proxy_pass host port path_prefix http_open_timeout
+       http_read_timeout max_retries).each do |var|
+      Postmark.instance_variable_set(:"@#{var}", nil)
+    end
+  end
 end
 
 RSpec::Matchers.define :be_serialized_to do |json|

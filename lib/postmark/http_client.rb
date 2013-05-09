@@ -2,11 +2,26 @@ require 'thread' unless defined? Mutex # For Ruby 1.8.7
 require 'cgi'
 
 module Postmark
-  module HttpClient
-    extend self
+  class HttpClient
+    attr_accessor :api_key
+    attr_reader :http, :secure, :proxy_host, :proxy_port, :proxy_user,
+                :proxy_pass, :host, :port, :path_prefix,
+                :http_open_timeout, :http_read_timeout
 
-    @@client_mutex = Mutex.new
-    @@request_mutex = Mutex.new
+    DEFAULTS = {
+      :host => 'api.postmarkapp.com',
+      :secure => false,
+      :path_prefix => '/',
+      :http_read_timeout => 15,
+      :http_open_timeout => 5
+    }
+
+    def initialize(api_key, options = {})
+      @api_key = api_key
+      @request_mutex = Mutex.new
+      apply_options(options)
+      @http = build_http
+    end
 
     def post(path, data = '')
       do_request { |client| client.post(url_path(path), data, headers) }
@@ -22,17 +37,25 @@ module Postmark
 
     protected
 
+    def apply_options(options = {})
+      options = Hash[*options.select { |_, v| !v.nil? }.flatten]
+      DEFAULTS.merge(options).each_pair do |name, value|
+        instance_variable_set(:"@#{name}", value)
+      end
+      @port = options[:port] || @secure ? 443 : 80
+    end
+
     def to_query_string(hash)
       return "" if hash.empty?
       "?" + hash.map { |key, value| "#{CGI.escape(key.to_s)}=#{CGI.escape(value.to_s)}" }.join("&")
     end
 
     def protocol
-      Postmark.secure ? "https" : "http"
+      self.secure ? "https" : "http"
     end
 
     def url
-      URI.parse("#{protocol}://#{Postmark.host}:#{Postmark.port}/")
+      URI.parse("#{protocol}://#{self.host}:#{self.port}/")
     end
 
     def handle_response(response)
@@ -51,37 +74,30 @@ module Postmark
     end
 
     def headers
-      @headers ||= HEADERS.merge({ "X-Postmark-Server-Token" => Postmark.api_key.to_s })
+      HEADERS.merge({ "X-Postmark-Server-Token" => self.api_key.to_s })
     end
 
     def url_path(path)
-      Postmark.path_prefix + path
+      self.path_prefix + path
     end
 
     def do_request
-      @@request_mutex.synchronize do
+      @request_mutex.synchronize do
         handle_response(yield(http))
       end
-    end
-
-    def http
-      return @http if @http
-
-      @@client_mutex.synchronize do
-        return @http if @http
-        @http = build_http
-      end
+    rescue Timeout::Error
+      raise TimeoutError.new($!)
     end
 
     def build_http
-      http = Net::HTTP::Proxy(Postmark.proxy_host,
-                              Postmark.proxy_port,
-                              Postmark.proxy_user,
-                              Postmark.proxy_pass).new(url.host, url.port)
+      http = Net::HTTP::Proxy(self.proxy_host,
+                              self.proxy_port,
+                              self.proxy_user,
+                              self.proxy_pass).new(url.host, url.port)
 
-      http.read_timeout = Postmark.http_read_timeout
-      http.open_timeout = Postmark.http_open_timeout
-      http.use_ssl = !!Postmark.secure
+      http.read_timeout = self.http_read_timeout
+      http.open_timeout = self.http_open_timeout
+      http.use_ssl = !!self.secure
       http
     end
 
@@ -91,7 +107,7 @@ module Postmark
 
     def error_message_and_code(response_body)
       reply = Postmark::Json.decode(response_body)
-      [reply["Message"], reply["ErrorCode"]]
+      [reply["Message"], reply["ErrorCode"], reply]
     end
 
     def error(clazz, response_body)

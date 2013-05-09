@@ -1,49 +1,44 @@
 module Postmark
   module SharedMessageExtensions
 
-    def tag
-      self['TAG']
+    def self.included(klass)
+      klass.instance_eval do
+        attr_accessor :delivered, :postmark_response
+      end
     end
 
-    def tag=(value)
-      self['TAG'] = value
+    def delivered?
+      self.delivered
+    end
+
+    def tag(val = nil)
+      default 'TAG', val
+    end
+
+    def tag=(val)
+      header['TAG'] = val
     end
 
     def postmark_attachments=(value)
-      @_attachments = wrap_in_array(value)
+      Kernel.warn("Mail::Message#postmark_attachments= is deprecated and will " \
+                  "be removed in the future. Please consider using the native " \
+                  "attachments API provided by Mail library.")
+      @_attachments = value
     end
 
     def postmark_attachments
       return [] if @_attachments.nil?
+      Kernel.warn("Mail::Message#postmark_attachments is deprecated and will " \
+                  "be removed in the future. Please consider using the native " \
+                  "attachments API provided by Mail library.")
 
-      @_attachments.map do |item|
-        if item.is_a?(Hash)
-          item
-        elsif item.is_a?(File)
-          {
-            "Name"        => item.path.split("/")[-1],
-            "Content"     => pack_attachment_data(IO.read(item.path)),
-            "ContentType" => "application/octet-stream"
-          }
-        end
-      end
+      Postmark::MessageHelper.attachments_to_postmark(@_attachments)
     end
 
     protected
 
     def pack_attachment_data(data)
-      [data].pack('m')
-    end
-
-    # From ActiveSupport (Array#wrap)
-    def wrap_in_array(object)
-      if object.nil?
-        []
-      elsif object.respond_to?(:to_ary)
-        object.to_ary || [object]
-      else
-        [object]
-      end
+      MessageHelper.encode_in_base64(data)
     end
 
   end
