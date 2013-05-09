@@ -6,6 +6,10 @@ module Postmark
     def to_postmark(message = {})
       message = message.dup
 
+      %w(to reply_to cc bcc).each do |field|
+        message[field.to_sym] = Array[*message[field.to_sym]].join(", ")
+      end
+
       if message[:headers]
         message[:headers] = headers_to_postmark(message[:headers])
       end
