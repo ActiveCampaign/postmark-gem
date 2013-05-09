@@ -1,7 +1,7 @@
 # Postmark Gem
 [![Build Status](https://travis-ci.org/wildbit/postmark-gem.png?branch=master)](https://travis-ci.org/wildbit/postmark-gem) [![Code Climate](https://codeclimate.com/github/wildbit/postmark-gem.png)](https://codeclimate.com/github/wildbit/postmark-gem)
 
-This gem is an official wrapper for [Postmark HTTP API](http://postmarkapp.com). Use it to send emails and retrieve info about bounces.
+This gem is the official wrapper for the [Postmark HTTP API](http://postmarkapp.com). Postmark allows you to send your application's emails with high delivery rates, including bounce/spam processing and detailed statistics. In addition, Postmark can parse incoming emails which are forwarded back to your application.
 
 ## Install the gem
 
@@ -17,20 +17,20 @@ Without Bundler:
 gem install postmark
 ```
 
-## Get Postmark API key
+## Get a Postmark API key
 
 In order to send emails using Postmark ruby gem, you will need a
 [Postmark](http://postmarkapp.com) account. If you don't have one please
 register at https://postmarkapp.com/sign_up.
 
-If you didn’t create any servers yet, please create one, proceed to
+If you didn’t create any servers yet, please create one, proceed to the
 `Credentials` tab and copy an API key. API keys should be frequently rotated for
 security reasons.
 
 ## Communicating with the API
 
 Make sure you have a [sender signature](https://postmarkapp.com/signatures) for
-every From email you specify.
+every From email address you specify.
 
 Create an instance of `Postmark::ApiClient` to start sending emails.
 
@@ -83,7 +83,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 
 You can add
 [attachments](http://developer.postmarkapp.com/developer-build.html#attachments)
-to your messages. Keep in mind attachment size can be 10 MB at most.
+to your messages. Keep in mind message size limit (contents and attachment) is currently 10 MB.
 
 ``` ruby
 client.deliver(from: 'leonard@bigbangtheory.com',
@@ -138,7 +138,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 You can pass multiple recipient addresses in the `:to` field and the optional
 `:cc` and `:bcc` fields. Note that Postmark has a limit of twenty recipients
 per message in total. You need to take care not to exceed that limit. 
-Otherwise you will get an error.
+Otherwise, you will get an error.
 
 ``` ruby
 client.deliver(from: 'sheldon@bigbangtheory.com',
@@ -183,8 +183,8 @@ client.deliver_in_batches(messages)
 
 ## Parsing inbound
 
-Inbound processing allows you to send inbound emails to Postmark, which we then
-process and deliver to you via a web hook in nicely formatted JSON.
+Inbound processing allows you (or your users) to send emails to Postmark, which we then
+process and deliver to you via a web hook in a nicely formatted JSON document.
 
 Here is a simple Ruby/Sinatra application that does basic inbound processing.
 
@@ -212,8 +212,8 @@ post '/inbound' do
 end
 ```
 
-If you don’t like that fields of Inbound JSON document are all in CamelCase, you
-can use `Postmark::Inbound.to_ruby_hash` method to give it some Ruby flavour.
+If you don’t like that the fields of the Inbound JSON document are all in CamelCase, you
+can use the `Postmark::Inbound.to_ruby_hash` method to give it some Ruby flavor.
 
 ```
 postmark_hash = Postmark::Json.decode(request.body.read)
@@ -245,14 +245,14 @@ client.get_bounce(654714902)
 # => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-8a7b-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test", :content=>"..."} 
 ```
 
-Use `#dump_bounce` to get full bounce body:
+Use `#dump_bounce` to get the full bounce body:
 
 ``` ruby
 client.dump_bounce(654714902)
 # => {:body=>"Return-Path: <>\r\nReceived: from m1.mtasv.net (74.205.19.136) by sc-ord-mail2.mtasv.net id hcjov61jk5ko for <pm_bounces@pm.mtasv.net>; Wed, 10 Apr 2013 01:00:35 -0400 (envelope-from <>)\r\nDate: Wed, 10 Apr 2013 01:00:48 -0400\r\nFrom: postmaster@m1.mtasv.net\r\n..."} 
 ```
 
-You can activate certain types of bounces by using `#activate_bounce`:
+You can activate email addresses that were disabled due to a hard bounce by using `#activate_bounce`:
 
 ``` ruby
 client.activate_bounce(654714902)
@@ -284,7 +284,7 @@ For example, you can use `#update_server_info` to set inbound hook URL:
 client.update_server_info inbound_hook_url: 'http://example.org/bounces'
 ```
 
-# Using with [Mail](http://rubygems.org/gems/mail) library
+# Using Postmark with the [Mail](http://rubygems.org/gems/mail) library
 
 You can use Postmark with the `mail` gem.
 
@@ -293,7 +293,7 @@ gem install mail
 ```
 
 Make sure you have a [sender signature](https://postmarkapp.com/signatures) for
-every `From` email you specify.
+every `From` email address you specify.
 
 To send a `Mail::Message` via Postmark you’ll need to specify `Mail::Postmark` as
 a delivery method for the message:
@@ -376,7 +376,7 @@ message.deliver
 
 ## Multipart message
 
-You can send multipart messages containing both text and HTML using Postmark gem.
+You can send multipart messages containing both text and HTML using the Postmark gem.
 
 ``` ruby
 require 'rubygems'
@@ -437,9 +437,9 @@ message.deliver
 ## Accessing Postmark Message-ID
 
 You might want to save identifiers of messages you send. Postmark provides you
-with unique Message-ID, which you can
+with a unique Message-ID, which you can
 [use to retrieve bounces](http://blog.postmarkapp.com/post/24970994681/using-messageid-to-retrieve-bounces)
-later. This example shows you how to access Message-ID of a sent email message.
+later. This example shows you how to access the Message-ID of a sent email message.
 
 ``` ruby
 message = Mail.new
@@ -454,9 +454,9 @@ message.message_id
 
 # Exploring Other Gem Features
 
-To provide an interface similar to ActiveRecord for bounces, Postmark gem adds
-`Postmark::Bounce` class. This class uses shared `Postmark::ApiClient` instance
-configured through Postmark module.
+To provide an interface similar to ActiveRecord for bounces, the Postmark gem adds
+`Postmark::Bounce` class. This class uses the shared `Postmark::ApiClient` instance
+configured through the Postmark module.
 
 ``` ruby
 require 'rubygems'
@@ -484,8 +484,8 @@ bounce.activate # reactivate hard bounce
 
 ## Requirements
 
-The gem relies on Mail or TMail for building the message. You will also need
-postmark account, server and sender signature set up to use it.
+The gem relies on Mail or TMail for building the message. You will also need a
+Postmark account, server and sender signature set up to use it.
 If you plan using it in a rails project, check out the
 [postmark-rails](https://github.com/wildbit/postmark-rails/) gem, which
 is meant to integrate with ActionMailer.
