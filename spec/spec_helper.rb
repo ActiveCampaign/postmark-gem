@@ -33,6 +33,7 @@ RSpec.configure do |config|
        http_read_timeout max_retries).each do |var|
       Postmark.instance_variable_set(:"@#{var}", nil)
     end
+    Postmark.response_parser_class = nil
   end
 end
 
