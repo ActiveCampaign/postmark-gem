@@ -1,7 +1,7 @@
 # Postmark Gem
 [![Build Status](https://travis-ci.org/wildbit/postmark-gem.png?branch=master)](https://travis-ci.org/wildbit/postmark-gem) [![Code Climate](https://codeclimate.com/github/wildbit/postmark-gem.png)](https://codeclimate.com/github/wildbit/postmark-gem)
 
-This gem is an official wrapper for [Postmark HTTP API](http://postmarkapp.com). Use it to send emails and retrieve info about bounces.
+This gem is the official wrapper for the [Postmark HTTP API](http://postmarkapp.com). Postmark allows you to send your application's emails with high delivery rates, including bounce/spam processing and detailed statistics. In addition, Postmark can parse incoming emails which are forwarded back to your application.
 
 ## Install the gem
 
@@ -17,20 +17,20 @@ Without Bundler:
 gem install postmark
 ```
 
-## Get Postmark API key
+## Get a Postmark API key
 
 In order to send emails using Postmark ruby gem, you will need a
 [Postmark](http://postmarkapp.com) account. If you don't have one please
 register at https://postmarkapp.com/sign_up.
 
-If you didn’t create any servers yet, please create one, proceed to
+If you didn’t create any servers yet, please create one, proceed to the
 `Credentials` tab and copy an API key. API keys should be frequently rotated for
 security reasons.
 
 ## Communicating with the API
 
 Make sure you have a [sender signature](https://postmarkapp.com/signatures) for
-every From email you specify.
+every From email address you specify.
 
 Create an instance of `Postmark::ApiClient` to start sending emails.
 
@@ -64,7 +64,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
                subject: 'Re: Come on, Sheldon. It will be fun.',
                text_body: 'That\'s what you said about the Green Lantern ' \
                           'movie. You were 114 minutes of wrong.')
-# => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:45:16.2059023-04:00", :message_id=>"b2b268e3-6a70-xxxx-b897-49c9eb8b1d2e", :error_code=>0, :message=>"OK"} 
+# => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:45:16.2059023-04:00", :message_id=>"b2b268e3-6a70-xxxx-b897-49c9eb8b1d2e", :error_code=>0, :message=>"OK"}
 ```
 
 ## Sending an HTML message
@@ -74,16 +74,16 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
                to: 'Leonard Hofstadter <leonard@bigbangtheory.com>',
                subject: 'Re: What, to you, is a large crowd?',
                html_body: '<p>Any group big enough to trample me to death. ' \
-                          'General rule of thumb is 36 adults or 70 ' \ 
+                          'General rule of thumb is 36 adults or 70 ' \
                           'children.</p>')
-# => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"} 
+# => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
 ```
 
 ## Sending a message with attachments
 
 You can add
 [attachments](http://developer.postmarkapp.com/developer-build.html#attachments)
-to your messages. Keep in mind attachment size can be 10 MB at most.
+to your messages. Keep in mind message size limit (contents and attachment) is currently 10 MB.
 
 ``` ruby
 client.deliver(from: 'leonard@bigbangtheory.com',
@@ -94,7 +94,7 @@ client.deliver(from: 'leonard@bigbangtheory.com',
                              {name: 'sheldon.jpeg',
                               content: [File.read('2.jpeg')].pack('m'),
                               content_type: 'image/jpeg'}])
-# => {:to=>"Dr. Sheldon Cooper <sheldon@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:56:12.2828813-04:00", :message_id=>"8ec0d283-8b93-xxxx-9d65-241d1777cf0f", :error_code=>0, :message=>"OK"} 
+# => {:to=>"Dr. Sheldon Cooper <sheldon@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:56:12.2828813-04:00", :message_id=>"8ec0d283-8b93-xxxx-9d65-241d1777cf0f", :error_code=>0, :message=>"OK"}
 ```
 
 ## Sending a multipart message
@@ -116,8 +116,8 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 ## Tagging messages
 
 You can categorize outgoing email using the optional `:tag` property. If you use
-different tags for the different types of emails your application generates, 
-you will be able to get detailed statistics for them through the Postmark user 
+different tags for the different types of emails your application generates,
+you will be able to get detailed statistics for them through the Postmark user
 interface.
 
 ``` ruby
@@ -137,8 +137,8 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 
 You can pass multiple recipient addresses in the `:to` field and the optional
 `:cc` and `:bcc` fields. Note that Postmark has a limit of twenty recipients
-per message in total. You need to take care not to exceed that limit. 
-Otherwise you will get an error.
+per message in total. You need to take care not to exceed that limit.
+Otherwise, you will get an error.
 
 ``` ruby
 client.deliver(from: 'sheldon@bigbangtheory.com',
@@ -156,7 +156,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 
 While Postmark is focused on transactional email, we understand that developers
 with higher volumes or processing time constraints need to send their messages
-in batches. To facilitate this we provide a batching endpoint that permits you 
+in batches. To facilitate this we provide a batching endpoint that permits you
 to send up to 500 well-formed Postmark messages in a single API call.
 
 ``` ruby
@@ -178,13 +178,13 @@ messages << {from: 'sheldon@bigbangtheory.com',
              tag: 'confidential'}
 
 client.deliver_in_batches(messages)
-# => [{:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T05:19:16.3361118-04:00", :message_id=>"247e43a9-6b0d-4914-a87f-7b74bf76b5cb", :error_code=>0, :message=>"OK"}, {:to=>"Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T05:19:16.3517099-04:00", :message_id=>"26467642-f169-4da8-87a8-b89154067dfb", :error_code=>0, :message=>"OK"}] 
+# => [{:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T05:19:16.3361118-04:00", :message_id=>"247e43a9-6b0d-4914-a87f-7b74bf76b5cb", :error_code=>0, :message=>"OK"}, {:to=>"Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T05:19:16.3517099-04:00", :message_id=>"26467642-f169-4da8-87a8-b89154067dfb", :error_code=>0, :message=>"OK"}]
 ```
 
 ## Parsing inbound
 
-Inbound processing allows you to send inbound emails to Postmark, which we then
-process and deliver to you via a web hook in nicely formatted JSON.
+Inbound processing allows you (or your users) to send emails to Postmark, which we then
+process and deliver to you via a web hook in a nicely formatted JSON document.
 
 Here is a simple Ruby/Sinatra application that does basic inbound processing.
 
@@ -212,13 +212,13 @@ post '/inbound' do
 end
 ```
 
-If you don’t like that fields of Inbound JSON document are all in CamelCase, you
-can use `Postmark::Inbound.to_ruby_hash` method to give it some Ruby flavour.
+If you don’t like that the fields of the Inbound JSON document are all in CamelCase, you
+can use the `Postmark::Inbound.to_ruby_hash` method to give it some Ruby flavor.
 
 ```
 postmark_hash = Postmark::Json.decode(request.body.read)
 ruby_hash = Postmark::Inbound.to_ruby_hash(postmark_hash)
-# => {:from=>"myUser@theirDomain.com", :from_full=>{:email=>"myUser@theirDomain.com", :name=>"John Doe"}, :to=>"451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com", :to_full=>[{:email=>"451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com", :name=>""}], :cc=>"\"Full name\" <sample.cc@emailDomain.com>, \"Another Cc\" <another.cc@emailDomain.com>", :cc_full=>[{:email=>"sample.cc@emailDomain.com", :name=>"Full name"}, {:email=>"another.cc@emailDomain.com", :name=>"Another Cc"}], :reply_to=>"myUsersReplyAddress@theirDomain.com", :subject=>"This is an inbound message", :message_id=>"22c74902-a0c1-4511-804f2-341342852c90", :date=>"Thu, 5 Apr 2012 16:59:01 +0200", :mailbox_hash=>"ahoy", :text_body=>"[ASCII]", :html_body=>"[HTML(encoded)]", :tag=>"", :headers=>[{:name=>"X-Spam-Checker-Version", :value=>"SpamAssassin 3.3.1 (2010-03-16) onrs-ord-pm-inbound1.wildbit.com"}, {:name=>"X-Spam-Status", :value=>"No"}, {:name=>"X-Spam-Score", :value=>"-0.1"}, {:name=>"X-Spam-Tests", :value=>"DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,SPF_PASS"}, {:name=>"Received-SPF", :value=>"Pass (sender SPF authorized) identity=mailfrom; client-ip=209.85.160.180; helo=mail-gy0-f180.google.com; envelope-from=myUser@theirDomain.com; receiver=451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com"}, {:name=>"DKIM-Signature", :value=>"v=1; a=rsa-sha256; c=relaxed/relaxed;        d=wildbit.com; s=google;        h=mime-version:reply-to:date:message-id:subject:from:to:cc         :content-type;        bh=cYr/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;        b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u         iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT         Q9ou6L1hgy/MbKChnp2kxHOtYNOrrszY3JfQM="}, {:name=>"MIME-Version", :value=>"1.0"}, {:name=>"Message-ID", :value=>"<CAGXpo2WKfxHWZ5UFYCR3H_J9SNMG+5AXUovfEFL6DjWBJSyZaA@mail.gmail.com>"}], :attachments=>[{:name=>"myimage.png", :content=>"[BASE64-ENCODED CONTENT]", :content_type=>"image/png", :content_length=>4096}, {:name=>"mypaper.doc", :content=>"[BASE64-ENCODED CONTENT]", :content_type=>"application/msword", :content_length=>16384}]} 
+# => {:from=>"myUser@theirDomain.com", :from_full=>{:email=>"myUser@theirDomain.com", :name=>"John Doe"}, :to=>"451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com", :to_full=>[{:email=>"451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com", :name=>""}], :cc=>"\"Full name\" <sample.cc@emailDomain.com>, \"Another Cc\" <another.cc@emailDomain.com>", :cc_full=>[{:email=>"sample.cc@emailDomain.com", :name=>"Full name"}, {:email=>"another.cc@emailDomain.com", :name=>"Another Cc"}], :reply_to=>"myUsersReplyAddress@theirDomain.com", :subject=>"This is an inbound message", :message_id=>"22c74902-a0c1-4511-804f2-341342852c90", :date=>"Thu, 5 Apr 2012 16:59:01 +0200", :mailbox_hash=>"ahoy", :text_body=>"[ASCII]", :html_body=>"[HTML(encoded)]", :tag=>"", :headers=>[{:name=>"X-Spam-Checker-Version", :value=>"SpamAssassin 3.3.1 (2010-03-16) onrs-ord-pm-inbound1.wildbit.com"}, {:name=>"X-Spam-Status", :value=>"No"}, {:name=>"X-Spam-Score", :value=>"-0.1"}, {:name=>"X-Spam-Tests", :value=>"DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,SPF_PASS"}, {:name=>"Received-SPF", :value=>"Pass (sender SPF authorized) identity=mailfrom; client-ip=209.85.160.180; helo=mail-gy0-f180.google.com; envelope-from=myUser@theirDomain.com; receiver=451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com"}, {:name=>"DKIM-Signature", :value=>"v=1; a=rsa-sha256; c=relaxed/relaxed;        d=wildbit.com; s=google;        h=mime-version:reply-to:date:message-id:subject:from:to:cc         :content-type;        bh=cYr/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;        b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u         iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT         Q9ou6L1hgy/MbKChnp2kxHOtYNOrrszY3JfQM="}, {:name=>"MIME-Version", :value=>"1.0"}, {:name=>"Message-ID", :value=>"<CAGXpo2WKfxHWZ5UFYCR3H_J9SNMG+5AXUovfEFL6DjWBJSyZaA@mail.gmail.com>"}], :attachments=>[{:name=>"myimage.png", :content=>"[BASE64-ENCODED CONTENT]", :content_type=>"image/png", :content_length=>4096}, {:name=>"mypaper.doc", :content=>"[BASE64-ENCODED CONTENT]", :content_type=>"application/msword", :content_length=>16384}]}
 ```
 
 ## Working with bounces
@@ -228,7 +228,7 @@ parameters to control pagination).
 
 ``` ruby
 client.get_bounces(count: 1, offset: 0)
-# => [{:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-4d5c-8a7b-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.org", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test"}] 
+# => [{:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-4d5c-8a7b-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.org", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test"}]
 ```
 
 Use `#get_bounced_tags` to retrieve a list of tags used for bounced emails.
@@ -242,21 +242,21 @@ Use `#get_bounce` to get info for a specific bounce using ID:
 
 ``` ruby
 client.get_bounce(654714902)
-# => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-8a7b-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test", :content=>"..."} 
+# => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-8a7b-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test", :content=>"..."}
 ```
 
-Use `#dump_bounce` to get full bounce body:
+Use `#dump_bounce` to get the full bounce body:
 
 ``` ruby
 client.dump_bounce(654714902)
-# => {:body=>"Return-Path: <>\r\nReceived: from m1.mtasv.net (74.205.19.136) by sc-ord-mail2.mtasv.net id hcjov61jk5ko for <pm_bounces@pm.mtasv.net>; Wed, 10 Apr 2013 01:00:35 -0400 (envelope-from <>)\r\nDate: Wed, 10 Apr 2013 01:00:48 -0400\r\nFrom: postmaster@m1.mtasv.net\r\n..."} 
+# => {:body=>"Return-Path: <>\r\nReceived: from m1.mtasv.net (74.205.19.136) by sc-ord-mail2.mtasv.net id hcjov61jk5ko for <pm_bounces@pm.mtasv.net>; Wed, 10 Apr 2013 01:00:35 -0400 (envelope-from <>)\r\nDate: Wed, 10 Apr 2013 01:00:48 -0400\r\nFrom: postmaster@m1.mtasv.net\r\n..."}
 ```
 
-You can activate certain types of bounces by using `#activate_bounce`:
+You can activate email addresses that were disabled due to a hard bounce by using `#activate_bounce`:
 
 ``` ruby
 client.activate_bounce(654714902)
- => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-xxxx-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test"} 
+ => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-xxxx-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test"}
 ```
 
 ## Getting delivery stats
@@ -275,7 +275,7 @@ The gem also allows you to read and update the server info:
 
 ``` ruby
 client.server_info
-# => {:name=>"Testing", :color=>"blue", :bounce_hook_url=>"", :inbound_hash=>"c2ffffff74f8643e5f6086c81", :inbound_hook_url=>"", :smtp_api_activated=>true} 
+# => {:name=>"Testing", :color=>"blue", :bounce_hook_url=>"", :inbound_hash=>"c2ffffff74f8643e5f6086c81", :inbound_hook_url=>"", :smtp_api_activated=>true}
 ```
 
 For example, you can use `#update_server_info` to set inbound hook URL:
@@ -284,7 +284,7 @@ For example, you can use `#update_server_info` to set inbound hook URL:
 client.update_server_info inbound_hook_url: 'http://example.org/bounces'
 ```
 
-# Using with [Mail](http://rubygems.org/gems/mail) library
+# Using Postmark with the [Mail](http://rubygems.org/gems/mail) library
 
 You can use Postmark with the `mail` gem.
 
@@ -293,7 +293,7 @@ gem install mail
 ```
 
 Make sure you have a [sender signature](https://postmarkapp.com/signatures) for
-every `From` email you specify.
+every `From` email address you specify.
 
 To send a `Mail::Message` via Postmark you’ll need to specify `Mail::Postmark` as
 a delivery method for the message:
@@ -376,7 +376,7 @@ message.deliver
 
 ## Multipart message
 
-You can send multipart messages containing both text and HTML using Postmark gem.
+You can send multipart messages containing both text and HTML using the Postmark gem.
 
 ``` ruby
 require 'rubygems'
@@ -437,9 +437,9 @@ message.deliver
 ## Accessing Postmark Message-ID
 
 You might want to save identifiers of messages you send. Postmark provides you
-with unique Message-ID, which you can
+with a unique Message-ID, which you can
 [use to retrieve bounces](http://blog.postmarkapp.com/post/24970994681/using-messageid-to-retrieve-bounces)
-later. This example shows you how to access Message-ID of a sent email message.
+later. This example shows you how to access the Message-ID of a sent email message.
 
 ``` ruby
 message = Mail.new
@@ -454,9 +454,9 @@ message.message_id
 
 # Exploring Other Gem Features
 
-To provide an interface similar to ActiveRecord for bounces, Postmark gem adds
-`Postmark::Bounce` class. This class uses shared `Postmark::ApiClient` instance
-configured through Postmark module.
+To provide an interface similar to ActiveRecord for bounces, the Postmark gem adds
+`Postmark::Bounce` class. This class uses the shared `Postmark::ApiClient` instance
+configured through the Postmark module.
 
 ``` ruby
 require 'rubygems'
@@ -484,8 +484,8 @@ bounce.activate # reactivate hard bounce
 
 ## Requirements
 
-The gem relies on Mail or TMail for building the message. You will also need
-postmark account, server and sender signature set up to use it.
+The gem relies on Mail or TMail for building the message. You will also need a
+Postmark account, server and sender signature set up to use it.
 If you plan using it in a rails project, check out the
 [postmark-rails](https://github.com/wildbit/postmark-rails/) gem, which
 is meant to integrate with ActionMailer.
