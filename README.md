@@ -434,6 +434,53 @@ message.deliver
 # => #<Mail::Message:70168327829580, Multipart: false, Headers: <From: sheldon@bigbangtheory.com>, <To: penny@bigbangtheory.com>, <Message-ID: af2570fd-3481-4b45-8b27-a249806d891a>, <Subject: Re: You cleaned my apartment???>, <TAG: confidential>>
 ```
 
+## Sending in batches
+
+You can also send `Mail::Message` objects in batches. Create an instance of
+`Postmark::ApiClient` as described in "Communicating with the API" section.
+
+``` ruby
+messages = []
+
+messages << Mail.new do
+  from            'sheldon@bigbangtheory.com'
+  to              'Leonard Hofstadter <leonard@bigbangtheory.com>'
+  subject         'Re: Come on, Sheldon. It will be fun.'
+  body            'That\'s what you said about the Green Lantern movie. You' \
+                  'were 114 minutes of wrong.'
+end
+
+messages << Mail.new do
+  from           'sheldon@bigbangtheory.com'
+  to             'Penny <penny@bigbangtheory.com>'
+  subject        'Re: You cleaned my apartment???'
+  body           'I couldn\'t sleep knowing that just outside my bedroom is ' \
+                 'our living room and just outside our living room is that ' \
+                 'hallway and immediately adjacent to that hallway is this!'
+  tag            'confidential'
+end
+
+client.deliver_messages(messages)
+# => [{:to=>"leonard@bigbangtheory.com", :submitted_at=>"2013-05-10T01:59:29.830486-04:00", :message_id=>"8ad0e8b0-xxxx-xxxx-951d-223c581bb467", :error_code=>0, :message=>"OK"}, {:to=>"penny@bigbangtheory.com", :submitted_at=>"2013-05-10T01:59:29.830486-04:00", :message_id=>"33c6240c-xxxx-xxxx-b0df-40bdfcf4e0f7", :error_code=>0, :message=>"OK"}]
+```
+
+After delivering a batch you can check on each message’s delivery status:
+
+``` ruby
+messages.first.delivered?
+# => true
+
+messages.all?(&:delivered)
+# => true
+```
+
+Or even get a related Postmark response:
+
+``` ruby
+messages.first.postmark_response
+# => {"To"=>"leonard@bigbangtheory.com", "SubmittedAt"=>"2013-05-10T01:59:29.830486-04:00", "MessageID"=>"8ad0e8b0-xxxx-xxxx-951d-223c581bb467", "ErrorCode"=>0, "Message"=>"OK"}
+```
+
 ## Accessing Postmark Message-ID
 
 You might want to save identifiers of messages you send. Postmark provides you
@@ -484,14 +531,13 @@ bounce.activate # reactivate hard bounce
 
 ## Requirements
 
-The gem relies on Mail or TMail for building the message. You will also need a
-Postmark account, server and sender signature set up to use it.
-If you plan using it in a rails project, check out the
+You will need a Postmark account, server and sender signature set up to use it.
+If you plan using it in a Rails project, check out the
 [postmark-rails](https://github.com/wildbit/postmark-rails/) gem, which
 is meant to integrate with ActionMailer.
 
 The plugin will try to use ActiveSupport Json if it is already included. If not,
-it will attempt using the built-in ruby Json library.
+it will attempt using the built-in Ruby Json library.
 
 You can also explicitly specify which one to be used, using
 
