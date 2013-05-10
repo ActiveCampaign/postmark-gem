@@ -57,7 +57,7 @@ describe Postmark::ApiClient do
 
   describe "#deliver" do
     let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
-    let(:email_json) { JSON.dump(email) }
+    let(:email_json) { Postmark::Json.encode(email) }
     let(:http_client) { subject.http_client }
     let(:response) { {"MessageID" => 42} }
 
@@ -84,7 +84,7 @@ describe Postmark::ApiClient do
   describe "#deliver_in_batches" do
     let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
     let(:emails) { [email, email, email] }
-    let(:emails_json) { JSON.dump(emails) }
+    let(:emails_json) { Postmark::Json.encode(emails) }
     let(:http_client) { subject.http_client }
     let(:response) { [{'ErrorCode' => 0}, {'ErrorCode' => 0}, {'ErrorCode' => 0}] }
 
