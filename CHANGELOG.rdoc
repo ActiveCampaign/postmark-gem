@@ -1,5 +1,25 @@
 = Changelog
 
+== 1.0.0
+
+* Introduced new instance-based architecture (see README for more details).
+* Removed TMail support.
+* Added support for sending emails in batches.
+* Added API to send emails without Mail library.
+* Introduced lock-free approach for Mail::Postmark delivery method.
+* Deprecated the Mail::Message#postmark_attachments method
+* Added Postmark::Inbound module.
+* Added integration tests.
+* Added support for the "server" endpoint of the Postmark API.
+* Improved unit test coverage.
+* Added more examples to the README file.
+* Added official JRuby support.
+* Fixed the inconsistent behaviour of Mail::Message#tag method added by the gem.
+* Added Mail::Message#delivered property and Mail::Message#delivered? predicate.
+* Added Mail::Message#postmark_response method.
+* Removed Postmark::AttachmentsFixForMail class (that hack no longer works).
+* Added Travis-CI for integration tests.
+
 == 0.9.19
 
 * Added support for native attachments API provided by Ruby Mail library.
