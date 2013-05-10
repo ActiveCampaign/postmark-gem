@@ -256,7 +256,7 @@ You can activate email addresses that were disabled due to a hard bounce by usin
 
 ``` ruby
 client.activate_bounce(654714902)
- => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-xxxx-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test"}
+# => {:id=>654714902, :type=>"Transient", :type_code=>2, :name=>"Message delayed", :message_id=>"1fdf3729-xxxx-xxxx-xxxx-96da7a23268b", :description=>"The server could not temporarily deliver your message (ex: Message is delayed due to network troubles).", :details=>"action: failed\r\n", :email=>"tema@wildbit.com", :bounced_at=>"2013-04-10T01:01:35.0965184-04:00", :dump_available=>true, :inactive=>false, :can_activate=>true, :subject=>"bounce test"}
 ```
 
 ## Getting delivery stats
