@@ -157,10 +157,11 @@ describe Postmark::ApiClient do
 
   describe "#delivery_stats" do
     let(:http_client) { subject.http_client }
+    let(:response) { {"Bounces" => [{"Foo" => "Bar"}]} }
 
     it 'requests data at /deliverystats' do
-      http_client.should_receive(:get).with("deliverystats")
-      subject.delivery_stats
+      http_client.should_receive(:get).with("deliverystats") { response }
+      subject.delivery_stats.should have_key(:bounces)
     end
   end
 
@@ -171,7 +172,7 @@ describe Postmark::ApiClient do
 
     it 'requests data at /bounces' do
       http_client.should_receive(:get).with("bounces", options) { response }
-      subject.get_bounces(options)
+      subject.get_bounces(options).should be_an Array
     end
   end
 
