@@ -23,7 +23,9 @@ Gem::Specification.new do |s|
 
   s.post_install_message = %q{
     ==================
-    Thanks for installing the postmark gem. If you don't have an account, please sign up at http://postmarkapp.com/.
+    Thanks for installing the postmark gem. If you don't have an account, please
+    sign up at http://postmarkapp.com/.
+
     Review the README.md for implementation details and examples.
     ==================
   }
@@ -34,9 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency "json"
 
   s.add_development_dependency "mail"
-  s.add_development_dependency "rspec-core", "~> 2.13"
   s.add_development_dependency "activesupport", "~> 3.0"
-  s.add_development_dependency "fakeweb"
-  s.add_development_dependency "fakeweb-matcher"
   s.add_development_dependency "yajl-ruby" unless RUBY_PLATFORM == "java"
 end
