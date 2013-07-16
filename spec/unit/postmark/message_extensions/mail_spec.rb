@@ -66,6 +66,16 @@ describe Mail::Message do
     end
   end
 
+  let(:mail_message_with_named_addresses) do
+    Mail.new do
+      from    "Sheldon <sheldon@bigbangtheory.com>"
+      to      "\"Leonard\" <leonard@bigbangtheory.com>"
+      subject "Hello!"
+      body    "Hello Sheldon!"
+      reply_to '"Penny" <penny@bigbangtheory.com>'
+    end
+  end
+
   describe "#html?" do
     it 'is true for html only email' do
       mail_html_message.should be_html
@@ -200,6 +210,16 @@ describe Mail::Message do
                              "ContentType"=>"image/gif"}],
           "TextBody"=>"Hello Sheldon!",
           "To"=>"lenard@bigbangtheory.com"}
+    end
+
+    it 'converts messages with named addresses correctly' do
+      mail_message_with_named_addresses.to_postmark_hash.should == {
+          "From" => "Sheldon <sheldon@bigbangtheory.com>",
+          "Subject" => "Hello!",
+          "TextBody" => "Hello Sheldon!",
+          "To" => "Leonard <leonard@bigbangtheory.com>",
+          "ReplyTo" => '"Penny" <penny@bigbangtheory.com>'
+      }
     end
   end
 end
