@@ -69,10 +69,10 @@ describe Mail::Message do
   let(:mail_message_with_named_addresses) do
     Mail.new do
       from    "Sheldon <sheldon@bigbangtheory.com>"
-      to      "\"Leonard\" <leonard@bigbangtheory.com>"
+      to      "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
       subject "Hello!"
       body    "Hello Sheldon!"
-      reply_to '"Penny" <penny@bigbangtheory.com>'
+      reply_to 'Penny "The Neighbor" <penny@bigbangtheory.com>'
     end
   end
 
@@ -217,8 +217,8 @@ describe Mail::Message do
           "From" => "Sheldon <sheldon@bigbangtheory.com>",
           "Subject" => "Hello!",
           "TextBody" => "Hello Sheldon!",
-          "To" => "Leonard <leonard@bigbangtheory.com>",
-          "ReplyTo" => '"Penny" <penny@bigbangtheory.com>'
+          "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
+          "ReplyTo" => "\"Penny \\\"The Neighbor\\\"\" <penny@bigbangtheory.com>"
       }
     end
   end
