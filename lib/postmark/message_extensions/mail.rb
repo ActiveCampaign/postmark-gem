@@ -53,7 +53,8 @@ module Mail
       options["Tag"] = self.tag.to_s if self.tag
 
       %w(to reply_to cc bcc).each do |field|
-        next unless value = self.send(field)
+        next unless self.send(field)
+        value = self[field.to_s]
         options[::Postmark::Inflector.to_postmark(field)] = Array[value].flatten.join(", ")
       end
 
