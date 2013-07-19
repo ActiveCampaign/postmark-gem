@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.0.1
+
+* Fixed an issue causing recipient names to disappear from "To", "Cc" and "Reply-To" headers when using with Mail library.
+
 == 1.0.0
 
 * Introduced new instance-based architecture (see README for more details).

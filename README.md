@@ -570,6 +570,7 @@ Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl are also suppor
 * Anton Astashov
 * Marcus Brito
 * Tyler Hunt
+* Russell Bevers
 
 ## Copyright
 
