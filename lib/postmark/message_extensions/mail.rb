@@ -79,7 +79,7 @@ module Mail
         date         content-type
         cc           bcc
         subject      tag
-        attachment
+        attachment   to
       ]
     end
 
