@@ -76,6 +76,23 @@ describe Mail::Message do
     end
   end
 
+  let(:mail_message_with_bogus_headers) do
+    mail_message.header['Return-Path'] = 'bounce@wildbit.com'
+    mail_message.header['From'] = 'info@wildbit.com'
+    mail_message.header['Sender'] = 'info@wildbit.com'
+    mail_message.header['Received'] = 'from mta.pstmrk.it ([72.14.252.155]:54907)'
+    mail_message.header['Date'] = 'January 25, 2013 3:30:58 PM PDT'
+    mail_message.header['Content-Type'] = 'application/json'
+    mail_message.header['To'] = 'lenard@bigbangtheory.com'
+    mail_message.header['Cc'] = 'sheldon@bigbangtheory.com'
+    mail_message.header['Bcc'] = 'penny@bigbangtheory.com'
+    mail_message.header['Subject'] = 'You want not to use a bogus header'
+    mail_message.header['Tag'] = 'bogus-tag'
+    mail_message.header['Attachment'] = 'anydatahere'
+    mail_message.header['Allowed-Header'] = 'value'
+    mail_message
+  end
+
   describe "#html?" do
     it 'is true for html only email' do
       mail_html_message.should be_html
@@ -157,6 +174,14 @@ describe Mail::Message do
       mail_message.postmark_attachments = exported_data
       mail_message.export_attachments.should == [exported_data, exported_data]
     end
+  end
+
+  describe "#export_headers" do
+    let(:headers) { mail_message_with_bogus_headers.export_headers }
+    let(:header_names) { headers.map { |h| h['Name'] } }
+
+    specify { header_names.should include('Allowed-Header') }
+    specify { header_names.count.should == 1 }
   end
 
   describe "#to_postmark_hash" do
