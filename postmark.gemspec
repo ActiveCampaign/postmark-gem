@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.version          = Postmark::VERSION
   s.homepage         = "http://postmarkapp.com"
   s.platform         = Gem::Platform::RUBY
+  s.license          = 'MIT'
 
   s.authors          = ["Petyo Ivanov", "Ilya Sabanin", "Artem Chistyakov"]
   s.email            = "ilya@wildbit.com"
