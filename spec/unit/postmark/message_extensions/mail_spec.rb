@@ -239,12 +239,26 @@ describe Mail::Message do
 
     it 'converts messages with named addresses correctly' do
       mail_message_with_named_addresses.to_postmark_hash.should == {
-          "From" => "Sheldon <sheldon@bigbangtheory.com>",
-          "Subject" => "Hello!",
-          "TextBody" => "Hello Sheldon!",
-          "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
-          "ReplyTo" => "\"Penny \\\"The Neighbor\\\"\" <penny@bigbangtheory.com>"
+        "From" => "Sheldon <sheldon@bigbangtheory.com>",
+        "Subject" => "Hello!",
+        "TextBody" => "Hello Sheldon!",
+        "To" => "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>",
+        "ReplyTo" => "Penny \"The Neighbor\" <penny@bigbangtheory.com>"
       }
+    end
+
+    context 'when bcc is empty' do
+      it 'should excluded bcc from message' do
+        mail_message.bcc = nil
+        mail_message.to_postmark_hash.keys.should_not include('Bcc')
+      end
+    end
+
+    context 'when cc is empty' do
+      it 'should excluded cc from message' do
+        mail_message.cc = nil
+        mail_message.to_postmark_hash.keys.should_not include('Cc')
+      end
     end
   end
 end
