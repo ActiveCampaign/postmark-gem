@@ -76,6 +76,13 @@ describe Postmark::MessageHelper do
       postmark_message_with_headers.merge("Attachments" => postmark_attachments)
     }
 
+    let(:message_with_empty_bcc) { message.merge(:bcc => []) }
+    let(:postmark_message_with_empty_bcc) {  postmark_message.tap{ |j| j.delete('Bcc') } }
+    let(:message_with_empty_cc) { message.merge(:cc => nil) }
+    let(:postmark_message_with_empty_cc) {  postmark_message.tap{ |j| j.delete('Cc') } }
+    let(:message_with_empty_reply_to) { message.merge(:reply_to => nil) }
+    let(:postmark_message_with_empty_reply_to) {  postmark_message.tap{ |j| j.delete('ReplyTo') } }
+
     it 'converts messages without custom headers and attachments correctly' do
       subject.to_postmark(message).should == postmark_message
     end
@@ -88,6 +95,21 @@ describe Postmark::MessageHelper do
       subject.to_postmark(message_with_headers_and_attachments).should == postmark_message_with_headers_and_attachments
     end
 
+    context 'when bcc is empty' do
+      it 'should excluded bcc from message' do
+        subject.to_postmark(message_with_empty_bcc).should eq(postmark_message_with_empty_bcc)
+      end
+    end
+    context 'when cc is empty' do
+      it 'should excluded cc from message' do
+        subject.to_postmark(message_with_empty_cc).should eq(postmark_message_with_empty_cc)
+      end
+    end
+    context 'when reply_to is empty' do
+      it 'should excluded reply_to from message' do
+        subject.to_postmark(message_with_empty_reply_to).should eq(postmark_message_with_empty_reply_to)
+      end
+    end
   end
 
   describe ".headers_to_postmark" do

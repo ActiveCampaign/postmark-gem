@@ -7,7 +7,11 @@ module Postmark
       message = message.dup
 
       %w(to reply_to cc bcc).each do |field|
-        message[field.to_sym] = Array[*message[field.to_sym]].join(", ")
+        if blank?(message[field.to_sym])
+          message.delete(field.to_sym)
+        else
+          message[field.to_sym] = Array[*message[field.to_sym]].join(", ")
+        end
       end
 
       if message[:headers]
@@ -43,6 +47,10 @@ module Postmark
 
     def encode_in_base64(data)
       [data].pack('m')
+    end
+
+    def blank?(value = nil)
+      value.respond_to?(:empty?) ? value.empty? : !value
     end
 
     protected

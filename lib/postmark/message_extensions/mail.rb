@@ -55,6 +55,7 @@ module Mail
       %w(to reply_to cc bcc).each do |field|
         next unless self.send(field)
         value = self[field.to_s]
+        value = value.respond_to?(:value) ? value.value : value # fix for mail '2.3.3'
         options[::Postmark::Inflector.to_postmark(field)] = Array[value].flatten.join(", ")
       end
 
