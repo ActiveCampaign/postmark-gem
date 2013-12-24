@@ -34,10 +34,10 @@ module Postmark
       data = serialize(message.to_postmark_hash)
 
       with_retries do
-        take_response_of { http_client.post("email", data) }.to do |response|
-          update_message(message, response)
-          format_response response, true
-        end
+        response, error = take_response_of { http_client.post("email", data) }
+        update_message(message, response)
+        raise error if error
+        format_response(response, true)
       end
     end
 
@@ -131,21 +131,9 @@ module Postmark
     end
 
     def take_response_of
-      define_singleton_method(:to, yield)
+      [yield, nil]
     rescue DeliveryError => e
-      define_singleton_method(:to, e.full_response || {}) do
-        raise e
-      end
-    end
-
-    def define_singleton_method(name, object)
-      singleton_class = class << object; self; end
-      singleton_class.send(:define_method, name) do |&b|
-        ret = b.call(self) if b
-        yield if block_given?
-        ret
-      end
-      object
+      [e.full_response || {}, e]
     end
 
     def format_response(response, compatible = false)

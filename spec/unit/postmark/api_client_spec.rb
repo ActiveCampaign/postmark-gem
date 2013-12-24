@@ -110,7 +110,7 @@ describe Postmark::ApiClient do
       subject.deliver_message(message)
     end
 
-    it "should retry 3 times" do
+    it "retries 3 times" do
       2.times do
         http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
       end
@@ -118,10 +118,15 @@ describe Postmark::ApiClient do
       expect { subject.deliver_message(message) }.not_to raise_error
     end
 
-    it "should retry on timeout" do
+    it "retries on timeout" do
       http_client.should_receive(:post).and_raise(Postmark::TimeoutError)
       http_client.should_receive(:post)
       expect { subject.deliver_message(message) }.not_to raise_error
+    end
+
+    it "proxies errors" do
+      http_client.stub(:post).and_raise(Postmark::TimeoutError)
+      expect { subject.deliver_message(message) }.to raise_error(Postmark::TimeoutError)
     end
 
   end
