@@ -14,24 +14,6 @@ describe Mail::Message do
     end
   end
 
-  let(:tagged_mail_message) do
-    Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
-      subject "Hello!"
-      body    "Hello Sheldon!"
-      tag     "sheldon"
-    end
-  end
-
-  let(:mail_message_without_body) do
-    Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
-      subject "Hello!"
-    end
-  end
-
   let(:mail_html_message) do
     mail = Mail.new do
       from          "sheldon@bigbangtheory.com"
@@ -39,40 +21,6 @@ describe Mail::Message do
       subject       "Hello!"
       content_type 'text/html; charset=UTF-8'
       body "<b>Hello Sheldon!</b>"
-    end
-  end
-
-  let(:mail_multipart_message) do
-    mail = Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
-      text_part do
-        body        "Hello Sheldon!"
-      end
-      html_part do
-        body        "<b>Hello Sheldon!</b>"
-      end
-    end
-  end
-
-  let(:mail_message_with_attachment) do
-    Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
-      subject "Hello!"
-      body    "Hello Sheldon!"
-      add_file empty_gif_path
-    end
-  end
-
-  let(:mail_message_with_named_addresses) do
-    Mail.new do
-      from    "Sheldon <sheldon@bigbangtheory.com>"
-      to      "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
-      subject "Hello!"
-      body    "Hello Sheldon!"
-      reply_to 'Penny "The Neighbor" <penny@bigbangtheory.com>'
     end
   end
 
@@ -185,66 +133,7 @@ describe Mail::Message do
   end
 
   describe "#to_postmark_hash" do
-    it 'converts plain text messages correctly' do
-      mail_message.to_postmark_hash.should == {
-          "From" => "sheldon@bigbangtheory.com",
-          "Subject" => "Hello!",
-          "TextBody" => "Hello Sheldon!",
-          "To" => "lenard@bigbangtheory.com"}
-    end
-
-    it 'converts tagged text messages correctly' do
-      tagged_mail_message.to_postmark_hash.should == {
-          "From" => "sheldon@bigbangtheory.com",
-          "Subject" => "Hello!",
-          "TextBody" => "Hello Sheldon!",
-          "Tag" => "sheldon",
-          "To"=>"lenard@bigbangtheory.com"}
-    end
-
-    it 'converts plain text messages without body correctly' do
-      mail_message_without_body.to_postmark_hash.should == {
-          "From" => "sheldon@bigbangtheory.com",
-          "Subject" => "Hello!",
-          "To" => "lenard@bigbangtheory.com"}
-    end
-
-    it 'converts html messages correctly' do
-      mail_html_message.to_postmark_hash.should == {
-          "From" => "sheldon@bigbangtheory.com",
-          "Subject" => "Hello!",
-          "HtmlBody" => "<b>Hello Sheldon!</b>",
-          "To" => "lenard@bigbangtheory.com"}
-    end
-
-    it 'converts multipart messages correctly' do
-      mail_multipart_message.to_postmark_hash.should == {
-          "From" => "sheldon@bigbangtheory.com",
-          "Subject" => "Hello!",
-          "HtmlBody" => "<b>Hello Sheldon!</b>",
-          "TextBody" => "Hello Sheldon!",
-          "To" => "lenard@bigbangtheory.com"}
-    end
-
-    it 'converts messages with attachments correctly' do
-      mail_message_with_attachment.to_postmark_hash.should == {
-          "From" => "sheldon@bigbangtheory.com",
-          "Subject" => "Hello!",
-          "Attachments" => [{"Name"=>"empty.gif",
-                             "Content"=>encoded_empty_gif_data,
-                             "ContentType"=>"image/gif"}],
-          "TextBody"=>"Hello Sheldon!",
-          "To"=>"lenard@bigbangtheory.com"}
-    end
-
-    it 'converts messages with named addresses correctly' do
-      mail_message_with_named_addresses.to_postmark_hash.should == {
-          "From" => "Sheldon <sheldon@bigbangtheory.com>",
-          "Subject" => "Hello!",
-          "TextBody" => "Hello Sheldon!",
-          "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
-          "ReplyTo" => "\"Penny \\\"The Neighbor\\\"\" <penny@bigbangtheory.com>"
-      }
-    end
+    # See mail_message_converter_spec.rb
   end
+
 end

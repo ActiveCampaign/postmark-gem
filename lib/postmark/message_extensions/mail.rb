@@ -40,25 +40,7 @@ module Mail
     end
 
     def to_postmark_hash
-      options = Hash.new
-      headers = self.export_headers
-      attachments = self.export_attachments
-
-      options["From"] = self['from'].to_s if self.from
-      options["Subject"] = self.subject
-      options["Attachments"] = attachments unless attachments.empty?
-      options["Headers"] = headers if headers.size > 0
-      options["HtmlBody"] = self.body_html
-      options["TextBody"] = self.body_text
-      options["Tag"] = self.tag.to_s if self.tag
-
-      %w(to reply_to cc bcc).each do |field|
-        next unless self.send(field)
-        value = self[field.to_s]
-        options[::Postmark::Inflector.to_postmark(field)] = Array[value].flatten.join(", ")
-      end
-
-      options.delete_if { |k,v| v.nil? || v.empty? }
+      ::Postmark::MailMessageConverter.new(self).run
     end
 
   protected

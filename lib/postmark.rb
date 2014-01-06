@@ -5,6 +5,7 @@ require 'thread' unless defined? Mutex # For Ruby 1.8.7
 require 'postmark/inflector'
 require 'postmark/helpers/hash_helper'
 require 'postmark/helpers/message_helper'
+require 'postmark/mail_message_converter'
 require 'postmark/bounce'
 require 'postmark/inbound'
 require 'postmark/json'
