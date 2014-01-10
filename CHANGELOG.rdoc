@@ -1,5 +1,10 @@
 = Changelog
 
+== 1.0.2
+
+* Removed metaprogramming executed at runtime. [#37]
+* Fixed invalid check for a blank recipient. [#38]
+
 == 1.0.1
 
 * Fixed an issue causing recipient names to disappear from "To", "Cc" and "Reply-To" headers when using with Mail library.
