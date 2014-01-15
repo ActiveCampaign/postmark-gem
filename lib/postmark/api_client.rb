@@ -65,6 +65,23 @@ module Postmark
       response
     end
 
+    def get_messages(options = {})
+      path, params = extract_messages_path_and_params(options)
+      params[:offset] ||= 0
+      params[:count] ||= 50
+      format_response http_client.get(path, params)['Messages']
+    end
+
+    def get_message(id, options = {})
+      path, params = extract_messages_path_and_params(options)
+      format_response http_client.get("#{path}/#{id}/details", params)
+    end
+
+    def dump_message(id, options = {})
+      path, params = extract_messages_path_and_params(options)
+      format_response http_client.get("#{path}/#{id}/dump", params)
+    end
+
     def get_bounces(options = {})
       format_response http_client.get("bounces", options)["Bounces"]
     end
@@ -144,6 +161,12 @@ module Postmark
       else
         Postmark::HashHelper.to_ruby(response, compatible)
       end
+    end
+
+    def extract_messages_path_and_params(options = {})
+      options = options.dup
+      path = options.delete(:inbound) ? 'messages/inbound' : 'messages/outbound'
+      [path, options]
     end
 
   end

@@ -170,6 +170,90 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#get_messages' do
+    let(:http_client) { subject.http_client }
+    let(:response) { {"TotalCount" => 1, "Messages" => [{}]} }
+
+    context 'given outbound' do
+
+      it 'requests data at /messages/outbound' do
+        http_client.should_receive(:get).
+                    with('messages/outbound', :offset => 50, :count => 50).
+                    and_return(response)
+        subject.get_messages(:offset => 50, :count => 50)
+      end
+
+    end
+
+    context 'given inbound' do
+
+      it 'requests data at /messages/inbound' do
+        http_client.should_receive(:get).
+                    with('messages/inbound', :offset => 50, :count => 50).
+                    and_return(response)
+        subject.get_messages(:inbound => true, :offset => 50, :count => 50).
+                should be_an(Array)
+      end
+
+    end
+  end
+
+  describe '#get_message' do
+    let(:id) { '8ad0e8b0-xxxx-xxxx-951d-223c581bb467' }
+    let(:http_client) { subject.http_client }
+    let(:response) { {"To" => "leonard@bigbangtheory.com"} }
+
+    context 'given outbound' do
+
+      it 'requests a single message by id at /messages/outbound/:id/details' do
+        http_client.should_receive(:get).
+                    with("messages/outbound/#{id}/details", {}).
+                    and_return(response)
+        subject.get_message(id).should have_key(:to)
+      end
+
+    end
+
+    context 'given inbound' do
+
+      it 'requests a single message by id at /messages/inbound/:id/details' do
+        http_client.should_receive(:get).
+                    with("messages/inbound/#{id}/details", {}).
+                    and_return(response)
+        subject.get_message(id, :inbound => true).should have_key(:to)
+      end
+
+    end
+  end
+
+  describe '#dump_message' do
+    let(:id) { '8ad0e8b0-xxxx-xxxx-951d-223c581bb467' }
+    let(:http_client) { subject.http_client }
+    let(:response) { {"Body" => "From: <leonard@bigbangtheory.com> \r\n ..."} }
+
+    context 'given outbound' do
+
+      it 'requests a single message by id at /messages/outbound/:id/dump' do
+        http_client.should_receive(:get).
+                    with("messages/outbound/#{id}/dump", {}).
+                    and_return(response)
+        subject.dump_message(id).should have_key(:body)
+      end
+
+    end
+
+    context 'given inbound' do
+
+      it 'requests a single message by id at /messages/inbound/:id/dump' do
+        http_client.should_receive(:get).
+                    with("messages/inbound/#{id}/dump", {}).
+                    and_return(response)
+        subject.dump_message(id, :inbound => true).should have_key(:body)
+      end
+
+    end
+  end
+
   describe "#get_bounces" do
     let(:http_client) { subject.http_client }
     let(:options) { {:foo => :bar} }
