@@ -47,9 +47,12 @@ module Mail
 
     def export_native_attachments
       attachments.map do |attachment|
-        {"Name" => attachment.filename,
-         "Content" => pack_attachment_data(attachment.body.decoded),
-         "ContentType" => attachment.mime_type}
+        basics = {"Name" => attachment.filename,
+                  "Content" => pack_attachment_data(attachment.body.decoded),
+                  "ContentType" => attachment.mime_type}
+        specials = attachment.inline? ? {'ContentID' => attachment.url} : {}
+
+        basics.update(specials)
       end
     end
 

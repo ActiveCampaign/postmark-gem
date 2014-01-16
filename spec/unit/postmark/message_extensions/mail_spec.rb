@@ -106,22 +106,40 @@ describe Mail::Message do
 
   describe "#export_attachments" do
     let(:file_data) { 'binarydatahere' }
-    let(:exported_data) do
+    let(:exported_data) {
       {'Name' => 'face.jpeg',
        'Content' => "YmluYXJ5ZGF0YWhlcmU=\n",
        'ContentType' => 'image/jpeg'}
+    }
+
+    context 'given a regular attachment' do
+
+      it "exports native attachments" do
+        mail_message.attachments["face.jpeg"] = file_data
+        mail_message.export_attachments.should include(exported_data)
+      end
+
+      it "still supports the deprecated attachments API" do
+        mail_message.attachments["face.jpeg"] = file_data
+        mail_message.postmark_attachments = exported_data
+        mail_message.export_attachments.should == [exported_data, exported_data]
+      end
+
     end
 
-    it "exports native attachments" do
-      mail_message.attachments["face.jpeg"] = file_data
-      mail_message.export_attachments.should include(exported_data)
+    context 'given an inline attachment' do
+
+      it "exports the attachment with related content id" do
+        mail_message.attachments.inline["face.jpeg"] = file_data
+        attachments = mail_message.export_attachments
+        attachments.count.should_not be_zero
+        attachments.first.should include(exported_data)
+        attachments.first.should have_key('ContentID')
+        attachments.first['ContentID'].should start_with('cid:')
+      end
+
     end
 
-    it "still supports the deprecated attachments API" do
-      mail_message.attachments["face.jpeg"] = file_data
-      mail_message.postmark_attachments = exported_data
-      mail_message.export_attachments.should == [exported_data, exported_data]
-    end
   end
 
   describe "#export_headers" do
