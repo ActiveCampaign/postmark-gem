@@ -402,6 +402,18 @@ message.deliver
 # => #<Mail::Message:70185826686240, Multipart: true, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: ba644cc1-b5b1-4bcb-aaf8-2f290b5aad80>, <Subject: Have you seen these pictures of yours?>, <Content-Type: multipart/mixed; boundary=--==_mimepart_5121f9f1ec653_12c53fd569035ad817726>>
 ```
 
+You can also make an attachment inline:
+
+``` ruby
+message.attachments.inline['sheldon.jpeg'] = File.read('2.jpeg')
+```
+
+Then simply use `Mail::Part#url` method to reference it from your email body.
+
+``` erb
+<p><img src="<%= message.attachments['sheldon.jpeg'].url %>" alt="Dr. Sheldon Cooper"></p>
+```
+
 ## Multipart message
 
 You can send multipart messages containing both text and HTML using the Postmark gem.
@@ -602,4 +614,4 @@ Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl are also suppor
 
 ## Copyright
 
-Copyright © 2013 Wildbit LLC. See LICENSE for details.
+Copyright © 2014 Wildbit LLC. See LICENSE for details.
