@@ -17,7 +17,7 @@ describe 'Accessing server resources using the API' do
 
   context 'Messages API' do
 
-    def with_retries(max_retries = 10, wait_seconds = 3)
+    def with_retries(max_retries = 20, wait_seconds = 3)
       yield
     rescue => e
       retries = retries ? retries + 1 : 1
