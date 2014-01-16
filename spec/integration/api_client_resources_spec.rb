@@ -2,7 +2,9 @@ require 'spec_helper'
 
 describe 'Accessing server resources using the API' do
 
-  let(:api_client) { Postmark::ApiClient.new(ENV['POSTMARK_API_KEY']) }
+  let(:api_client) {
+    Postmark::ApiClient.new(ENV['POSTMARK_API_KEY'], :http_open_timeout => 15)
+  }
   let(:recipient) { ENV['POSTMARK_CI_RECIPIENT'] }
   let(:message) {
     {

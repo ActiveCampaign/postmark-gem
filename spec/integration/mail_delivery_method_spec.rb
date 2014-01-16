@@ -10,7 +10,8 @@ describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
       subject "Mail::Message object"
       body "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do "
            "eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST"
+      delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST", :http_open_timeout => 15
+
     end
   }
 
@@ -24,7 +25,7 @@ describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
     Mail.new do
       from "sender@postmarkapp.com"
       to "recipient@postmarkapp.com"
-      delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST"
+      delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST", :http_open_timeout => 15
     end
   }
 
@@ -38,7 +39,7 @@ describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
     Mail.new do
       from "sender@postmarkapp.com"
       to "@postmarkapp.com"
-      delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST"
+      delivery_method Mail::Postmark, :api_key => "POSTMARK_API_TEST", :http_open_timeout => 15
     end
   }
 
