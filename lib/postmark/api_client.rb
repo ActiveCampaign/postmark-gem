@@ -73,13 +73,11 @@ module Postmark
     end
 
     def get_message(id, options = {})
-      path, params = extract_messages_path_and_params(options)
-      format_response http_client.get("#{path}/#{id}/details", params)
+      get_for_message('details', id, options)
     end
 
     def dump_message(id, options = {})
-      path, params = extract_messages_path_and_params(options)
-      format_response http_client.get("#{path}/#{id}/dump", params)
+      get_for_message('dump', id, options)
     end
 
     def get_bounces(options = {})
@@ -151,6 +149,11 @@ module Postmark
       [yield, nil]
     rescue DeliveryError => e
       [e.full_response || {}, e]
+    end
+
+    def get_for_message(action, id, options = {})
+      path, params = extract_messages_path_and_params(options)
+      format_response http_client.get("#{path}/#{id}/#{action}", params)
     end
 
     def format_response(response, compatible = false)
