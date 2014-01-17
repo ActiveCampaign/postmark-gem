@@ -83,17 +83,23 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 
 You can add
 [attachments](http://developer.postmarkapp.com/developer-build.html#attachments)
-to your messages. Keep in mind message size limit (contents and attachment) is currently 10 MB.
+to your messages. Keep in mind message size limit (contents and attachment) is currently 10 MB. For inline attachments it is possible to specify content IDs via the `content_id` attribute.
 
 ``` ruby
 client.deliver(from: 'leonard@bigbangtheory.com',
                to: 'Dr. Sheldon Cooper <sheldon@bigbangtheory.com>',
                subject: 'Have you seen these pictures of yours?',
                text_body: 'You look like a real geek!',
+               html_body: '<p>You look like a real geek!</p><center><img src="cid:42"></center>',
                attachments: [File.open('1.jpeg'),
                              {name: 'sheldon.jpeg',
                               content: [File.read('2.jpeg')].pack('m'),
-                              content_type: 'image/jpeg'}])
+                              content_type: 'image/jpeg'},
+                             {name: 'logo.png',
+                              content: [File.read('1.png')].pack('m'),
+                              content_type: 'image/png',
+                              content_id: 'cid:42'}])
+
 # => {:to=>"Dr. Sheldon Cooper <sheldon@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:56:12.2828813-04:00", :message_id=>"8ec0d283-8b93-xxxx-9d65-241d1777cf0f", :error_code=>0, :message=>"OK"}
 ```
 
