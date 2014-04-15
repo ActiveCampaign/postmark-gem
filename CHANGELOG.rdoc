@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.1.1
+
+* Fixed inbound support for the Postmark Messages API.
+
 == 1.1.0
 
 * Added support for inline attachments when using the Mail gem.
