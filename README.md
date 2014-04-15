@@ -600,24 +600,6 @@ Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl are also suppor
 * Commit, do not mess with rakefile, version, or history.
 * Send me a pull request. Bonus points for topic branches.
 
-## Authors & Contributors
-
-* Petyo Ivanov
-* Ilya Sabanin
-* Artem Chistyakov
-* Hristo Deshev
-* Dmitry Sabanin
-* Randy Schmidt
-* Chris Williams
-* Aitor García Rey
-* James Miller
-* Yury Batenko
-* Pavel Maksimenko
-* Anton Astashov
-* Marcus Brito
-* Tyler Hunt
-* Russell Bevers
-
 ## Copyright
 
 Copyright © 2014 Wildbit LLC. See LICENSE for details.
