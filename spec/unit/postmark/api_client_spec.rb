@@ -172,9 +172,9 @@ describe Postmark::ApiClient do
 
   describe '#get_messages' do
     let(:http_client) { subject.http_client }
-    let(:response) { {"TotalCount" => 1, "Messages" => [{}]} }
 
     context 'given outbound' do
+      let(:response) { {"TotalCount" => 1, "Messages" => [{}]} }
 
       it 'requests data at /messages/outbound' do
         http_client.should_receive(:get).
@@ -186,6 +186,7 @@ describe Postmark::ApiClient do
     end
 
     context 'given inbound' do
+      let(:response) { {"TotalCount" => 1, "InboundMessages" => [{}]} }
 
       it 'requests data at /messages/inbound' do
         http_client.should_receive(:get).

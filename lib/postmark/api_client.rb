@@ -69,7 +69,8 @@ module Postmark
       path, params = extract_messages_path_and_params(options)
       params[:offset] ||= 0
       params[:count] ||= 50
-      format_response http_client.get(path, params)['Messages']
+      messages_key = options[:inbound] ? 'InboundMessages' : 'Messages'
+      format_response http_client.get(path, params)[messages_key]
     end
 
     def get_message(id, options = {})
