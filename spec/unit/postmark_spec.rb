@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Postmark do
-  let(:api_key) { mock }
-  let(:secure) { mock }
-  let(:proxy_host) { mock }
-  let(:proxy_port) { mock }
-  let(:proxy_user) { mock }
-  let(:proxy_pass) { mock }
-  let(:host) { mock }
-  let(:port) { mock }
-  let(:path_prefix) { mock }
-  let(:max_retries) { mock }
+  let(:api_key) { double }
+  let(:secure) { double }
+  let(:proxy_host) { double }
+  let(:proxy_port) { double }
+  let(:proxy_user) { double }
+  let(:proxy_pass) { double }
+  let(:host) { double }
+  let(:port) { double }
+  let(:path_prefix) { double }
+  let(:max_retries) { double }
 
   before do
     subject.api_key = api_key
@@ -83,7 +83,7 @@ describe Postmark do
   end
 
   describe ".api_client" do
-    let(:api_client) { mock }
+    let(:api_client) { double }
 
     context "when shared client instance already exists" do
 
@@ -117,8 +117,8 @@ describe Postmark do
   end
 
   describe ".deliver_message" do
-    let(:api_client) { mock }
-    let(:message) { mock }
+    let(:api_client) { double }
+    let(:message) { double }
 
     before do
       subject.api_client = api_client
@@ -136,8 +136,8 @@ describe Postmark do
   end
 
   describe ".deliver_messages" do
-    let(:api_client) { mock }
-    let(:message) { mock }
+    let(:api_client) { double }
+    let(:message) { double }
 
     before do
       subject.api_client = api_client
@@ -150,7 +150,7 @@ describe Postmark do
   end
 
   describe ".delivery_stats" do
-    let(:api_client) { mock }
+    let(:api_client) { double }
 
     before do
       subject.api_client = api_client

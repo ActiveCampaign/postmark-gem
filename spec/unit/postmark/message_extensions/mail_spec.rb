@@ -75,7 +75,7 @@ describe Mail::Message do
   end
 
   describe "#postmark_attachments" do
-    let(:attached_file) { mock("file") }
+    let(:attached_file) { double("file") }
     let(:attached_hash) { {'Name' => 'picture.jpeg',
                            'ContentType' => 'image/jpeg'} }
     let(:exported_file) { {'Name' => 'file.jpeg',
