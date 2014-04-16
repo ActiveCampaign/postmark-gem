@@ -3,7 +3,9 @@ require 'spec_helper'
 describe "Sending messages as Ruby hashes with Postmark::ApiClient" do
   let(:postmark_message_id_format) { /\w{8}\-\w{4}-\w{4}-\w{4}-\w{12}/ }
   let(:api_client) {
-    Postmark::ApiClient.new('POSTMARK_API_TEST', :http_open_timeout => 15)
+    Postmark::ApiClient.new('POSTMARK_API_TEST',
+                            :http_open_timeout => 15,
+                            :http_read_timeout => 15)
   }
 
   let(:message) {
