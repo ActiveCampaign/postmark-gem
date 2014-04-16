@@ -107,7 +107,7 @@ module Postmark
 
     def update_server_info(attributes = {})
       data = HashHelper.to_postmark(attributes)
-      format_response http_client.post("server", serialize(data))
+      format_response http_client.put("server", serialize(data))
     end
 
     def max_batch_size

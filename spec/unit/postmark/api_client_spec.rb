@@ -328,7 +328,7 @@ describe Postmark::ApiClient do
     let(:update) { {:smtp_api_activated => false} }
 
     it 'updates server info in Postmark and converts it to ruby format' do
-      http_client.should_receive(:post).with('server', anything) { response }
+      http_client.should_receive(:put).with('server', anything) { response }
       subject.update_server_info(update)[:smtp_api_activated].should be_false
     end
   end
