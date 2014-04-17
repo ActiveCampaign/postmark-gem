@@ -28,11 +28,13 @@ RSpec.configure do |config|
   }
 
   config.filter_run_excluding :skip_ruby_version => lambda { |version|
-    RUBY_VERSION.to_s =~ /^#{version.to_s}/
+    versions = [*version]
+    versions.any? { |v| RUBY_VERSION.to_s =~ /^#{v.to_s}/ }
   }
 
   config.filter_run_excluding :exclusive_for_ruby_version => lambda { |version|
-    !(RUBY_VERSION.to_s =~ /^#{version.to_s}/)
+    versions = [*version]
+    versions.all? { |v| !(RUBY_VERSION.to_s =~ /^#{v.to_s}/) }
   }
 
   config.before(:each) do
