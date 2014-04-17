@@ -172,9 +172,12 @@ describe Postmark::ApiClient do
 
   describe '#messages' do
 
-    let(:response) { {'TotalCount' => 5} }
-
     context 'given outbound' do
+
+      let(:response) {
+        {'TotalCount' => 5,
+         'Messages' => [{}].cycle(5).to_a}
+      }
 
       it 'returns an enumerator' do
         expect(subject.messages).to be_kind_of(Enumerable)
@@ -183,12 +186,17 @@ describe Postmark::ApiClient do
       it 'loads outbound messages' do
         allow(subject.http_client).to receive(:get).
             with('messages/outbound', an_instance_of(Hash)).and_return(response)
-        expect(subject.messages.size).to eq(5)
+        expect(subject.messages.count).to eq(5)
       end
 
     end
 
     context 'given inbound' do
+
+      let(:response) {
+        {'TotalCount' => 5,
+         'InboundMessages' => [{}].cycle(5).to_a}
+      }
 
       it 'returns an enumerator' do
         expect(subject.messages(:inbound => true)).to be_kind_of(Enumerable)
@@ -197,7 +205,7 @@ describe Postmark::ApiClient do
       it 'loads inbound messages' do
         allow(subject.http_client).to receive(:get).
             with('messages/inbound', an_instance_of(Hash)).and_return(response)
-        expect(subject.messages(:inbound => true).size).to eq(5)
+        expect(subject.messages(:inbound => true).count).to eq(5)
       end
 
     end
