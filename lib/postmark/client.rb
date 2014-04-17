@@ -1,3 +1,5 @@
+require 'enumerator'
+
 module Postmark
   class Client
     attr_reader :http_client, :max_retries
@@ -43,6 +45,36 @@ module Postmark
       else
         Postmark::HashHelper.to_ruby(response, compatible)
       end
+    end
+
+    def find_each(path, name, options)
+      if block_given?
+        options = options.dup
+        i, total_count = [0, 1]
+
+        while i < total_count
+          options[:offset] = i
+          total_count, collection = load_batch(path, name, options)
+          collection.each { |e| yield e }
+          i += collection.size
+        end
+      else
+        enum_for(:find_each, path, name, options) do
+          get_resource_count(path, options)
+        end
+      end
+    end
+
+    def get_resource_count(path, options = {})
+      total_count, _ = load_batch(path, nil, options.merge(:count => 0))
+      total_count
+    end
+
+    def load_batch(path, name, options)
+      options[:offset] ||= 0
+      options[:count] ||= 30
+      response = http_client.get(path, options)
+      [response['TotalCount'], format_response(response[name])]
     end
 
   end

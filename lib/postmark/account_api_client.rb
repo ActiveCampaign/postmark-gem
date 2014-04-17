@@ -7,12 +7,20 @@ module Postmark
       super
     end
 
+    def senders(options = {})
+      find_each('senders', 'SenderSignatures', options)
+    end
+    alias_method :signatures, :senders
+
     def get_senders(options = {})
-      options[:offset] ||= 0
-      options[:count] ||= 10
-      format_response http_client.get('senders', options)['SenderSignatures']
+      load_batch('senders', 'SenderSignatures', options).last
     end
     alias_method :get_signatures, :get_senders
+
+    def get_senders_count(options = {})
+      get_resource_count('senders', options)
+    end
+    alias_method :get_signatures_count, :get_senders_count
 
     def get_sender(id)
       format_response http_client.get("senders/#{id.to_i}")
@@ -53,10 +61,16 @@ module Postmark
     end
     alias_method :delete_signature, :delete_sender
 
+    def servers(options = {})
+      find_each('servers', 'Servers', options)
+    end
+
     def get_servers(options = {})
-      options[:offset] ||= 0
-      options[:count] ||= 10
-      format_response http_client.get('servers', options)['Servers']
+      load_batch('servers', 'Servers', options).last
+    end
+
+    def get_servers_count(options = {})
+      get_resource_count('servers', options)
     end
 
     def get_server(id)

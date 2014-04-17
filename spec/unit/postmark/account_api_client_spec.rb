@@ -22,6 +22,46 @@ describe Postmark::AccountApiClient do
       expect(auth_header).to eq('X-Postmark-Account-Token')
     end
 
+    describe '#senders' do
+
+      let(:response) {
+        {
+          'TotalCount' => 10,
+          'SenderSignatures' => [{'Foo' => 'bar'}, {'Bar' => 'foo'}]
+        }
+      }
+
+      it 'is aliased as #signatures' do
+        expect(subject).to respond_to(:signatures)
+        expect(subject).to respond_to(:signatures).with(1).argument
+      end
+
+      it 'returns an enumerator' do
+        expect(subject.senders).to be_kind_of(Enumerable)
+      end
+
+      it 'can be iterated' do
+        collection = [{:foo => 'bar'}, {:bar => 'foo'}].cycle(5)
+        allow(subject.http_client).
+            to receive(:get).exactly(5).times.and_return(response)
+        expect { |b| subject.senders(:count => 2).each(&b) }.
+            to yield_successive_args(*collection)
+      end
+
+      it 'lazily calculates the collection size', :skip_ruby_version => '1.8.7' do
+        allow(subject.http_client).
+            to receive(:get).exactly(1).times.and_return(response)
+        expect(subject.senders.size).to eq(10)
+      end
+
+      it 'iterates over the collection to find its size', :exclusive_for_ruby_version => '1.8.7' do
+        allow(subject.http_client).
+            to receive(:get).exactly(5).times.and_return(response)
+        expect(subject.senders(:count => 2).count).to eq(10)
+      end
+
+    end
+
     describe '#get_senders' do
 
       let(:response) {
@@ -44,7 +84,7 @@ describe Postmark::AccountApiClient do
 
       it 'performs a GET request to /senders endpoint' do
         allow(subject.http_client).to receive(:get).
-            with('senders', :offset => 0, :count => 10).
+            with('senders', :offset => 0, :count => 30).
             and_return(response)
         subject.get_senders
       end
@@ -57,9 +97,26 @@ describe Postmark::AccountApiClient do
 
       it 'accepts offset and count options' do
         allow(subject.http_client).to receive(:get).
-            with('senders', :offset => 10, :count => 30).
+            with('senders', :offset => 10, :count => 42).
             and_return(response)
-        subject.get_senders(:offset => 10, :count => 30)
+        subject.get_senders(:offset => 10, :count => 42)
+      end
+
+    end
+
+    describe '#get_senders_count' do
+
+      let(:response) { {'TotalCount' => 42} }
+
+      it 'is aliased as #get_signatures_count' do
+        expect(subject).to respond_to(:get_signatures_count)
+        expect(subject).to respond_to(:get_signatures_count).with(1).argument
+      end
+
+      it 'returns a total number of senders' do
+        allow(subject.http_client).to receive(:get).
+            with('senders', an_instance_of(Hash)).and_return(response)
+        expect(subject.get_senders_count).to eq(42)
       end
 
     end
@@ -282,6 +339,41 @@ describe Postmark::AccountApiClient do
 
     end
 
+    describe '#servers' do
+
+      let(:response) {
+        {
+          'TotalCount' => 10,
+          'Servers' => [{'Foo' => 'bar'}, {'Bar' => 'foo'}]
+        }
+      }
+
+      it 'returns an enumerator' do
+        expect(subject.servers).to be_kind_of(Enumerable)
+      end
+
+      it 'can be iterated' do
+        collection = [{:foo => 'bar'}, {:bar => 'foo'}].cycle(5)
+        allow(subject.http_client).
+            to receive(:get).exactly(5).times.and_return(response)
+        expect { |b| subject.servers(:count => 2).each(&b) }.
+            to yield_successive_args(*collection)
+      end
+
+      it 'lazily calculates the collection size', :skip_ruby_version => '1.8.7' do
+        allow(subject.http_client).
+            to receive(:get).exactly(1).times.and_return(response)
+        expect(subject.servers.size).to eq(10)
+      end
+
+      it 'iterates over the collection to find its size', :exclusive_for_ruby_version => '1.8.7' do
+        allow(subject.http_client).
+            to receive(:get).exactly(5).times.and_return(response)
+        expect(subject.servers(:count => 2).count).to eq(10)
+      end
+
+    end
+
     describe '#get_servers' do
 
       let(:response) {
@@ -359,6 +451,18 @@ describe Postmark::AccountApiClient do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_server(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+
+    end
+
+    describe '#get_servers_count' do
+
+      let(:response) { {'TotalCount' => 42} }
+
+      it 'returns a total number of servers' do
+        allow(subject.http_client).to receive(:get).
+            with('servers', an_instance_of(Hash)).and_return(response)
+        expect(subject.get_servers_count).to eq(42)
       end
 
     end
