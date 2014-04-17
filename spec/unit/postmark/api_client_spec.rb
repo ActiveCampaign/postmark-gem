@@ -170,6 +170,40 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#messages' do
+
+    let(:response) { {'TotalCount' => 5} }
+
+    context 'given outbound' do
+
+      it 'returns an enumerator' do
+        expect(subject.messages).to be_kind_of(Enumerable)
+      end
+
+      it 'loads outbound messages' do
+        allow(subject.http_client).to receive(:get).
+            with('messages/outbound', an_instance_of(Hash)).and_return(response)
+        expect(subject.messages.size).to eq(5)
+      end
+
+    end
+
+    context 'given inbound' do
+
+      it 'returns an enumerator' do
+        expect(subject.messages(:inbound => true)).to be_kind_of(Enumerable)
+      end
+
+      it 'loads inbound messages' do
+        allow(subject.http_client).to receive(:get).
+            with('messages/inbound', an_instance_of(Hash)).and_return(response)
+        expect(subject.messages(:inbound => true).size).to eq(5)
+      end
+
+    end
+
+  end
+
   describe '#get_messages' do
     let(:http_client) { subject.http_client }
 
@@ -197,6 +231,33 @@ describe Postmark::ApiClient do
       end
 
     end
+  end
+
+  describe '#get_messages_count' do
+
+    let(:response) { {'TotalCount' => 42} }
+
+    context 'given outbound' do
+
+      it 'requests and returns outbound messages count' do
+        allow(subject.http_client).to receive(:get).
+            with('messages/outbound', an_instance_of(Hash)).and_return(response)
+        expect(subject.get_messages_count).to eq(42)
+        expect(subject.get_messages_count(:inbound => false)).to eq(42)
+      end
+
+    end
+
+    context 'given inbound' do
+
+      it 'requests and returns inbound messages count' do
+        allow(subject.http_client).to receive(:get).
+            with('messages/inbound', an_instance_of(Hash)).and_return(response)
+        expect(subject.get_messages_count(:inbound => true)).to eq(42)
+      end
+
+    end
+
   end
 
   describe '#get_message' do

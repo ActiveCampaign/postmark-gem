@@ -61,12 +61,19 @@ module Postmark
       response
     end
 
+    def messages(options = {})
+      path, name, params = extract_messages_path_and_params(options)
+      find_each(path, name, params)
+    end
+
     def get_messages(options = {})
-      path, params = extract_messages_path_and_params(options)
-      params[:offset] ||= 0
-      params[:count] ||= 50
-      messages_key = options[:inbound] ? 'InboundMessages' : 'Messages'
-      format_response http_client.get(path, params)[messages_key]
+      path, name, params = extract_messages_path_and_params(options)
+      load_batch(path, name, params).last
+    end
+
+    def get_messages_count(options = {})
+      path, _, params = extract_messages_path_and_params(options)
+      get_resource_count(path, params)
     end
 
     def get_message(id, options = {})
@@ -124,14 +131,15 @@ module Postmark
     end
 
     def get_for_message(action, id, options = {})
-      path, params = extract_messages_path_and_params(options)
+      path, _, params = extract_messages_path_and_params(options)
       format_response http_client.get("#{path}/#{id}/#{action}", params)
     end
 
     def extract_messages_path_and_params(options = {})
       options = options.dup
+      messages_key = options[:inbound] ? 'InboundMessages' : 'Messages'
       path = options.delete(:inbound) ? 'messages/inbound' : 'messages/outbound'
-      [path, options]
+      [path, messages_key, options]
     end
 
   end
