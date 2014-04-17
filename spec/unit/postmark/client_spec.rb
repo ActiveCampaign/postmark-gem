@@ -30,15 +30,16 @@ describe Postmark::Client do
             to yield_successive_args(*collection)
       end
 
+      # Only Ruby >= 2.0.0 supports Enumerator#size
       it 'lazily calculates the collection size',
-          :skip_ruby_version => '1.8.7' do
+        :skip_ruby_version => ['1.8.7', '1.9'] do
         allow(subject.http_client).
             to receive(:get).exactly(1).times.and_return(response)
-        expect(subject.find_each(path, name, :count => 2).size).to eq(10)
+        collection = subject.find_each(path, name, :count => 2)
+        expect(collection.size).to eq(10)
       end
 
-      it 'iterates over the collection to find its size',
-          :exclusive_for_ruby_version => '1.8.7' do
+      it 'iterates over the collection to count it' do
         allow(subject.http_client).
             to receive(:get).exactly(5).times.and_return(response)
         expect(subject.find_each(path, name, :count => 2).count).to eq(10)
