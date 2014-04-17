@@ -6,9 +6,10 @@ module Postmark
     attr_accessor :api_key
     attr_reader :http, :secure, :proxy_host, :proxy_port, :proxy_user,
                 :proxy_pass, :host, :port, :path_prefix,
-                :http_open_timeout, :http_read_timeout
+                :http_open_timeout, :http_read_timeout, :auth_header_name
 
     DEFAULTS = {
+      :auth_header_name => 'X-Postmark-Server-Token',
       :host => 'api.postmarkapp.com',
       :secure => false,
       :path_prefix => '/',
@@ -33,6 +34,10 @@ module Postmark
 
     def get(path, query = {})
       do_request { |client| client.get(url_path(path + to_query_string(query)), headers) }
+    end
+
+    def delete(path, query = {})
+      do_request { |client| client.delete(url_path(path + to_query_string(query)), headers) }
     end
 
     protected
@@ -74,7 +79,7 @@ module Postmark
     end
 
     def headers
-      HEADERS.merge({ "X-Postmark-Server-Token" => self.api_key.to_s })
+      HEADERS.merge(self.auth_header_name => self.api_key.to_s)
     end
 
     def url_path(path)

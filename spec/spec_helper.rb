@@ -27,6 +27,16 @@ RSpec.configure do |config|
     RUBY_PLATFORM.to_s =~ /^#{platform.to_s}/
   }
 
+  config.filter_run_excluding :skip_ruby_version => lambda { |version|
+    versions = [*version]
+    versions.any? { |v| RUBY_VERSION.to_s =~ /^#{v.to_s}/ }
+  }
+
+  config.filter_run_excluding :exclusive_for_ruby_version => lambda { |version|
+    versions = [*version]
+    versions.all? { |v| !(RUBY_VERSION.to_s =~ /^#{v.to_s}/) }
+  }
+
   config.before(:each) do
     %w(api_client response_parser_class secure api_key proxy_host proxy_port
        proxy_user proxy_pass host port path_prefix http_open_timeout

@@ -1,15 +1,11 @@
 module Postmark
-  class ApiClient
-    attr_reader :http_client, :max_retries
-    attr_writer :max_batch_size
+  class ApiClient < Client
+    attr_accessor :max_batch_size
 
     def initialize(api_key, options = {})
-      @max_retries = options.delete(:max_retries) || 3
-      @http_client = HttpClient.new(api_key, options)
-    end
-
-    def api_key=(api_key)
-      http_client.api_key = api_key
+      options = options.dup
+      @max_batch_size = options.delete(:max_batch_size) || 500
+      super
     end
 
     def deliver(message_hash = {})
@@ -65,12 +61,19 @@ module Postmark
       response
     end
 
+    def messages(options = {})
+      path, name, params = extract_messages_path_and_params(options)
+      find_each(path, name, params)
+    end
+
     def get_messages(options = {})
-      path, params = extract_messages_path_and_params(options)
-      params[:offset] ||= 0
-      params[:count] ||= 50
-      messages_key = options[:inbound] ? 'InboundMessages' : 'Messages'
-      format_response http_client.get(path, params)[messages_key]
+      path, name, params = extract_messages_path_and_params(options)
+      load_batch(path, name, params).last
+    end
+
+    def get_messages_count(options = {})
+      path, _, params = extract_messages_path_and_params(options)
+      get_resource_count(path, params)
     end
 
     def get_message(id, options = {})
@@ -110,22 +113,7 @@ module Postmark
       format_response http_client.put("server", serialize(data))
     end
 
-    def max_batch_size
-      @max_batch_size ||= 500
-    end
-
     protected
-
-    def with_retries
-      yield
-    rescue DeliveryError
-      retries = retries ? retries + 1 : 1
-      if retries < self.max_retries
-        retry
-      else
-        raise
-      end
-    end
 
     def in_batches(messages)
       r = messages.each_slice(max_batch_size).each_with_index.map do |batch, i|
@@ -142,35 +130,16 @@ module Postmark
       message.postmark_response = response
     end
 
-    def serialize(data)
-      Postmark::Json.encode(data)
-    end
-
-    def take_response_of
-      [yield, nil]
-    rescue DeliveryError => e
-      [e.full_response || {}, e]
-    end
-
     def get_for_message(action, id, options = {})
-      path, params = extract_messages_path_and_params(options)
+      path, _, params = extract_messages_path_and_params(options)
       format_response http_client.get("#{path}/#{id}/#{action}", params)
-    end
-
-    def format_response(response, compatible = false)
-      return {} unless response
-
-      if response.kind_of? Array
-        response.map { |entry| Postmark::HashHelper.to_ruby(entry, compatible) }
-      else
-        Postmark::HashHelper.to_ruby(response, compatible)
-      end
     end
 
     def extract_messages_path_and_params(options = {})
       options = options.dup
+      messages_key = options[:inbound] ? 'InboundMessages' : 'Messages'
       path = options.delete(:inbound) ? 'messages/inbound' : 'messages/outbound'
-      [path, options]
+      [path, messages_key, options]
     end
 
   end

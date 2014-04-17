@@ -4,7 +4,7 @@ source "http://rubygems.org"
 gemspec
 
 group :test do
-  gem 'rspec', '~> 2.13.0'
+  gem 'rspec', '~> 2.14.0'
   gem 'fakeweb'
   gem 'fakeweb-matcher'
 end

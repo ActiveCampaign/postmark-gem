@@ -1,6 +1,8 @@
 env:
   global:
-    secure: MV+nKlzuLJ5CEoEfCmzwRMlnBOudgB1fTxBYI6aDV9vUkwYRzkcpCPS+Ik6jdCzNEFK+L2dTfv/IfDOvxnK3cZpMi1sp0po04m3Pg+ZhzYoANS1KY6V4sFIFaPtx+x2DVStxjFch4WQV8ktzdoUI0POlCdJrD6GYXLh1aTgbAGU=
+    - secure: "fo5ce1ABn12rZODstLzMnM14Ma21CUpYkcn9EnRtsPlvpFt/71hTPtP5pYrhnTTGUxVk6JPYGSUC58fXMa9zJKyMZv1PKokiGuGw4ktcsn+fX/pvEYxmsuQx0e+GbZ6psCHneIbaADEjUeqR/XJUBJDFpDoXKGwZuJW05b8Hxbc="
+    - secure: "YGu/kwvIbTKQ9/ox2MGJ3qVLU78ccqi+HLgkXYBxhjfOFTgTemFizMgZYRDmwGKnOB1XVnKj0mZUOuMb66DjZjRn9MK6ifxp6NjPb82AKkLALFkMKUm0rUqz2PeiUYSPDyta3pQfyTZTvN/XjFXjKvInVz9onKsoPUmPGh2AxNw="
+    - secure: "Cb54rQW9L8XAOPLe8x+DNTsF0g13QjSRhzCUq3U8vHlM7UmsHzIRA0GvAomFCq5bp5wrUVVQKD+6rQpqGLBdTG6VxKvPbomS+nVIukjQiOqnqtjaZHcSuK5RnJ+4mJSKHV/W1Wq7NbdvmQxpzURXTJuuLqib5Lwd4Jt5cWqX05w="
 language: ruby
 rvm:
 - 1.8.7

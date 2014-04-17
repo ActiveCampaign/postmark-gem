@@ -85,7 +85,7 @@ describe Postmark::Bounce do
 
   describe "#dump" do
 
-    let(:bounce_body) { mock }
+    let(:bounce_body) { double }
     let(:response) { {:body => bounce_body} }
     let(:api_client) { Postmark.api_client }
 
