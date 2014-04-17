@@ -26,8 +26,7 @@ describe Postmark::AccountApiClient do
 
       let(:response) {
         {
-          'TotalCount' => 10,
-          'SenderSignatures' => [{'Foo' => 'bar'}, {'Bar' => 'foo'}]
+          'TotalCount' => 10, 'SenderSignatures' => [{}, {}]
         }
       }
 
@@ -40,24 +39,10 @@ describe Postmark::AccountApiClient do
         expect(subject.senders).to be_kind_of(Enumerable)
       end
 
-      it 'can be iterated' do
-        collection = [{:foo => 'bar'}, {:bar => 'foo'}].cycle(5)
-        allow(subject.http_client).
-            to receive(:get).exactly(5).times.and_return(response)
-        expect { |b| subject.senders(:count => 2).each(&b) }.
-            to yield_successive_args(*collection)
-      end
-
-      it 'lazily calculates the collection size', :skip_ruby_version => '1.8.7' do
-        allow(subject.http_client).
-            to receive(:get).exactly(1).times.and_return(response)
-        expect(subject.senders.size).to eq(10)
-      end
-
-      it 'iterates over the collection to find its size', :exclusive_for_ruby_version => '1.8.7' do
-        allow(subject.http_client).
-            to receive(:get).exactly(5).times.and_return(response)
-        expect(subject.senders(:count => 2).count).to eq(10)
+      it 'lazily loads senders' do
+        allow(subject.http_client).to receive(:get).
+            with('senders', an_instance_of(Hash)).and_return(response)
+        subject.senders.take(1000)
       end
 
     end
@@ -341,35 +326,16 @@ describe Postmark::AccountApiClient do
 
     describe '#servers' do
 
-      let(:response) {
-        {
-          'TotalCount' => 10,
-          'Servers' => [{'Foo' => 'bar'}, {'Bar' => 'foo'}]
-        }
-      }
+      let(:response) { {'TotalCount' => 10, 'Servers' => [{}, {}]} }
 
       it 'returns an enumerator' do
         expect(subject.servers).to be_kind_of(Enumerable)
       end
 
-      it 'can be iterated' do
-        collection = [{:foo => 'bar'}, {:bar => 'foo'}].cycle(5)
-        allow(subject.http_client).
-            to receive(:get).exactly(5).times.and_return(response)
-        expect { |b| subject.servers(:count => 2).each(&b) }.
-            to yield_successive_args(*collection)
-      end
-
-      it 'lazily calculates the collection size', :skip_ruby_version => '1.8.7' do
-        allow(subject.http_client).
-            to receive(:get).exactly(1).times.and_return(response)
-        expect(subject.servers.size).to eq(10)
-      end
-
-      it 'iterates over the collection to find its size', :exclusive_for_ruby_version => '1.8.7' do
-        allow(subject.http_client).
-            to receive(:get).exactly(5).times.and_return(response)
-        expect(subject.servers(:count => 2).count).to eq(10)
+      it 'lazily loads servers' do
+        allow(subject.http_client).to receive(:get).
+            with('servers', an_instance_of(Hash)).and_return(response)
+        subject.servers.take(100)
       end
 
     end

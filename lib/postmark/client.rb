@@ -14,6 +14,24 @@ module Postmark
       http_client.api_key = api_key
     end
 
+    def find_each(path, name, options = {})
+      if block_given?
+        options = options.dup
+        i, total_count = [0, 1]
+
+        while i < total_count
+          options[:offset] = i
+          total_count, collection = load_batch(path, name, options)
+          collection.each { |e| yield e }
+          i += collection.size
+        end
+      else
+        enum_for(:find_each, path, name, options) do
+          get_resource_count(path, options)
+        end
+      end
+    end
+
     protected
 
     def with_retries
@@ -44,24 +62,6 @@ module Postmark
         response.map { |entry| Postmark::HashHelper.to_ruby(entry, compatible) }
       else
         Postmark::HashHelper.to_ruby(response, compatible)
-      end
-    end
-
-    def find_each(path, name, options)
-      if block_given?
-        options = options.dup
-        i, total_count = [0, 1]
-
-        while i < total_count
-          options[:offset] = i
-          total_count, collection = load_batch(path, name, options)
-          collection.each { |e| yield e }
-          i += collection.size
-        end
-      else
-        enum_for(:find_each, path, name, options) do
-          get_resource_count(path, options)
-        end
       end
     end
 
