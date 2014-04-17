@@ -9,15 +9,23 @@ describe 'Account API client usage' do
   let(:unique_from_email) { ENV['POSTMARK_CI_RECIPIENT'].gsub(/(\+.+)?@/, "+#{unique_token}@") }
 
   it 'can be used to manage senders' do
-    # create
-    new_sender = subject.create_sender(:name => 'Integration Test',
-                                       :from_email => unique_from_email)
+    new_sender = nil
+
+    # create & count
+    expect {
+      new_sender = subject.create_sender(:name => 'Integration Test',
+                                         :from_email => unique_from_email)
+    }.to change { subject.get_senders_count }.by(1)
+
     # get
     expect(subject.get_sender(new_sender[:id])[:id]).to eq(new_sender[:id])
 
     # list
     senders = subject.get_senders(:count => 50)
     expect(senders.map { |s| s[:id] }).to include(new_sender[:id])
+
+    # collection
+    expect(subject.senders.map { |s| s[:id] }).to include(new_sender[:id])
 
     # update
     updated_sender = subject.update_sender(new_sender[:id], :name => 'New Name')
@@ -40,9 +48,13 @@ describe 'Account API client usage' do
   end
 
   it 'can be used to manage servers' do
-    # create
-    new_server = subject.create_server(:name => "server-#{unique_token}",
-                                       :color => 'red')
+    new_server = nil
+
+    # create & count
+    expect {
+      new_server = subject.create_server(:name => "server-#{unique_token}",
+                                         :color => 'red')
+    }.to change { subject.get_servers_count }.by(1)
 
     # get
     expect(subject.get_server(new_server[:id])[:id]).to eq(new_server[:id])
@@ -50,6 +62,9 @@ describe 'Account API client usage' do
     # list
     servers = subject.get_servers(:count => 50)
     expect(servers.map { |s| s[:id] }).to include(new_server[:id])
+
+    # collection
+    expect(subject.servers.map { |s| s[:id] }).to include(new_server[:id])
 
     # update
     updated_server = subject.update_server(new_server[:id], :color => 'blue')
