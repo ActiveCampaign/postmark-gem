@@ -563,7 +563,7 @@ message.message_id
 
 ## The Account API Support
 
-Postmark allows you to automatically scale your sending infrastructure with the Account API. Learn how in the [Account API Support](wiki/The-Account-API-Support) guide.
+Postmark allows you to automatically scale your sending infrastructure with the Account API. Learn how in the [Account API Support](https://github.com/wildbit/postmark-gem/wiki/The-Account-API-Support) guide.
 
 ## ActiveModel-like Interface For Bounces
 
