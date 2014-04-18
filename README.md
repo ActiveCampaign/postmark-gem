@@ -252,6 +252,13 @@ client.dump_message('41f03342-xxxx-xxxx-xxxx-558caedb5e82')
 # => {:body=>"..."}
 ```
 
+There is also a handy `#messages` enumerator allowing you to easily manipulate big data arrays.
+
+``` ruby
+client.messages.lazy.select { |m| DateTime.parse(m[:received_at]).day.even? }.first(5)
+# => [{...}, {...}]
+```
+
 You can get more details about the underlying endpoints and parameters they
 accept in [Postmark Developer Docs](http://developer.postmarkapp.com/developer-messages.html).
 
@@ -284,6 +291,13 @@ Use `#dump_bounce` to get the full bounce body:
 ``` ruby
 client.dump_bounce(654714902)
 # => {:body=>"Return-Path: <>\r\nReceived: from m1.mtasv.net (74.205.19.136) by sc-ord-mail2.mtasv.net id hcjov61jk5ko for <pm_bounces@pm.mtasv.net>; Wed, 10 Apr 2013 01:00:35 -0400 (envelope-from <>)\r\nDate: Wed, 10 Apr 2013 01:00:48 -0400\r\nFrom: postmaster@m1.mtasv.net\r\n..."}
+```
+
+There is a `#bounces` enumerator to take the underlying complexity off of your shoulders. Use it to iterate over all of your bounces.
+
+``` ruby
+client.bounces.first(5)
+# => [{...}, {...}]
 ```
 
 You can activate email addresses that were disabled due to a hard bounce by using `#activate_bounce`:
@@ -547,7 +561,13 @@ message.message_id
 
 # Exploring Other Gem Features
 
-To provide an interface similar to ActiveRecord for bounces, the Postmark gem adds
+## The Account API Support
+
+Postmark allows you to automatically scale your sending infrastructure with the Account API. Learn how in the [Account API Support](wiki/The-Account-API-Support) guide.
+
+## ActiveModel-like Interface For Bounces
+
+To provide an interface similar to ActiveModel for bounces, the Postmark gem adds
 `Postmark::Bounce` class. This class uses the shared `Postmark::ApiClient` instance
 configured through the Postmark module.
 
@@ -595,8 +615,7 @@ Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl are also suppor
 
 * Fork the project.
 * Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
+* Add tests for it. This is important so I don't break it in a future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
 * Send me a pull request. Bonus points for topic branches.
 

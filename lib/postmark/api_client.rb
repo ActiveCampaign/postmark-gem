@@ -84,8 +84,12 @@ module Postmark
       get_for_message('dump', id, options)
     end
 
+    def bounces(options = {})
+      find_each('bounces', 'Bounces', options)
+    end
+
     def get_bounces(options = {})
-      format_response http_client.get("bounces", options)["Bounces"]
+      load_batch('bounces', 'Bounces', options)
     end
 
     def get_bounced_tags

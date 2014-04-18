@@ -66,7 +66,8 @@ module Postmark
     end
 
     def get_resource_count(path, options = {})
-      total_count, _ = load_batch(path, nil, options.merge(:count => 0))
+      # At this point Postmark API returns 0 as total if you request 0 documents
+      total_count, _ = load_batch(path, nil, options.merge(:count => 1))
       total_count
     end
 
