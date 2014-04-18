@@ -324,6 +324,21 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#bounces' do
+
+    it 'returns an Enumerator' do
+      expect(subject.bounces).to be_kind_of(Enumerable)
+    end
+
+    it 'requests data at /bounces' do
+      allow(subject.http_client).to receive(:get).
+          with('bounces', an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Bounces' => [{}])
+      expect(subject.bounces.first(5).count).to eq(1)
+    end
+
+  end
+
   describe "#get_bounces" do
     let(:http_client) { subject.http_client }
     let(:options) { {:foo => :bar} }
