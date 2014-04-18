@@ -1,5 +1,10 @@
 = Changelog
 
+== 1.2.0
+
+* Added support for the Postmark Account API.
+* Added #bounces and #messages methods to Postmark::ApiClient returning Ruby enumerators.
+
 == 1.1.2
 
 * Fixed HTTP verb used to update server info from POST to PUT to support the breaking change in the API.
