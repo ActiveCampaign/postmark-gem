@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.2.1
+
+* Fixed a bug in Postmark::ApiClient causing #get_bounces to return unexpected value.
+
 == 1.2.0
 
 * Added support for the Postmark Account API.
