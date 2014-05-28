@@ -345,8 +345,9 @@ describe Postmark::ApiClient do
     let(:response) { {"Bounces" => []} }
 
     it 'requests data at /bounces' do
-      http_client.should_receive(:get).with("bounces", options) { response }
-      subject.get_bounces(options).should be_an Array
+      allow(http_client).to receive(:get).with("bounces", options) { response }
+      expect(subject.get_bounces(options)).to be_an(Array)
+      expect(subject.get_bounces(options).count).to be_zero
     end
   end
 

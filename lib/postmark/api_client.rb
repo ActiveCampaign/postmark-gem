@@ -89,7 +89,8 @@ module Postmark
     end
 
     def get_bounces(options = {})
-      load_batch('bounces', 'Bounces', options)
+      _, batch = load_batch('bounces', 'Bounces', options)
+      batch
     end
 
     def get_bounced_tags
