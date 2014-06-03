@@ -109,6 +109,26 @@ module Postmark
       format_response http_client.put("bounces/#{id}/activate")["Bounce"]
     end
 
+    def opens(options = {})
+      find_each('messages/outbound/opens', 'Opens', options)
+    end
+
+    def get_opens(options = {})
+      _, batch = load_batch('messages/outbound/opens', 'Opens', options)
+      batch
+    end
+
+    def get_opens_by_message_id(message_id, options ={})
+      _, batch = load_batch("messages/outbound/opens/#{message_id}",
+                            'Opens',
+                            options)
+      batch
+    end
+
+    def opens_by_message_id(message_id, options = {})
+      find_each("messages/outbound/opens/#{message_id}", 'Opens', options)
+    end
+
     def create_trigger(options)
       data = serialize(HashHelper.to_postmark(options))
       format_response http_client.post('triggers/tags', data)

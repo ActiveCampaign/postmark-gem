@@ -391,6 +391,64 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#opens' do
+
+    it 'returns an Enumerator' do
+      expect(subject.opens).to be_kind_of(Enumerable)
+    end
+
+    it 'performs a GET request to /opens/tags' do
+      allow(subject.http_client).to receive(:get).
+          with('messages/outbound/opens', an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Opens' => [{}])
+      expect(subject.opens.first(5).count).to eq(1)
+    end
+
+  end  
+
+  describe '#get_opens' do
+    let(:http_client) { subject.http_client }
+    let(:options) { {:offset => 5} }
+    let(:response) { {'Opens' => [], 'TotalCount' => 0} }
+
+    it 'performs a GET request to /messages/outbound/opens' do
+      allow(http_client).to receive(:get).with('messages/outbound/opens', options) { response }
+      expect(subject.get_opens(options)).to be_an(Array)
+      expect(subject.get_opens(options).count).to be_zero
+    end
+  end
+
+  describe '#get_opens_by_message_id' do
+    let(:http_client) { subject.http_client }
+    let(:message_id) { 42 }
+    let(:options) { {:offset => 5} }
+    let(:response) { {'Opens' => [], 'TotalCount' => 0} }
+
+    it 'performs a GET request to /messages/outbound/opens' do
+      allow(http_client).
+          to receive(:get).with("messages/outbound/opens/#{message_id}",
+                                options).
+                           and_return(response)
+      expect(subject.get_opens_by_message_id(message_id, options)).to be_an(Array)
+      expect(subject.get_opens_by_message_id(message_id, options).count).to be_zero
+    end
+  end
+
+  describe '#opens_by_message_id' do
+    let(:message_id) { 42 }
+
+    it 'returns an Enumerator' do
+      expect(subject.opens_by_message_id(message_id)).to be_kind_of(Enumerable)
+    end
+
+    it 'performs a GET request to /opens/tags' do
+      allow(subject.http_client).to receive(:get).
+          with("messages/outbound/opens/#{message_id}", an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Opens' => [{}])
+      expect(subject.opens_by_message_id(message_id).first(5).count).to eq(1)
+    end
+  end
+
   describe '#create_trigger' do
     let(:http_client) { subject.http_client }
     let(:options) { {:foo => 'bar'} }
