@@ -17,6 +17,23 @@ describe 'Accessing server resources using the API' do
     }
   }
 
+  context 'Triggers API' do
+
+    it 'can be used to manage triggers via the API' do
+      trigger = api_client.create_trigger(:name => "gemtest_#{RUBY_VERSION}",
+                                           :track_opens => true)
+      api_client.update_trigger(trigger[:id], :name => "pre_#{trigger[:name]}")
+      updated = api_client.get_trigger(trigger[:id])
+
+      expect(updated[:id]).to eq(trigger[:id])
+      expect(updated[:name]).not_to eq(trigger[:id])
+      expect(api_client.triggers.map { |t| t[:id] }).to include(trigger[:id])
+
+      api_client.delete_trigger(trigger[:id])
+    end
+
+  end
+
   context 'Messages API' do
 
     def with_retries(max_retries = 20, wait_seconds = 3)

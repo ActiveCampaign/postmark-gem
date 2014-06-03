@@ -391,6 +391,97 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#create_trigger' do
+    let(:http_client) { subject.http_client }
+    let(:options) { {:foo => 'bar'} }
+    let(:response) { {'Foo' => 'Bar'} }
+
+    it 'performs a POST request to /triggers/tags with given options' do
+      allow(http_client).to receive(:post).with('triggers/tags',
+                                                {'Foo' => 'bar'}.to_json)
+      subject.create_trigger(options)
+    end
+
+    it 'symbolizes response keys' do
+      allow(http_client).to receive(:post).and_return(response)
+      expect(subject.create_trigger(options)).to eq(:foo => 'Bar')
+    end
+  end
+
+  describe '#get_trigger' do
+    let(:http_client) { subject.http_client }
+    let(:id) { 42 }
+
+    it 'performs a GET request to /triggers/tags/:id' do
+      allow(http_client).to receive(:get).with("triggers/tags/#{id}")
+      subject.get_trigger(id)
+    end
+
+    it 'symbolizes response keys' do
+      allow(http_client).to receive(:get).and_return('Foo' => 'Bar')
+      expect(subject.get_trigger(id)).to eq(:foo => 'Bar')
+    end
+  end
+
+  describe '#update_trigger' do
+    let(:http_client) { subject.http_client }
+    let(:options) { {:foo => 'bar'} }
+    let(:id) { 42 }
+
+    it 'performs a PUT request to /triggers/tags/:id' do
+      allow(http_client).to receive(:put).with("triggers/tags/#{id}",
+                                               {'Foo' => 'bar'}.to_json)
+      subject.update_trigger(id, options)
+    end
+
+    it 'symbolizes response keys' do
+      allow(http_client).to receive(:put).and_return('Foo' => 'Bar')
+      expect(subject.update_trigger(id, options)).to eq(:foo => 'Bar')
+    end
+  end
+
+  describe '#delete_trigger' do
+    let(:http_client) { subject.http_client }
+    let(:id) { 42 }
+
+    it 'performs a DELETE request to /triggers/tags/:id' do
+      allow(http_client).to receive(:delete).with("triggers/tags/#{id}")
+      subject.delete_trigger(id)
+    end
+
+    it 'symbolizes response keys' do
+      allow(http_client).to receive(:delete).and_return('Foo' => 'Bar')
+      expect(subject.delete_trigger(id)).to eq(:foo => 'Bar')
+    end
+  end
+
+  describe '#get_triggers' do
+    let(:http_client) { subject.http_client }
+    let(:options) { {:offset => 5} }
+    let(:response) { {'Tags' => [], 'TotalCount' => 0} }
+
+    it 'performs a GET request to /triggers/tags' do
+      allow(http_client).to receive(:get).with('triggers/tags', options) { response }
+      expect(subject.get_triggers(options)).to be_an(Array)
+      expect(subject.get_triggers(options).count).to be_zero
+    end
+  end
+
+  describe '#triggers' do
+
+    it 'returns an Enumerator' do
+      expect(subject.triggers).to be_kind_of(Enumerable)
+    end
+
+    it 'performs a GET request to /triggers/tags' do
+      allow(subject.http_client).to receive(:get).
+          with('triggers/tags', an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Tags' => [{}])
+      expect(subject.triggers.first(5).count).to eq(1)
+    end
+
+  end
+
   describe "#server_info" do
     let(:http_client) { subject.http_client }
     let(:response) { {"Name" => "Testing",

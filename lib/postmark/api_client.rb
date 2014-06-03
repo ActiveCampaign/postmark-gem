@@ -109,6 +109,33 @@ module Postmark
       format_response http_client.put("bounces/#{id}/activate")["Bounce"]
     end
 
+    def create_trigger(options)
+      data = serialize(HashHelper.to_postmark(options))
+      format_response http_client.post('triggers/tags', data)
+    end
+
+    def get_trigger(id)
+      format_response http_client.get("triggers/tags/#{id}")
+    end
+
+    def update_trigger(id, options)
+      data = serialize(HashHelper.to_postmark(options))
+      format_response http_client.put("triggers/tags/#{id}", data)
+    end
+
+    def delete_trigger(id)
+      format_response http_client.delete("triggers/tags/#{id}")
+    end
+
+    def get_triggers(options = {})
+      _, batch = load_batch('triggers/tags', 'Tags', options)
+      batch
+    end
+
+    def triggers(options = {})
+      find_each('triggers/tags', 'Tags', options)
+    end
+
     def server_info
       format_response http_client.get("server")
     end
