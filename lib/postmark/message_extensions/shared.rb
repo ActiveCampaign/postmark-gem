@@ -19,6 +19,14 @@ module Postmark
       header['TAG'] = val
     end
 
+    def track_opens(val = nil)
+      default 'TRACK-OPENS', !!val
+    end
+
+    def track_opens=(val)
+      header['TRACK-OPENS'] = !!val
+    end
+
     def postmark_attachments=(value)
       Kernel.warn("Mail::Message#postmark_attachments= is deprecated and will " \
                   "be removed in the future. Please consider using the native " \

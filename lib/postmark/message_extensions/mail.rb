@@ -65,6 +65,7 @@ module Mail
         cc           bcc
         subject      tag
         attachment   to
+        track-opens
       ]
     end
 

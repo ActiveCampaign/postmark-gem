@@ -56,7 +56,7 @@ describe Postmark::MessageHelper do
         "Tag" => "Invitation",
         "HtmlBody" => "<b>Hello</b>",
         "TextBody" => "Hello",
-        "ReplyTo" => "reply@example.com"
+        "ReplyTo" => "reply@example.com",
       }
     }
 
@@ -76,6 +76,14 @@ describe Postmark::MessageHelper do
       postmark_message_with_headers.merge("Attachments" => postmark_attachments)
     }
 
+    let(:message_with_open_tracking) {
+      message.merge(:track_opens => true)
+    }
+
+    let(:postmark_message_with_open_tracking) {
+      postmark_message.merge("TrackOpens" => true)
+    }
+
     it 'converts messages without custom headers and attachments correctly' do
       subject.to_postmark(message).should == postmark_message
     end
@@ -86,6 +94,10 @@ describe Postmark::MessageHelper do
 
     it 'converts messages with custom headers and attachments correctly' do
       subject.to_postmark(message_with_headers_and_attachments).should == postmark_message_with_headers_and_attachments
+    end
+
+    it 'includes open tracking flag when specified' do
+      expect(subject.to_postmark(message_with_open_tracking)).to eq(postmark_message_with_open_tracking)
     end
 
   end

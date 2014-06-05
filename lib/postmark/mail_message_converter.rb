@@ -17,7 +17,7 @@ module Postmark
     end
 
     def delete_blank_fields(message_hash)
-      message_hash.delete_if { |k, v| v.nil? || v.empty? }
+      message_hash.delete_if { |k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }
     end
 
     def headers_part
@@ -29,7 +29,8 @@ module Postmark
         'Bcc' => @message['bcc'].to_s,
         'Subject' => @message.subject,
         'Headers' => @message.export_headers,
-        'Tag' => @message.tag.to_s
+        'Tag' => @message.tag.to_s,
+        'TrackOpens' => !!@message.track_opens
       }
     end
 
