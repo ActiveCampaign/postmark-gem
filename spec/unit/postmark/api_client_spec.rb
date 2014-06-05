@@ -102,7 +102,7 @@ describe Postmark::ApiClient do
 
   describe "#deliver_message" do
     let(:email) { message.to_postmark_hash }
-    let(:email_json) { JSON.dump(email) }
+    let(:email_json) { Postmark::Json.encode(email) }
     let(:http_client) { subject.http_client }
 
     it 'turns message into a JSON document and posts it to /email' do
@@ -135,7 +135,7 @@ describe Postmark::ApiClient do
 
     let(:email) { message.to_postmark_hash }
     let(:emails) { [email, email, email] }
-    let(:emails_json) { JSON.dump(emails) }
+    let(:emails_json) { Postmark::Json.encode(emails) }
     let(:http_client) { subject.http_client }
     let(:response) { [{}, {}, {}] }
 
