@@ -67,7 +67,9 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:45:16.2059023-04:00", :message_id=>"b2b268e3-6a70-xxxx-b897-49c9eb8b1d2e", :error_code=>0, :message=>"OK"}
 ```
 
-## Sending an HTML message
+## Sending an HTML message (with open tracking!)
+
+Simply pass an HTML document as html_body parameter to `#deliver`. You can also enable open tracking by setting `track_opens` to `true`.
 
 ``` ruby
 client.deliver(from: 'sheldon@bigbangtheory.com',
@@ -75,7 +77,8 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
                subject: 'Re: What, to you, is a large crowd?',
                html_body: '<p>Any group big enough to trample me to death. ' \
                           'General rule of thumb is 36 adults or 70 ' \
-                          'children.</p>')
+                          'children.</p>',
+               track_opens: true)
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
 ```
 
@@ -227,41 +230,6 @@ ruby_hash = Postmark::Inbound.to_ruby_hash(postmark_hash)
 # => {:from=>"myUser@theirDomain.com", :from_full=>{:email=>"myUser@theirDomain.com", :name=>"John Doe"}, :to=>"451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com", :to_full=>[{:email=>"451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com", :name=>""}], :cc=>"\"Full name\" <sample.cc@emailDomain.com>, \"Another Cc\" <another.cc@emailDomain.com>", :cc_full=>[{:email=>"sample.cc@emailDomain.com", :name=>"Full name"}, {:email=>"another.cc@emailDomain.com", :name=>"Another Cc"}], :reply_to=>"myUsersReplyAddress@theirDomain.com", :subject=>"This is an inbound message", :message_id=>"22c74902-a0c1-4511-804f2-341342852c90", :date=>"Thu, 5 Apr 2012 16:59:01 +0200", :mailbox_hash=>"ahoy", :text_body=>"[ASCII]", :html_body=>"[HTML(encoded)]", :tag=>"", :headers=>[{:name=>"X-Spam-Checker-Version", :value=>"SpamAssassin 3.3.1 (2010-03-16) onrs-ord-pm-inbound1.wildbit.com"}, {:name=>"X-Spam-Status", :value=>"No"}, {:name=>"X-Spam-Score", :value=>"-0.1"}, {:name=>"X-Spam-Tests", :value=>"DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,SPF_PASS"}, {:name=>"Received-SPF", :value=>"Pass (sender SPF authorized) identity=mailfrom; client-ip=209.85.160.180; helo=mail-gy0-f180.google.com; envelope-from=myUser@theirDomain.com; receiver=451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com"}, {:name=>"DKIM-Signature", :value=>"v=1; a=rsa-sha256; c=relaxed/relaxed;        d=wildbit.com; s=google;        h=mime-version:reply-to:date:message-id:subject:from:to:cc         :content-type;        bh=cYr/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;        b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u         iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT         Q9ou6L1hgy/MbKChnp2kxHOtYNOrrszY3JfQM="}, {:name=>"MIME-Version", :value=>"1.0"}, {:name=>"Message-ID", :value=>"<CAGXpo2WKfxHWZ5UFYCR3H_J9SNMG+5AXUovfEFL6DjWBJSyZaA@mail.gmail.com>"}], :attachments=>[{:name=>"myimage.png", :content=>"[BASE64-ENCODED CONTENT]", :content_type=>"image/png", :content_length=>4096}, {:name=>"mypaper.doc", :content=>"[BASE64-ENCODED CONTENT]", :content_type=>"application/msword", :content_length=>16384}]}
 ```
 
-## Working with messages
-
-Use `#get_messages` to retrieve messages (`:count` and `:offset` parameters 
-control pagination). Access inbound messages by passing `:inbound => true` as
-a parameter.
-
-``` ruby
-client.get_messages(count: 1, offset: 0)
-# => [{:message_id=>"41f03342-xxxx-xxxx-xxxx-558caedb5e82", :to=>[{"Email"=>"info@wildbit.com", "Name"=>nil}], :cc=>[], :bcc=>[], :recipients=>["info@wildbit.com"], :received_at=>"2014-01-15T16:41:22.4533537-05:00", :from=>"\"Postmark\" <support@postmarkapp.com>", :subject=>"Good Luck With The Gem", :attachments=>[]}] 
-```
-
-Use `#get_message` to get details for a specific message using ID:
-
-``` ruby
-client.get_message('41f03342-xxxx-xxxx-xxxx-558caedb5e82')
-# => {:text_body=>"...", :body=>"...", :message_id=>"41f03342-xxxx-xxxx-xxxx-558caedb5e82", :to=>[{"Email"=>"info@wildbit.com", "Name"=>nil}], :cc=>[], :bcc=>[], :recipients=>["info@wildbit.com"], :received_at=>"2014-01-15T16:41:22.4533537-05:00", :from=>"\"Postmark\" <support@postmarkapp.com>", :subject=>"Good Luck With The Gem", :attachments=>[]}
-```
-
-Use `#dump_message` to get the full message body:
-
-``` ruby
-client.dump_message('41f03342-xxxx-xxxx-xxxx-558caedb5e82')
-# => {:body=>"..."}
-```
-
-There is also a handy `#messages` enumerator allowing you to easily manipulate big data arrays.
-
-``` ruby
-client.messages.lazy.select { |m| DateTime.parse(m[:received_at]).day.even? }.first(5)
-# => [{...}, {...}]
-```
-
-You can get more details about the underlying endpoints and parameters they
-accept in [Postmark Developer Docs](http://developer.postmarkapp.com/developer-messages.html).
-
 ## Working with bounces
 
 Use `#get_bounces` to retrieve a list of bounces (use `:count` and `:offset`
@@ -379,7 +347,9 @@ message.deliver
 # => #<Mail::Message:70355890541720, Multipart: false, Headers: <From: sheldon@bigbangtheory.com>, <To: leonard@bigbangtheory.com>, <Message-ID: e439fec0-4c89-475b-b3fc-eb446249a051>, <Subject: Re: Come on, Sheldon. It will be fun.>>
 ```
 
-## HTML message
+## HTML message (with open tracking)
+
+Notice that we set `track_opens` field to `true`, to enable open tracking for this message.
 
 ``` ruby
 require 'rubygems'
@@ -395,6 +365,8 @@ message = Mail.new do
   content_type    'text/html; charset=UTF-8'
   body            '<p>Any group big enough to trample me to death. General ' \
                   'rule of thumb is 36 adults or 70 children.</p>'
+
+  track_opens     true
 
   delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
 end
@@ -564,6 +536,14 @@ message.message_id
 ## The Account API Support
 
 Postmark allows you to automatically scale your sending infrastructure with the Account API. Learn how in the [Account API Support](https://github.com/wildbit/postmark-gem/wiki/The-Account-API-Support) guide.
+
+## The Triggers API Support
+
+[The Triggers API](https://github.com/wildbit/postmark-gem/wiki/The-Triggers-API-Support) can be used to tell Postmark to automatically track opens for all messages with a certain tag.
+
+## The Messages API Support
+
+If you ever need to access your messages or their metadata (i.e. open tracking info), [the Messages API](https://github.com/wildbit/postmark-gem/wiki/The-Messages-API-support) is a great place to start.
 
 ## ActiveModel-like Interface For Bounces
 
