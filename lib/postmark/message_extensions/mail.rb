@@ -36,7 +36,7 @@ module Mail
                   "be removed in the future. Please consider using the native " \
                   "attachments API provided by Mail library.")
 
-      Postmark::MessageHelper.attachments_to_postmark(@_attachments)
+      ::Postmark::MessageHelper.attachments_to_postmark(@_attachments)
     end
 
     def html?
