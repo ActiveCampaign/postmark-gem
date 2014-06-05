@@ -1,5 +1,11 @@
 = Changelog
 
+== 1.3.0
+
+* Add support for TrackOpens flag of the Delivery API.
+* Add support for the Opens API.
+* Add support for the Triggers API.
+
 == 1.2.1
 
 * Fixed a bug in Postmark::ApiClient causing #get_bounces to return unexpected value.
