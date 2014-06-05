@@ -13,7 +13,6 @@ require 'postmark/http_client'
 require 'postmark/client'
 require 'postmark/api_client'
 require 'postmark/account_api_client'
-require 'postmark/message_extensions/shared'
 require 'postmark/message_extensions/mail'
 require 'postmark/handlers/mail'
 
