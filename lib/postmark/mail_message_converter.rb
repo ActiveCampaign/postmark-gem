@@ -30,7 +30,7 @@ module Postmark
         'Subject' => @message.subject,
         'Headers' => @message.export_headers,
         'Tag' => @message.tag.to_s,
-        'TrackOpens' => !!@message.track_opens
+        'TrackOpens' => cast_to_bool(@message.track_opens)
       }
     end
 
@@ -40,6 +40,18 @@ module Postmark
         'HtmlBody' => @message.body_html,
         'TextBody' => @message.body_text
       }
+    end
+
+    protected
+
+    def cast_to_bool(val)
+      if val.is_a?(TrueClass) || val.is_a?(FalseClass)
+        val
+      elsif val.is_a?(String) && val.downcase == "true"
+        true
+      else
+        false
+      end
     end
 
   end
