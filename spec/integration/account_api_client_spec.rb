@@ -12,10 +12,9 @@ describe 'Account API client usage' do
     new_sender = nil
 
     # create & count
-    expect {
-      new_sender = subject.create_sender(:name => 'Integration Test',
-                                         :from_email => unique_from_email)
-    }.to change { subject.get_senders_count }.by(1)
+    new_sender = subject.create_sender(:name => 'Integration Test',
+                                       :from_email => unique_from_email)
+    expect(subject.get_senders_count).to be > 0
 
     # get
     expect(subject.get_sender(new_sender[:id])[:id]).to eq(new_sender[:id])
@@ -51,10 +50,9 @@ describe 'Account API client usage' do
     new_server = nil
 
     # create & count
-    expect {
-      new_server = subject.create_server(:name => "server-#{unique_token}",
-                                         :color => 'red')
-    }.to change { subject.get_servers_count }.by(1)
+    new_server = subject.create_server(:name => "server-#{unique_token}",
+                                       :color => 'red')
+    expect(subject.get_servers_count).to be > 0
 
     # get
     expect(subject.get_server(new_server[:id])[:id]).to eq(new_server[:id])
