@@ -72,7 +72,7 @@ describe Postmark::MailMessageConverter do
       to      "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
       subject "Hello!"
       body    "Hello Sheldon!"
-      reply_to 'Penny "The Neighbor" <penny@bigbangtheory.com>'
+      reply_to '"Penny The Neighbor" <penny@bigbangtheory.com>'
     end
   end
 
@@ -134,7 +134,7 @@ describe Postmark::MailMessageConverter do
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
         "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
-        "ReplyTo" => "\"Penny \\\"The Neighbor\\\"\" <penny@bigbangtheory.com>"
+        "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>'
     }
   end
 
