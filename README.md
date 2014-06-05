@@ -366,7 +366,7 @@ message = Mail.new do
   body            '<p>Any group big enough to trample me to death. General ' \
                   'rule of thumb is 36 adults or 70 children.</p>'
 
-  track_opens     true
+  track_opens     "true" # Fee free to use true on mail >= 2.3.0
 
   delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
 end
