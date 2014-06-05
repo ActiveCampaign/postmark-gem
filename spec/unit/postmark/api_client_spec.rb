@@ -457,12 +457,12 @@ describe Postmark::ApiClient do
     it 'performs a POST request to /triggers/tags with given options' do
       allow(http_client).to receive(:post).with('triggers/tags',
                                                 {'Foo' => 'bar'}.to_json)
-      subject.create_trigger(options)
+      subject.create_trigger(:tags, options)
     end
 
     it 'symbolizes response keys' do
       allow(http_client).to receive(:post).and_return(response)
-      expect(subject.create_trigger(options)).to eq(:foo => 'Bar')
+      expect(subject.create_trigger(:tags, options)).to eq(:foo => 'Bar')
     end
   end
 
@@ -472,12 +472,12 @@ describe Postmark::ApiClient do
 
     it 'performs a GET request to /triggers/tags/:id' do
       allow(http_client).to receive(:get).with("triggers/tags/#{id}")
-      subject.get_trigger(id)
+      subject.get_trigger(:tags, id)
     end
 
     it 'symbolizes response keys' do
       allow(http_client).to receive(:get).and_return('Foo' => 'Bar')
-      expect(subject.get_trigger(id)).to eq(:foo => 'Bar')
+      expect(subject.get_trigger(:tags, id)).to eq(:foo => 'Bar')
     end
   end
 
@@ -489,12 +489,12 @@ describe Postmark::ApiClient do
     it 'performs a PUT request to /triggers/tags/:id' do
       allow(http_client).to receive(:put).with("triggers/tags/#{id}",
                                                {'Foo' => 'bar'}.to_json)
-      subject.update_trigger(id, options)
+      subject.update_trigger(:tags, id, options)
     end
 
     it 'symbolizes response keys' do
       allow(http_client).to receive(:put).and_return('Foo' => 'Bar')
-      expect(subject.update_trigger(id, options)).to eq(:foo => 'Bar')
+      expect(subject.update_trigger(:tags, id, options)).to eq(:foo => 'Bar')
     end
   end
 
@@ -504,12 +504,12 @@ describe Postmark::ApiClient do
 
     it 'performs a DELETE request to /triggers/tags/:id' do
       allow(http_client).to receive(:delete).with("triggers/tags/#{id}")
-      subject.delete_trigger(id)
+      subject.delete_trigger(:tags, id)
     end
 
     it 'symbolizes response keys' do
       allow(http_client).to receive(:delete).and_return('Foo' => 'Bar')
-      expect(subject.delete_trigger(id)).to eq(:foo => 'Bar')
+      expect(subject.delete_trigger(:tags, id)).to eq(:foo => 'Bar')
     end
   end
 
@@ -520,22 +520,22 @@ describe Postmark::ApiClient do
 
     it 'performs a GET request to /triggers/tags' do
       allow(http_client).to receive(:get).with('triggers/tags', options) { response }
-      expect(subject.get_triggers(options)).to be_an(Array)
-      expect(subject.get_triggers(options).count).to be_zero
+      expect(subject.get_triggers(:tags, options)).to be_an(Array)
+      expect(subject.get_triggers(:tags, options).count).to be_zero
     end
   end
 
   describe '#triggers' do
 
     it 'returns an Enumerator' do
-      expect(subject.triggers).to be_kind_of(Enumerable)
+      expect(subject.triggers(:tags)).to be_kind_of(Enumerable)
     end
 
     it 'performs a GET request to /triggers/tags' do
       allow(subject.http_client).to receive(:get).
           with('triggers/tags', an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Tags' => [{}])
-      expect(subject.triggers.first(5).count).to eq(1)
+      expect(subject.triggers(:tags).first(5).count).to eq(1)
     end
 
   end

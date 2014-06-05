@@ -129,31 +129,31 @@ module Postmark
       find_each("messages/outbound/opens/#{message_id}", 'Opens', options)
     end
 
-    def create_trigger(options)
+    def create_trigger(type, options)
       data = serialize(HashHelper.to_postmark(options))
-      format_response http_client.post('triggers/tags', data)
+      format_response http_client.post("triggers/#{type}", data)
     end
 
-    def get_trigger(id)
-      format_response http_client.get("triggers/tags/#{id}")
+    def get_trigger(type, id)
+      format_response http_client.get("triggers/#{type}/#{id}")
     end
 
-    def update_trigger(id, options)
+    def update_trigger(type, id, options)
       data = serialize(HashHelper.to_postmark(options))
-      format_response http_client.put("triggers/tags/#{id}", data)
+      format_response http_client.put("triggers/#{type}/#{id}", data)
     end
 
-    def delete_trigger(id)
-      format_response http_client.delete("triggers/tags/#{id}")
+    def delete_trigger(type, id)
+      format_response http_client.delete("triggers/#{type}/#{id}")
     end
 
-    def get_triggers(options = {})
-      _, batch = load_batch('triggers/tags', 'Tags', options)
+    def get_triggers(type, options = {})
+      _, batch = load_batch("triggers/#{type}", 'Tags', options)
       batch
     end
 
-    def triggers(options = {})
-      find_each('triggers/tags', 'Tags', options)
+    def triggers(type, options = {})
+      find_each("triggers/#{type}", 'Tags', options)
     end
 
     def server_info
