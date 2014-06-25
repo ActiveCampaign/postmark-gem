@@ -42,6 +42,14 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
   let(:partially_valid_messages) { [message, message.dup, message_with_no_body] }
   let(:invalid_messages) { [message_with_no_body, message_with_no_body.dup] }
 
+  context 'invalid API code' do
+    it "doesn't deliver messages" do
+      expect {
+        Postmark::ApiClient.new('INVALID').deliver_message(message) rescue Postmark::InvalidApiKeyError
+      }.to change{message.delivered?}.to(false)
+    end
+  end
+
   context "message by message" do
     it 'delivers a plain text message' do
       api_client.deliver_message(message).should have_key(:message_id)
