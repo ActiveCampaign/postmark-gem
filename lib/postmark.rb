@@ -2,6 +2,7 @@ require 'net/http'
 require 'net/https'
 require 'thread' unless defined? Mutex # For Ruby 1.8.7
 
+require 'postmark/version'
 require 'postmark/inflector'
 require 'postmark/helpers/hash_helper'
 require 'postmark/helpers/message_helper'
@@ -42,6 +43,7 @@ module Postmark
   end
 
   HEADERS = {
+    'User-Agent'   => "Postmark Ruby Gem v#{VERSION}",
     'Content-type' => 'application/json',
     'Accept'       => 'application/json'
   }
