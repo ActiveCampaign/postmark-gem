@@ -42,13 +42,12 @@ client = Postmark::ApiClient.new(your_api_key)
 `Postmark::ApiClient` accepts various options:
 
 ``` ruby
-client = Postmark::ApiClient.new(your_api_key, secure: true
-                                               http_open_timeout: 15)
+client = Postmark::ApiClient.new(your_api_key, http_open_timeout: 15)
 ```
 
 Some useful options are:
 
-* `secure` (`true` or `false`): set to true to use SSL connection.
+* `secure` (`true` or `false`): set to false to disable SSL connection.
 * `http_read_timeout` (positive number): limit HTTP read time to `n` seconds.
 * `http_open_timeout` (positive number): limit HTTP open time to `n` seconds.
 * `proxy_host` (string): proxy address to use.
@@ -317,7 +316,7 @@ a delivery method for the message:
 ``` ruby
 message = Mail.new do
   # ...
-  delivery_method Mail::Postmark, api_key: 'your-postmark-api-key', secure: true
+  delivery_method Mail::Postmark, api_key: 'your-postmark-api-key'
 end
 ```
 

@@ -11,7 +11,7 @@ module Postmark
     DEFAULTS = {
       :auth_header_name => 'X-Postmark-Server-Token',
       :host => 'api.postmarkapp.com',
-      :secure => false,
+      :secure => true,
       :path_prefix => '/',
       :http_read_timeout => 15,
       :http_open_timeout => 5
