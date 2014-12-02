@@ -7,17 +7,6 @@ describe Postmark::HttpClient do
   end
 
   let(:api_key) { "provided-postmark-api-key" }
-  let(:secure) { true }
-  let(:proxy_host) { "providedproxyhostname.com" }
-  let(:proxy_port) { 42 }
-  let(:proxy_user) { "provided proxy user" }
-  let(:proxy_pass) { "provided proxy pass" }
-  let(:host) { "providedhostname.org" }
-  let(:port) { 443 }
-  let(:path_prefix) { "/provided/path/prefix" }
-  let(:http_open_timeout) { 42 }
-  let(:http_read_timeout) { 42 }
-
   let(:http_client) { Postmark::HttpClient.new(api_key) }
   subject { http_client }
 
@@ -43,14 +32,25 @@ describe Postmark::HttpClient do
   context "when it is created without options" do
     its(:api_key) { should eq api_key }
     its(:host) { should eq 'api.postmarkapp.com' }
-    its(:port) { should eq 80 }
-    its(:secure) { should be_false }
+    its(:port) { should eq 443 }
+    its(:secure) { should be_true }
     its(:path_prefix) { should eq '/' }
     its(:http_read_timeout) { should eq 15 }
     its(:http_open_timeout) { should eq 5 }
   end
 
   context "when it is created with options" do
+    let(:secure) { true }
+    let(:proxy_host) { "providedproxyhostname.com" }
+    let(:proxy_port) { 42 }
+    let(:proxy_user) { "provided proxy user" }
+    let(:proxy_pass) { "provided proxy pass" }
+    let(:host) { "providedhostname.org" }
+    let(:port) { 443 }
+    let(:path_prefix) { "/provided/path/prefix" }
+    let(:http_open_timeout) { 42 }
+    let(:http_read_timeout) { 42 }
+
     subject { Postmark::HttpClient.new(api_key, 
                                        :secure => secure,
                                        :proxy_host => proxy_host,
@@ -78,7 +78,7 @@ describe Postmark::HttpClient do
 
   describe "#post" do
     let(:target_path) { "path/on/server" }
-    let(:target_url) { "http://api.postmarkapp.com/#{target_path}" }
+    let(:target_url) { "https://api.postmarkapp.com/#{target_path}" }
 
     it "sends a POST request to provided URI" do
       FakeWeb.register_uri(:post, target_url, :body => response_body(200))
@@ -120,7 +120,7 @@ describe Postmark::HttpClient do
 
   describe "#get" do
     let(:target_path) { "path/on/server" }
-    let(:target_url) { "http://api.postmarkapp.com/#{target_path}" }
+    let(:target_url) { "https://api.postmarkapp.com/#{target_path}" }
 
     it "sends a GET request to provided URI" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(200))
@@ -136,25 +136,24 @@ describe Postmark::HttpClient do
 
     it "raises a custom error when sent JSON was not valid" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(422),
-                                              :status => [ "422", "Invalid" ])
+                                             :status => [ "422", "Invalid" ])
       expect { subject.get(target_path) }.to raise_error Postmark::InvalidMessageError
     end
 
     it "raises a custom error when server fails to process the request" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(500),
-                                              :status => [ "500", "Internal Server Error" ])
+                                             :status => [ "500", "Internal Server Error" ])
       expect { subject.get(target_path) }.to raise_error Postmark::InternalServerError
     end
 
     it "raises a custom error when the request times out" do
-      subject.http.should_receive(:get).at_least(:once).
-                                             and_raise(Timeout::Error)
+      subject.http.should_receive(:get).at_least(:once).and_raise(Timeout::Error)
       expect { subject.get(target_path) }.to raise_error Postmark::TimeoutError
     end
 
     it "raises a default error when unknown issue occurs" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(485),
-                                              :status => [ "485", "Custom HTTP response status" ])
+                                             :status => [ "485", "Custom HTTP response status" ])
       expect { subject.get(target_path) }.to raise_error Postmark::UnknownError
     end
     
@@ -162,7 +161,7 @@ describe Postmark::HttpClient do
 
   describe "#put" do
     let(:target_path) { "path/on/server" }
-    let(:target_url) { "http://api.postmarkapp.com/#{target_path}" }
+    let(:target_url) { "https://api.postmarkapp.com/#{target_path}" }
 
     it "sends a PUT request to provided URI" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(200))
@@ -172,31 +171,30 @@ describe Postmark::HttpClient do
 
     it "raises a custom error when API key authorization fails" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(401),
-                                              :status => [ "401", "Unauthorized" ])
+                                             :status => [ "401", "Unauthorized" ])
       expect { subject.put(target_path) }.to raise_error Postmark::InvalidApiKeyError
     end
 
     it "raises a custom error when sent JSON was not valid" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(422),
-                                              :status => [ "422", "Invalid" ])
+                                             :status => [ "422", "Invalid" ])
       expect { subject.put(target_path) }.to raise_error Postmark::InvalidMessageError
     end
 
     it "raises a custom error when server fails to process the request" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(500),
-                                              :status => [ "500", "Internal Server Error" ])
+                                             :status => [ "500", "Internal Server Error" ])
       expect { subject.put(target_path) }.to raise_error Postmark::InternalServerError
     end
 
     it "raises a custom error when the request times out" do
-      subject.http.should_receive(:put).at_least(:once).
-                                             and_raise(Timeout::Error)
+      subject.http.should_receive(:put).at_least(:once).and_raise(Timeout::Error)
       expect { subject.put(target_path) }.to raise_error Postmark::TimeoutError
     end
 
     it "raises a default error when unknown issue occurs" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(485),
-                                              :status => [ "485", "Custom HTTP response status" ])
+                                             :status => [ "485", "Custom HTTP response status" ])
       expect { subject.put(target_path) }.to raise_error Postmark::UnknownError
     end
     
