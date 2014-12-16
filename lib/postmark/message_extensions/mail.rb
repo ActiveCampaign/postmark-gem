@@ -45,17 +45,17 @@ module Mail
 
     def body_html
       if html_part.nil?
-        body.to_s if html?
+        decoded if html?
       else
-        html_part.body.to_s
+        html_part.decoded
       end
     end
 
     def body_text
       if text_part.nil?
-        body.to_s unless html?
+        decoded unless html?
       else
-        text_part.body.to_s
+        text_part.decoded
       end
     end
 

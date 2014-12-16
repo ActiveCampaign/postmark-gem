@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'spec_helper'
 
 describe Postmark::MailMessageConverter do
@@ -87,6 +88,36 @@ describe Postmark::MailMessageConverter do
     end
   end
 
+  let(:mail_message_quoted_printable) do
+    Mail.new do
+      from    "Sheldon <sheldon@bigbangtheory.com>"
+      to      "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
+      subject "Hello!"
+      content_type 'text/plain; charset=utf-8'
+      content_transfer_encoding 'quoted-printable'
+      body    'Он здесь бывал: еще не в галифе.'
+      reply_to '"Penny The Neighbor" <penny@bigbangtheory.com>'
+    end
+  end
+
+  let(:multipart_message_quoted_printable) do
+    Mail.new do
+      from          "sheldon@bigbangtheory.com"
+      to            "lenard@bigbangtheory.com"
+      subject       "Hello!"
+      text_part do
+        content_type 'text/plain; charset=utf-8'
+        content_transfer_encoding 'quoted-printable'
+        body 'Загадочное послание.'
+      end
+      html_part do
+        content_type 'text/html; charset=utf-8'
+        content_transfer_encoding 'quoted-printable'
+        body '<b>Загадочное послание.</b>'
+      end
+    end
+  end
+
   it 'converts plain text messages correctly' do
     subject.new(mail_message).run.should == {
         "From" => "sheldon@bigbangtheory.com",
@@ -163,6 +194,17 @@ describe Postmark::MailMessageConverter do
         "HtmlBody" => "<b>Hello Sheldon!</b>",
         "To" => "lenard@bigbangtheory.com",
         "TrackOpens" => true}
+  end
+
+  it 'correctly decodes unicode in messages transfered as quoted-printable' do
+    subject.new(mail_message_quoted_printable).run.should \
+      include('TextBody' => 'Он здесь бывал: еще не в галифе.')
+  end
+
+  it 'correctly decodes unicode in multipart quoted-printable messages' do
+    subject.new(multipart_message_quoted_printable).run.should \
+      include('TextBody' => 'Загадочное послание.',
+              'HtmlBody' => '<b>Загадочное послание.</b>')
   end
 
   context 'when bcc is empty' do
