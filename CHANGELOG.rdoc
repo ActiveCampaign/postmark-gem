@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.4.1
+
+* Fix an exception when sending a Mail::Message containing quoted-printable parts with unicode characters.
+
 == 1.4.0
 
 * Add descriptive User-Agent string.
