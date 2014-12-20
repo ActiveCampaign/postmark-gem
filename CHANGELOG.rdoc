@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.4.2
+
+* Fix a regression when using the gem with older mail gem versions introduced in 1.4.1. Affected mail gem versions are 2.5.3 and below.
+
 == 1.4.1
 
 * Fix an exception when sending a Mail::Message containing quoted-printable parts with unicode characters.
