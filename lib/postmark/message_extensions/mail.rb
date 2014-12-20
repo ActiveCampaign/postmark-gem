@@ -39,14 +39,22 @@ module Mail
       ::Postmark::MessageHelper.attachments_to_postmark(@_attachments)
     end
 
+    def text?
+      if defined?(super)
+        super
+      else
+        has_content_type? ? !!(main_type =~ /^text$/i) : false
+      end
+    end
+
     def html?
-      content_type && content_type.include?('text/html')
+      text? && !!(sub_type =~ /^html$/i)
     end
 
     def body_html
       if multipart? && html_part
         html_part.decoded
-      elsif text? && html?
+      elsif html?
         decoded
       end
     end
