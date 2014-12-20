@@ -37,6 +37,4 @@ Gem::Specification.new do |s|
   s.add_dependency "json"
 
   s.add_development_dependency "mail"
-  s.add_development_dependency "activesupport", "~> 3.0"
-  s.add_development_dependency "yajl-ruby" unless RUBY_PLATFORM == "java"
 end
