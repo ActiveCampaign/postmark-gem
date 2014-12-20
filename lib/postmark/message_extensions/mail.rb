@@ -44,18 +44,20 @@ module Mail
     end
 
     def body_html
-      if html_part.nil?
-        decoded if html?
-      else
+      if multipart? && html_part
         html_part.decoded
+      elsif text? && html?
+        decoded
       end
     end
 
     def body_text
-      if text_part.nil?
-        decoded unless html?
-      else
+      if multipart? && text_part
         text_part.decoded
+      elsif text? && !html?
+        decoded
+      elsif !html?
+        body.decoded
       end
     end
 
@@ -76,6 +78,7 @@ module Mail
     end
 
     def to_postmark_hash
+      ready_to_send!
       ::Postmark::MailMessageConverter.new(self).run
     end
 
