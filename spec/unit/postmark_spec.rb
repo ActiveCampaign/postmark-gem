@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Postmark do
-  let(:api_key) { double }
+  let(:api_token) { double }
   let(:secure) { double }
   let(:proxy_host) { double }
   let(:proxy_port) { double }
@@ -13,7 +13,7 @@ describe Postmark do
   let(:max_retries) { double }
 
   before do
-    subject.api_key = api_key
+    subject.api_token = api_token
     subject.secure = secure
     subject.proxy_host = proxy_host
     subject.proxy_port = proxy_port
@@ -28,6 +28,7 @@ describe Postmark do
   context "attr readers" do
     it { should respond_to(:secure) }
     it { should respond_to(:api_key) }
+    it { should respond_to(:api_token) }
     it { should respond_to(:proxy_host) }
     it { should respond_to(:proxy_port) }
     it { should respond_to(:proxy_user) }
@@ -43,6 +44,7 @@ describe Postmark do
   context "attr writers" do
     it { should respond_to(:secure=) }
     it { should respond_to(:api_key=) }
+    it { should respond_to(:api_token=) }
     it { should respond_to(:proxy_host=) }
     it { should respond_to(:proxy_port=) }
     it { should respond_to(:proxy_user=) }
@@ -98,7 +100,7 @@ describe Postmark do
 
       it 'creates a new instance of Postmark::ApiClient' do
         Postmark::ApiClient.should_receive(:new).
-                            with(api_key,
+                            with(api_token,
                                  :secure => secure,
                                  :proxy_host => proxy_host,
                                  :proxy_port => proxy_port,

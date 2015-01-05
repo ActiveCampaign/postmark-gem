@@ -17,14 +17,14 @@ Without Bundler:
 gem install postmark
 ```
 
-## Get a Postmark API key
+## Get a Postmark API token
 
 In order to send emails using Postmark ruby gem, you will need a
 [Postmark](http://postmarkapp.com) account. If you don't have one please
 register at https://postmarkapp.com/sign_up.
 
 If you didn’t create any servers yet, please create one, proceed to the
-`Credentials` tab and copy an API key. API keys should be frequently rotated for
+`Credentials` tab and copy an API token. API tokens should be frequently rotated for
 security reasons.
 
 ## Communicating with the API
@@ -35,14 +35,14 @@ every From email address you specify.
 Create an instance of `Postmark::ApiClient` to start sending emails.
 
 ``` ruby
-your_api_key = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-client = Postmark::ApiClient.new(your_api_key)
+your_api_token = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+client = Postmark::ApiClient.new(your_api_token)
 ```
 
 `Postmark::ApiClient` accepts various options:
 
 ``` ruby
-client = Postmark::ApiClient.new(your_api_key, http_open_timeout: 15)
+client = Postmark::ApiClient.new(your_api_token, http_open_timeout: 15)
 ```
 
 Some useful options are:
@@ -316,7 +316,7 @@ a delivery method for the message:
 ``` ruby
 message = Mail.new do
   # ...
-  delivery_method Mail::Postmark, api_key: 'your-postmark-api-key'
+  delivery_method Mail::Postmark, api_token: 'your-postmark-api-token'
 end
 ```
 
@@ -339,7 +339,7 @@ message = Mail.new do
   body            'That\'s what you said about the Green Lantern movie. You' \
                   'were 114 minutes of wrong.'
 
-  delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
 end
 
 message.deliver
@@ -367,7 +367,7 @@ message = Mail.new do
 
   track_opens     "true" # Feel free to use boolean values on mail >= 2.3.0
 
-  delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
 end
 
 message.deliver
@@ -384,7 +384,7 @@ message = Mail.new do
   body            'You look like a real geek!'
   add_file        '1.jpeg'
 
-  delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
 end
 
 message.attachments['sheldon.jpeg'] = File.read('2.jpeg')
@@ -419,7 +419,7 @@ message = Mail.new do
   from            'sheldon@bigbangtheory.com'
   to              'Leonard Hofstadter <leonard@bigbangtheory.com>'
   subject         'Re: Anything Can Happen Thursday'
-  delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
 
   text_part do
     body          'Apparently the news didn\'t reach my digestive system,' \
@@ -458,7 +458,7 @@ message = Mail.new do
                  'hallway and immediately adjacent to that hallway is this!'
   tag            'confidential'
 
-  delivery_method Mail::Postmark, :api_key => 'your-postmark-api-key'
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
 end
 
 message.deliver
@@ -557,7 +557,7 @@ require 'mail'
 require 'json'
 
 Postmark.response_parser_class = :Json
-Postmark.api_key = 'your-postmark-api-key'
+Postmark.api_token = 'your-postmark-api-token'
 
 # Get bounces information: (array of bounce objects)
 Postmark::Bounce.all

@@ -3,10 +3,12 @@ require 'cgi'
 
 module Postmark
   class HttpClient
-    attr_accessor :api_key
+    attr_accessor :api_token
     attr_reader :http, :secure, :proxy_host, :proxy_port, :proxy_user,
                 :proxy_pass, :host, :port, :path_prefix,
                 :http_open_timeout, :http_read_timeout, :auth_header_name
+    alias_method :api_key, :api_token
+    alias_method :api_key=, :api_token=
 
     DEFAULTS = {
       :auth_header_name => 'X-Postmark-Server-Token',
@@ -17,8 +19,8 @@ module Postmark
       :http_open_timeout => 5
     }
 
-    def initialize(api_key, options = {})
-      @api_key = api_key
+    def initialize(api_token, options = {})
+      @api_token = api_token
       @request_mutex = Mutex.new
       apply_options(options)
       @http = build_http
@@ -79,7 +81,7 @@ module Postmark
     end
 
     def headers
-      HEADERS.merge(self.auth_header_name => self.api_key.to_s)
+      HEADERS.merge(self.auth_header_name => self.api_token.to_s)
     end
 
     def url_path(path)

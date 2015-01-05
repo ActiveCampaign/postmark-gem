@@ -6,17 +6,19 @@ describe Postmark::HttpClient do
     body = {"ErrorCode" => status, "Message" => message}.to_json
   end
 
-  let(:api_key) { "provided-postmark-api-key" }
-  let(:http_client) { Postmark::HttpClient.new(api_key) }
+  let(:api_token) { "provided-postmark-api-token" }
+  let(:http_client) { Postmark::HttpClient.new(api_token) }
   subject { http_client }
 
   context "attr writers" do
+    it { should respond_to(:api_token=) }
     it { should respond_to(:api_key=) }
   end
 
   context "attr readers" do
     it { should respond_to(:http) }
     it { should respond_to(:secure) }
+    it { should respond_to(:api_token) }
     it { should respond_to(:api_key) }
     it { should respond_to(:proxy_host) }
     it { should respond_to(:proxy_port) }
@@ -30,7 +32,8 @@ describe Postmark::HttpClient do
   end
 
   context "when it is created without options" do
-    its(:api_key) { should eq api_key }
+    its(:api_token) { should eq api_token }
+    its(:api_key) { should eq api_token }
     its(:host) { should eq 'api.postmarkapp.com' }
     its(:port) { should eq 443 }
     its(:secure) { should be_true }
@@ -51,7 +54,7 @@ describe Postmark::HttpClient do
     let(:http_open_timeout) { 42 }
     let(:http_read_timeout) { 42 }
 
-    subject { Postmark::HttpClient.new(api_key, 
+    subject { Postmark::HttpClient.new(api_token,
                                        :secure => secure,
                                        :proxy_host => proxy_host,
                                        :proxy_port => proxy_port,
@@ -63,7 +66,8 @@ describe Postmark::HttpClient do
                                        :http_open_timeout => http_open_timeout,
                                        :http_read_timeout => http_read_timeout) }
 
-    its(:api_key) { should eq api_key }
+    its(:api_token) { should eq api_token }
+    its(:api_key) { should eq api_token }
     its(:secure) { should == secure }
     its(:proxy_host) { should == proxy_host }
     its(:proxy_port) { should == proxy_port }
@@ -86,7 +90,7 @@ describe Postmark::HttpClient do
       FakeWeb.should have_requested(:post, target_url)
     end
 
-    it "raises a custom error when API key authorization fails" do
+    it "raises a custom error when API token authorization fails" do
       FakeWeb.register_uri(:post, target_url, :body => response_body(401),
                                               :status => [ "401", "Unauthorized" ])
       expect { subject.post(target_path) }.to raise_error Postmark::InvalidApiKeyError
@@ -128,7 +132,7 @@ describe Postmark::HttpClient do
       FakeWeb.should have_requested(:get, target_url)
     end
 
-    it "raises a custom error when API key authorization fails" do
+    it "raises a custom error when API token authorization fails" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(401),
                                               :status => [ "401", "Unauthorized" ])
       expect { subject.get(target_path) }.to raise_error Postmark::InvalidApiKeyError
@@ -169,7 +173,7 @@ describe Postmark::HttpClient do
       FakeWeb.should have_requested(:put, target_url)
     end
 
-    it "raises a custom error when API key authorization fails" do
+    it "raises a custom error when API token authorization fails" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(401),
                                              :status => [ "401", "Unauthorized" ])
       expect { subject.put(target_path) }.to raise_error Postmark::InvalidApiKeyError

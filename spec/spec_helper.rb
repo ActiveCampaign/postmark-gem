@@ -38,7 +38,7 @@ RSpec.configure do |config|
   }
 
   config.before(:each) do
-    %w(api_client response_parser_class secure api_key proxy_host proxy_port
+    %w(api_client response_parser_class secure api_token proxy_host proxy_port
        proxy_user proxy_pass host port path_prefix http_open_timeout
        http_read_timeout max_retries).each do |var|
       Postmark.instance_variable_set(:"@#{var}", nil)

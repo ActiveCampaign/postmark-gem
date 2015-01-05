@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.5.0
+
+* Call API access strings tokens instead of keys. Keep backwards compatibility.
+
 == 1.4.3
 
 * Fix a regression when using the gem with older mail gem versions not implementing Mail::Message#text?.

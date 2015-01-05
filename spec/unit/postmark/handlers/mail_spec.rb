@@ -32,8 +32,20 @@ describe Mail::Postmark do
     message.deliver.should eq message
   end
 
-  it "allows to set the api key" do
-    message.delivery_method Mail::Postmark, {:api_key => 'api-key'}
-    message.delivery_method.settings[:api_key].should == 'api-key'
+  it "allows setting the api token" do
+    message.delivery_method Mail::Postmark, :api_token => 'api-token'
+    message.delivery_method.settings[:api_token].should == 'api-token'
+  end
+
+  it 'uses provided API token' do
+    message.delivery_method Mail::Postmark, :api_token => 'api-token'
+    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(deliver_message: true))
+    message.deliver
+  end
+
+  it 'uses API token provided as legacy api_key' do
+    message.delivery_method Mail::Postmark, :api_key => 'api-token'
+    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(deliver_message: true))
+    message.deliver
   end
 end

@@ -52,9 +52,12 @@ module Postmark
 
   @@api_client_mutex = Mutex.new
 
-  attr_accessor :secure, :api_key, :proxy_host, :proxy_port, :proxy_user,
+  attr_accessor :secure, :api_token, :proxy_host, :proxy_port, :proxy_user,
                 :proxy_pass, :host, :port, :path_prefix,
                 :http_open_timeout, :http_read_timeout, :max_retries
+
+  alias_method :api_key, :api_token
+  alias_method :api_key=, :api_token=
 
   attr_writer :response_parser_class, :api_client
 
@@ -71,7 +74,7 @@ module Postmark
 
     @@api_client_mutex.synchronize do
       @api_client ||= Postmark::ApiClient.new(
-                        self.api_key,
+                        self.api_token,
                         :secure => self.secure,
                         :proxy_host => self.proxy_host,
                         :proxy_port => self.proxy_port,

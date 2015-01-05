@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Postmark::ApiClient do
 
-  let(:api_key) { "provided-api-key" }
+  let(:api_token) { "provided-api-token" }
   let(:max_retries) { 42 }
   let(:message_hash) {
     {
@@ -16,7 +16,7 @@ describe Postmark::ApiClient do
     end
   }
 
-  let(:api_client) { Postmark::ApiClient.new(api_key) }
+  let(:api_client) { Postmark::ApiClient.new(api_token) }
   subject { api_client }
 
   context "attr readers" do
@@ -32,25 +32,30 @@ describe Postmark::ApiClient do
 
   context "when it's created with user options" do
 
-    subject { Postmark::ApiClient.new(api_key, :max_retries => max_retries,
+    subject { Postmark::ApiClient.new(api_token, :max_retries => max_retries,
                                                :foo => :bar)}
 
     its(:max_retries) { should eq max_retries }
 
     it 'passes other options to HttpClient instance' do
-      Postmark::HttpClient.should_receive(:new).with(api_key, :foo => :bar)
+      Postmark::HttpClient.should_receive(:new).with(api_token, :foo => :bar)
       subject.should be
     end
 
   end
 
-  describe "#api_key=" do
+  describe "#api_token=" do
 
-    let(:api_key) { "new-api-key-value" }
+    let(:api_token) { "new-api-token-value" }
 
-    it 'assigns the api key to the http client instance' do
-      subject.api_key = api_key
-      subject.http_client.api_key.should == api_key
+    it 'assigns the api token to the http client instance' do
+      subject.api_token = api_token
+      subject.http_client.api_token.should == api_token
+    end
+
+    it 'is aliased as api_key=' do
+      subject.api_key = api_token
+      subject.http_client.api_token.should == api_token
     end
 
   end

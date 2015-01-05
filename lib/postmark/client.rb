@@ -4,15 +4,16 @@ module Postmark
   class Client
     attr_reader :http_client, :max_retries
 
-    def initialize(api_key, options = {})
+    def initialize(api_token, options = {})
       options = options.dup
       @max_retries = options.delete(:max_retries) || 3
-      @http_client = HttpClient.new(api_key, options)
+      @http_client = HttpClient.new(api_token, options)
     end
 
-    def api_key=(api_key)
-      http_client.api_key = api_key
+    def api_token=(api_token)
+      http_client.api_token = api_token
     end
+    alias_method :api_key=, :api_token=
 
     def find_each(path, name, options = {})
       if block_given?

@@ -2,7 +2,7 @@ module Postmark
   class ApiClient < Client
     attr_accessor :max_batch_size
 
-    def initialize(api_key, options = {})
+    def initialize(api_token, options = {})
       options = options.dup
       @max_batch_size = options.delete(:max_batch_size) || 500
       super

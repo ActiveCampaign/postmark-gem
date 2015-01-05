@@ -2,20 +2,20 @@ require 'spec_helper'
 
 describe Postmark::AccountApiClient do
 
-  let(:api_key) { 'abcd-efgh' }
+  let(:api_token) { 'abcd-efgh' }
   subject { Postmark::AccountApiClient}
 
-  it 'can be created with an API key' do
-    expect { subject.new(api_key) }.not_to raise_error
+  it 'can be created with an API token' do
+    expect { subject.new(api_token) }.not_to raise_error
   end
 
-  it 'can be created with an API key and options hash' do
-    expect { subject.new(api_key, :http_read_timeout => 5) }.not_to raise_error
+  it 'can be created with an API token and options hash' do
+    expect { subject.new(api_token, :http_read_timeout => 5) }.not_to raise_error
   end
 
   context 'instance' do
 
-    subject { Postmark::AccountApiClient.new(api_key) }
+    subject { Postmark::AccountApiClient.new(api_token) }
 
     it 'uses the auth header specific for Account API' do
       auth_header = subject.http_client.auth_header_name
