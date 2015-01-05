@@ -39,13 +39,13 @@ describe Mail::Postmark do
 
   it 'uses provided API token' do
     message.delivery_method Mail::Postmark, :api_token => 'api-token'
-    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(deliver_message: true))
+    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(:deliver_message => true))
     message.deliver
   end
 
   it 'uses API token provided as legacy api_key' do
     message.delivery_method Mail::Postmark, :api_key => 'api-token'
-    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(deliver_message: true))
+    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(:deliver_message => true))
     message.deliver
   end
 end
