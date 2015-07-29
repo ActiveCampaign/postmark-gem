@@ -595,7 +595,7 @@ describe Postmark::ApiClient do
     it 'gets templates info and converts it to ruby format' do
       http_client.should_receive(:get).with('templates', :offset => 0, :count => 2).and_return(response)
 
-      count, templates = subject.get_templates(count: 2)
+      count, templates = subject.get_templates(:count => 2)
 
       expect(count).to eq(31)
       expect(templates.first[:template_id]).to eq(123)
@@ -673,10 +673,10 @@ describe Postmark::ApiClient do
 
       http_client.should_receive(:post).with('templates', expected_json).and_return(response)
 
-      template = subject.create_template(name: 'template name',
-                                         text_body: 'text body',
-                                         html_body: 'html body',
-                                         subject: 'subject')
+      template = subject.create_template(:name => 'template name',
+                                         :text_body => 'text body',
+                                         :html_body => 'html body',
+                                         :subject => 'subject')
 
       expect(template[:name]).to eq('template name')
       expect(template[:template_id]).to eq(123)
@@ -703,10 +703,10 @@ describe Postmark::ApiClient do
 
       http_client.should_receive(:put).with('templates/123', expected_json).and_return(response)
 
-      template = subject.update_template(123, name: 'template name',
-                                         text_body: 'text body',
-                                         html_body: 'html body',
-                                         subject: 'subject')
+      template = subject.update_template(123, :name => 'template name',
+                                              :text_body => 'text body',
+                                              :html_body => 'html body',
+                                              :subject => 'subject')
 
       expect(template[:name]).to eq('template name')
       expect(template[:template_id]).to eq(123)
@@ -760,17 +760,17 @@ describe Postmark::ApiClient do
       end
 
       it 'performs a POST request and returns unmodified suggested template model' do
-        http_client.should_receive(:post)
-                   .with('templates/validate', {
-                     'HtmlBody' => '{{MyName}}',
-                     'TextBody' => '{{MyName}}',
-                     'Subject' => '{{MyName}}'
-                   }.to_json)
-                   .and_return(response)
+        expected_template_json = {
+          'HtmlBody' => '{{MyName}}',
+          'TextBody' => '{{MyName}}',
+          'Subject' => '{{MyName}}'
+        }.to_json
 
-        resp = subject.validate_template(html_body: '{{MyName}}',
-                                         text_body: '{{MyName}}',
-                                         subject: '{{MyName}}')
+        http_client.should_receive(:post).with('templates/validate', expected_template_json).and_return(response)
+
+        resp = subject.validate_template(:html_body => '{{MyName}}',
+                                         :text_body => '{{MyName}}',
+                                         :subject => '{{MyName}}')
 
         expect(resp[:all_content_is_valid]).to be_true
         expect(resp[:html_body][:content_is_valid]).to be_true
@@ -809,17 +809,17 @@ describe Postmark::ApiClient do
       end
 
       it 'performs a POST request and returns validation errors' do
-        http_client.should_receive(:post)
-                   .with('templates/validate', {
-                     'HtmlBody' => '{{#each}}',
-                     'TextBody' => '{{MyName}}',
-                     'Subject' => '{{MyName}}'
-                   }.to_json)
-                   .and_return(response)
+        expected_template_json = {
+          'HtmlBody' => '{{#each}}',
+          'TextBody' => '{{MyName}}',
+          'Subject' => '{{MyName}}'
+        }.to_json
 
-        resp = subject.validate_template(html_body: '{{#each}}',
-                                         text_body: '{{MyName}}',
-                                         subject: '{{MyName}}')
+        http_client.should_receive(:post).with('templates/validate', expected_template_json).and_return(response)
+
+        resp = subject.validate_template(:html_body => '{{#each}}',
+                                         :text_body => '{{MyName}}',
+                                         :subject => '{{MyName}}')
 
         expect(resp[:all_content_is_valid]).to be_false
         expect(resp[:text_body][:content_is_valid]).to be_true
