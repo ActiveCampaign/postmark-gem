@@ -628,31 +628,6 @@ describe Postmark::ApiClient do
     end
   end
 
-  describe '#get_template' do
-    let(:http_client) { subject.http_client }
-    let(:response) do
-      {
-        'Name' => 'Template Name',
-        'TemplateId' => 123,
-        'Subject' => 'Subject',
-        'HtmlBody' => 'Html',
-        'TextBody' => 'Text',
-        'AssociatedServerId' => 456,
-        'Active' => true
-      }
-    end
-
-    it 'gets single template and converts it to ruby format' do
-      http_client.should_receive(:get).with('templates/123').and_return(response)
-
-      template = subject.get_template('123')
-
-      expect(template[:name]).to eq('Template Name')
-      expect(template[:template_id]).to eq(123)
-      expect(template[:html_body]).to eq('Html')
-    end
-  end
-
   describe '#create_template' do
     let(:http_client) { subject.http_client }
     let(:response) do
