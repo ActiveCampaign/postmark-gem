@@ -169,6 +169,10 @@ module Postmark
       load_batch('templates', 'Templates', options)
     end
 
+    def templates(options = {})
+      find_each('templates', 'Templates', options)
+    end
+
     def get_template(id)
       format_response http_client.get("templates/#{id}")
     end

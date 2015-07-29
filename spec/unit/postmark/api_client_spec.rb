@@ -603,6 +603,19 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#templates' do
+    it 'returns an Enumerator' do
+      expect(subject.templates).to be_kind_of(Enumerable)
+    end
+
+    it 'requests data at /templates' do
+      allow(subject.http_client).to receive(:get).
+          with('templates', an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Templates' => [{}])
+      expect(subject.templates.first(5).count).to eq(1)
+    end
+  end
+
   describe '#get_template' do
     let(:http_client) { subject.http_client }
     let(:response) do
