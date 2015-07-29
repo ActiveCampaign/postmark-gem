@@ -664,19 +664,11 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a POST request to /templates with the given attributes' do
-      expected_json = {
-        'Name' => 'template name',
-        'TextBody' => 'text body',
-        'HtmlBody' => 'html body',
-        'Subject' => 'subject' 
-      }.to_json
+      expected_json = { 'Name' => 'template name' }.to_json
 
       http_client.should_receive(:post).with('templates', expected_json).and_return(response)
 
-      template = subject.create_template(:name => 'template name',
-                                         :text_body => 'text body',
-                                         :html_body => 'html body',
-                                         :subject => 'subject')
+      template = subject.create_template(:name => 'template name')
 
       expect(template[:name]).to eq('template name')
       expect(template[:template_id]).to eq(123)
@@ -694,19 +686,11 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a PUT request to /templates with the given attributes' do
-      expected_json = {
-        'Name' => 'template name',
-        'TextBody' => 'text body',
-        'HtmlBody' => 'html body',
-        'Subject' => 'subject' 
-      }.to_json
+      expected_json = { 'Name' => 'template name' }.to_json
 
       http_client.should_receive(:put).with('templates/123', expected_json).and_return(response)
 
-      template = subject.update_template(123, :name => 'template name',
-                                              :text_body => 'text body',
-                                              :html_body => 'html body',
-                                              :subject => 'subject')
+      template = subject.update_template(123, :name => 'template name')
 
       expect(template[:name]).to eq('template name')
       expect(template[:template_id]).to eq(123)
