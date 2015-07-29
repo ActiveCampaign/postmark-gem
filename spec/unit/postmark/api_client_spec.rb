@@ -593,9 +593,7 @@ describe Postmark::ApiClient do
     end
 
     it 'gets templates info and converts it to ruby format' do
-      http_client.should_receive(:get)
-      .with('templates', :offset => 0, :count => 2)
-      .and_return(response)
+      http_client.should_receive(:get).with('templates', :offset => 0, :count => 2).and_return(response)
 
       count, templates = subject.get_templates(count: 2)
 
@@ -620,9 +618,7 @@ describe Postmark::ApiClient do
     end
 
     it 'gets single template and converts it to ruby format' do
-      http_client.should_receive(:get)
-      .with('templates/123')
-      .and_return(response)
+      http_client.should_receive(:get).with('templates/123').and_return(response)
 
       template = subject.get_template('123')
 
@@ -647,9 +643,7 @@ describe Postmark::ApiClient do
     end
 
     it 'gets single template and converts it to ruby format' do
-      http_client.should_receive(:get)
-      .with('templates/123')
-      .and_return(response)
+      http_client.should_receive(:get).with('templates/123').and_return(response)
 
       template = subject.get_template('123')
 
@@ -670,12 +664,14 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a POST request to /templates with the given attributes' do
-      http_client.should_receive(:post)
-      .with('templates', { 'Name' => 'template name',
-                           'TextBody' => 'text body',
-                           'HtmlBody' => 'html body',
-                           'Subject' => 'subject' }.to_json)
-      .and_return(response)
+      expected_json = {
+        'Name' => 'template name',
+        'TextBody' => 'text body',
+        'HtmlBody' => 'html body',
+        'Subject' => 'subject' 
+      }.to_json
+
+      http_client.should_receive(:post).with('templates', expected_json).and_return(response)
 
       template = subject.create_template(name: 'template name',
                                          text_body: 'text body',
@@ -698,12 +694,14 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a PUT request to /templates with the given attributes' do
-      http_client.should_receive(:put)
-      .with('templates/123', { 'Name' => 'template name',
-                               'TextBody' => 'text body',
-                               'HtmlBody' => 'html body',
-                               'Subject' => 'subject' }.to_json)
-      .and_return(response)
+      expected_json = {
+        'Name' => 'template name',
+        'TextBody' => 'text body',
+        'HtmlBody' => 'html body',
+        'Subject' => 'subject' 
+      }.to_json
+
+      http_client.should_receive(:put).with('templates/123', expected_json).and_return(response)
 
       template = subject.update_template(123, name: 'template name',
                                          text_body: 'text body',
@@ -725,9 +723,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a DELETE request to /templates/:id' do
-      http_client.should_receive(:delete)
-      .with('templates/123')
-      .and_return(response)
+      http_client.should_receive(:delete).with('templates/123').and_return(response)
 
       resp = subject.delete_template(123)
 
