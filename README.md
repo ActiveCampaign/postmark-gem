@@ -160,6 +160,22 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>, Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T05:04:16.3247488-04:00", :message_id=>"d647c5d6-xxxx-466d-9411-557dcd5c2297", :error_code=>0, :message=>"OK"}
 ```
 
+## Sending a templated email
+
+If you have a [template created](https://github.com/wildbit/postmark-gem/wiki/The-Templates-API-support) in Postmark you can send an email using that template. 
+
+``` ruby
+client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
+                             to: 'Penny <penny@bigbangtheory.com>',
+                             template_id: 123,
+                             template_model: {
+                               name: 'Penny',
+                               message: 'Bazinga!'
+                             })
+
+# => {:to=>"Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T03:00:55.4454938-04:00", :message_id=>"34aed4b3-3a95-xxxx-bd1d-88064909cc93", :error_code=>0, :message=>"OK"}
+```
+
 ## Sending in batches
 
 While Postmark is focused on transactional email, we understand that developers
@@ -543,6 +559,10 @@ Postmark allows you to automatically scale your sending infrastructure with the 
 ## The Messages API Support
 
 If you ever need to access your messages or their metadata (i.e. open tracking info), [the Messages API](https://github.com/wildbit/postmark-gem/wiki/The-Messages-API-support) is a great place to start.
+
+## The Templates API Support
+
+[The Templates API](https://github.com/wildbit/postmark-gem/wiki/The-Templates-API-support) can be used to fully manage your templates.
 
 ## ActiveModel-like Interface For Bounces
 

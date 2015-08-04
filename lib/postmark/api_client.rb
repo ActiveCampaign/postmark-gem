@@ -165,6 +165,62 @@ module Postmark
       format_response http_client.put("server", serialize(data))
     end
 
+    def get_templates(options = {})
+      load_batch('templates', 'Templates', options)
+    end
+
+    def templates(options = {})
+      find_each('templates', 'Templates', options)
+    end
+
+    def get_template(id)
+      format_response http_client.get("templates/#{id}")
+    end
+
+    def create_template(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+
+      format_response http_client.post('templates', data)
+    end
+
+    def update_template(id, attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+
+      format_response http_client.put("templates/#{id}", data)
+    end
+
+    def delete_template(id)
+      format_response http_client.delete("templates/#{id}")
+    end
+
+    def validate_template(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+      response = format_response(http_client.post('templates/validate', data))
+
+      response.each do |k, v|
+        next unless v.is_a?(Hash) && k != :suggested_template_model
+
+        response[k] = HashHelper.to_ruby(v)
+
+        if response[k].has_key?(:validation_errors)
+          ruby_hashes = response[k][:validation_errors].map do |err|
+            HashHelper.to_ruby(err)
+          end
+          response[k][:validation_errors] = ruby_hashes
+        end
+      end
+
+      response
+    end
+
+    def deliver_with_template(attributes = {})
+      data = serialize(MessageHelper.to_postmark(attributes))
+
+      with_retries do
+        format_response http_client.post('email/withTemplate', data)
+      end
+    end
+
     protected
 
     def in_batches(messages)

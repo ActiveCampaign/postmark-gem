@@ -572,4 +572,259 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#get_templates' do
+    let(:http_client) { subject.http_client }
+    let(:response) do
+      {
+        'TotalCount' => 31,
+        'Templates' => [
+          {
+            'Active' => true,
+            'TemplateId' => 123,
+            'Name' => 'ABC'
+          },
+          {
+            'Active' => true,
+            'TemplateId' => 456,
+            'Name' => 'DEF'
+          }
+        ]
+      }
+    end
+
+    it 'gets templates info and converts it to ruby format' do
+      http_client.should_receive(:get).with('templates', :offset => 0, :count => 2).and_return(response)
+
+      count, templates = subject.get_templates(:count => 2)
+
+      expect(count).to eq(31)
+      expect(templates.first[:template_id]).to eq(123)
+      expect(templates.first[:name]).to eq('ABC')
+    end
+  end
+
+  describe '#templates' do
+    it 'returns an Enumerator' do
+      expect(subject.templates).to be_kind_of(Enumerable)
+    end
+
+    it 'requests data at /templates' do
+      allow(subject.http_client).to receive(:get).
+          with('templates', an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Templates' => [{}])
+      expect(subject.templates.first(5).count).to eq(1)
+    end
+  end
+
+  describe '#get_template' do
+    let(:http_client) { subject.http_client }
+    let(:response) do
+      {
+        'Name' => 'Template Name',
+        'TemplateId' => 123,
+        'Subject' => 'Subject',
+        'HtmlBody' => 'Html',
+        'TextBody' => 'Text',
+        'AssociatedServerId' => 456,
+        'Active' => true
+      }
+    end
+
+    it 'gets single template and converts it to ruby format' do
+      http_client.should_receive(:get).with('templates/123').and_return(response)
+
+      template = subject.get_template('123')
+
+      expect(template[:name]).to eq('Template Name')
+      expect(template[:template_id]).to eq(123)
+      expect(template[:html_body]).to eq('Html')
+    end
+  end
+
+  describe '#create_template' do
+    let(:http_client) { subject.http_client }
+    let(:response) do
+      {
+        'TemplateId' => 123,
+        'Name' => 'template name',
+        'Active' => true
+      }
+    end
+
+    it 'performs a POST request to /templates with the given attributes' do
+      expected_json = { 'Name' => 'template name' }.to_json
+
+      http_client.should_receive(:post).with('templates', expected_json).and_return(response)
+
+      template = subject.create_template(:name => 'template name')
+
+      expect(template[:name]).to eq('template name')
+      expect(template[:template_id]).to eq(123)
+    end
+  end
+
+  describe '#update_template' do
+    let(:http_client) { subject.http_client }
+    let(:response) do
+      {
+        'TemplateId' => 123,
+        'Name' => 'template name',
+        'Active' => true
+      }
+    end
+
+    it 'performs a PUT request to /templates with the given attributes' do
+      expected_json = { 'Name' => 'template name' }.to_json
+
+      http_client.should_receive(:put).with('templates/123', expected_json).and_return(response)
+
+      template = subject.update_template(123, :name => 'template name')
+
+      expect(template[:name]).to eq('template name')
+      expect(template[:template_id]).to eq(123)
+    end
+  end
+
+  describe '#delete_template' do
+    let(:http_client) { subject.http_client }
+    let(:response) do
+      {
+        'ErrorCode' => 0,
+        'Message' => 'Template 123 removed.'
+      }
+    end
+
+    it 'performs a DELETE request to /templates/:id' do
+      http_client.should_receive(:delete).with('templates/123').and_return(response)
+
+      resp = subject.delete_template(123)
+
+      expect(resp[:error_code]).to eq(0)
+    end
+  end
+
+  describe '#validate_template' do
+    let(:http_client) { subject.http_client }
+
+    context 'when template is valid' do
+      let(:response) do
+        {
+          'AllContentIsValid' => true,
+          'HtmlBody' => {
+            'ContentIsValid' => true,
+            'ValidationErrors' => [],
+            'RenderedContent' => '<html><head></head><body>MyName_Value</body></html>'
+          },
+          'TextBody' => {
+            'ContentIsValid' => true,
+            'ValidationErrors' => [],
+            'RenderedContent' => 'MyName_Value'
+          },
+          'Subject' => {
+            'ContentIsValid' => true,
+            'ValidationErrors' => [],
+            'RenderedContent' => 'MyName_Value'
+          },
+          'SuggestedTemplateModel' => {
+            'MyName' => 'MyName_Value'
+          }
+        }
+      end
+
+      it 'performs a POST request and returns unmodified suggested template model' do
+        expected_template_json = {
+          'HtmlBody' => '{{MyName}}',
+          'TextBody' => '{{MyName}}',
+          'Subject' => '{{MyName}}'
+        }.to_json
+
+        http_client.should_receive(:post).with('templates/validate', expected_template_json).and_return(response)
+
+        resp = subject.validate_template(:html_body => '{{MyName}}',
+                                         :text_body => '{{MyName}}',
+                                         :subject => '{{MyName}}')
+
+        expect(resp[:all_content_is_valid]).to be_true
+        expect(resp[:html_body][:content_is_valid]).to be_true
+        expect(resp[:html_body][:validation_errors]).to be_empty
+        expect(resp[:suggested_template_model]['MyName']).to eq('MyName_Value')
+      end
+    end
+
+    context 'when template is invalid' do
+      let(:response) do
+        {
+          'AllContentIsValid' => false,
+          'HtmlBody' => {
+            'ContentIsValid' => false,
+            'ValidationErrors' => [
+              {
+                'Message' => 'The \'each\' block being opened requires a model path to be specified in the form \'{#each <name>}\'.',
+                'Line' => 1,
+                'CharacterPosition' => 1
+              }
+            ],
+            'RenderedContent' => nil
+          },
+          'TextBody' => {
+            'ContentIsValid' => true,
+            'ValidationErrors' => [],
+            'RenderedContent' => 'MyName_Value'
+          },
+          'Subject' => {
+            'ContentIsValid' => true,
+            'ValidationErrors' => [],
+            'RenderedContent' => 'MyName_Value'
+          },
+          'SuggestedTemplateModel' => nil
+        }
+      end
+
+      it 'performs a POST request and returns validation errors' do
+        expected_template_json = {
+          'HtmlBody' => '{{#each}}',
+          'TextBody' => '{{MyName}}',
+          'Subject' => '{{MyName}}'
+        }.to_json
+
+        http_client.should_receive(:post).with('templates/validate', expected_template_json).and_return(response)
+
+        resp = subject.validate_template(:html_body => '{{#each}}',
+                                         :text_body => '{{MyName}}',
+                                         :subject => '{{MyName}}')
+
+        expect(resp[:all_content_is_valid]).to be_false
+        expect(resp[:text_body][:content_is_valid]).to be_true
+        expect(resp[:html_body][:content_is_valid]).to be_false
+        expect(resp[:html_body][:validation_errors].first[:character_position]).to eq(1)
+        expect(resp[:html_body][:validation_errors].first[:message]).to eq('The \'each\' block being opened requires a model path to be specified in the form \'{#each <name>}\'.')
+      end
+    end
+  end
+
+  describe "#deliver_with_template" do
+    let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
+    let(:email_json) { Postmark::Json.encode(email) }
+    let(:http_client) { subject.http_client }
+    let(:response) { {"MessageID" => 42} }
+
+    it 'converts message hash to Postmark format and posts it to /email/withTemplate' do
+      http_client.should_receive(:post).with('email/withTemplate', email_json) { response }
+      subject.deliver_with_template(message_hash)
+    end
+
+    it 'retries 3 times' do
+      2.times do
+        http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
+      end
+      http_client.should_receive(:post) { response }
+      expect { subject.deliver_with_template(message_hash) }.not_to raise_error
+    end
+
+    it 'converts response to ruby format' do
+      http_client.should_receive(:post).with('email/withTemplate', email_json) { response }
+      r = subject.deliver_with_template(message_hash)
+      r.should have_key(:message_id)
+    end
+  end
 end
