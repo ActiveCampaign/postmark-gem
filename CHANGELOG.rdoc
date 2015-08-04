@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.6.0
+
+* Add methods to access new templates API endpoints.
+
 == 1.5.0
 
 * Call API access strings tokens instead of keys. Keep backwards compatibility.
