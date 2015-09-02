@@ -225,9 +225,12 @@ module Postmark
       format_response(http_client.get('stats/outbound', options))
     end
 
-    def get_stats_counts(type, options = {})
-      options[:fromdate] ||= (Date.today - 30).to_s
-      response = format_response(http_client.get("stats/outbound/#{type}", options))
+    def get_stats_counts(stat, options = {})
+      url = "stats/outbound/#{stat}"
+
+      url += "/#{options.delete(:type)}" if options.has_key?(:type)
+
+      response = format_response(http_client.get(url, options))
 
       response[:days] = response[:days].map { |d| HashHelper.to_ruby(d) }
 

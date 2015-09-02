@@ -871,8 +871,8 @@ describe Postmark::ApiClient do
     end
     let(:http_client) { subject.http_client }
 
-    it 'converts response to ruby format and defaults fromdate' do
-      http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo', :fromdate => (Date.today - 30).to_s }) { response }
+    it 'converts response to ruby format' do
+      http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo' }) { response }
       r = subject.get_stats_counts(:sends, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)
@@ -883,9 +883,21 @@ describe Postmark::ApiClient do
       first_day.should have_key(:sent)
     end
 
-    it 'uses non default fromdata that is passed in' do
+    it 'uses fromdate that is passed in' do
       http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo', :fromdate => '2015-01-01' }) { response }
       r = subject.get_stats_counts(:sends, :tag => 'foo', :fromdate => '2015-01-01')
+      r.should have_key(:days)
+      r.should have_key(:sent)
+
+      first_day = r[:days].first
+
+      first_day.should have_key(:date)
+      first_day.should have_key(:sent)
+    end
+
+    it 'uses stats type that is passed in' do
+      http_client.should_receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo' }) { response }
+      r = subject.get_stats_counts(:opens, :type => :readtimes, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)
 
