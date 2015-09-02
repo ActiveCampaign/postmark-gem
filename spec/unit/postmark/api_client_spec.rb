@@ -848,25 +848,25 @@ describe Postmark::ApiClient do
   describe '#get_stats_counts' do
     let(:response) do
       {
-        "Days": [
+        "Days" => [
           {
-            "Date": "2014-01-01",
-            "Sent": 140
+            "Date" => "2014-01-01",
+            "Sent" => 140
           },
           {
-            "Date": "2014-01-02",
-            "Sent": 160
+            "Date" => "2014-01-02",
+            "Sent" => 160
           },
           {
-            "Date": "2014-01-04",
-            "Sent": 50
+            "Date" => "2014-01-04",
+            "Sent" => 50
           },
           {
-            "Date": "2014-01-05",
-            "Sent": 115
+            "Date" => "2014-01-05",
+            "Sent" => 115
           }
         ],
-        "Sent": 615
+        "Sent" => 615
       }
     end
     let(:http_client) { subject.http_client }
