@@ -221,6 +221,19 @@ module Postmark
       end
     end
 
+    def get_stats_totals(options = {})
+      format_response(http_client.get('stats/outbound', options))
+    end
+
+    def get_stats_counts(type, options = {})
+      options[:fromdate] ||= (Date.today - 30).to_s
+      response = format_response(http_client.get("stats/outbound/#{type}", options))
+
+      response[:days] = response[:days].map { |d| HashHelper.to_ruby(d) }
+
+      response
+    end
+
     protected
 
     def in_batches(messages)
