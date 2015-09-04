@@ -896,7 +896,7 @@ describe Postmark::ApiClient do
     end
 
     it 'uses stats type that is passed in' do
-      http_client.should_receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo' }) { response }
+      http_client.should_receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo', :type => :readtimes }) { response }
       r = subject.get_stats_counts(:opens, :type => :readtimes, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)
