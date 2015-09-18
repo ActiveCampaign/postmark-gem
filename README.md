@@ -566,7 +566,7 @@ If you ever need to access your messages or their metadata (i.e. open tracking i
 
 ## The Stats API Support
 
-[The Stats API](https://github.com/wildbit/postmark-gem/wiki/) can be used to access statistics on your emails sent by date and tag.
+[The Stats API](https://github.com/wildbit/postmark-gem/wiki/The-Stats-API-support) can be used to access statistics on your emails sent by date and tag.
 
 
 ## ActiveModel-like Interface For Bounces
