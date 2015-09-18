@@ -78,7 +78,7 @@ module Mail
         self.header.fields.each do |field|
           key, value = field.name, field.value
           next if bogus_headers.include? key.downcase
-          name = key.split(/-/).map { |i| i.capitalize }.join('-')
+          name = key # key.split(/-/).map { |i| i.capitalize }.join('-')
 
           headers << { "Name" => name, "Value" => value }
         end
