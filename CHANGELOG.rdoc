@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.7.0
+
+* Add methods to access stats API endpoints.
+
 == 1.6.0
 
 * Add methods to access new templates API endpoints.

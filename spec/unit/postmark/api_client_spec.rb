@@ -409,7 +409,7 @@ describe Postmark::ApiClient do
       expect(subject.opens.first(5).count).to eq(1)
     end
 
-  end  
+  end
 
   describe '#get_opens' do
     let(:http_client) { subject.http_client }
@@ -825,6 +825,86 @@ describe Postmark::ApiClient do
       http_client.should_receive(:post).with('email/withTemplate', email_json) { response }
       r = subject.deliver_with_template(message_hash)
       r.should have_key(:message_id)
+    end
+  end
+
+  describe '#get_stats_totals' do
+    let(:response) do
+      {
+        "Sent" => 615,
+        "BounceRate" => 10.406,
+      }
+    end
+    let(:http_client) { subject.http_client }
+
+    it 'converts response to ruby format' do
+      http_client.should_receive(:get).with('stats/outbound', { :tag => 'foo' }) { response }
+      r = subject.get_stats_totals(:tag => 'foo')
+      r.should have_key(:sent)
+      r.should have_key(:bounce_rate)
+    end
+  end
+
+  describe '#get_stats_counts' do
+    let(:response) do
+      {
+        "Days" => [
+          {
+            "Date" => "2014-01-01",
+            "Sent" => 140
+          },
+          {
+            "Date" => "2014-01-02",
+            "Sent" => 160
+          },
+          {
+            "Date" => "2014-01-04",
+            "Sent" => 50
+          },
+          {
+            "Date" => "2014-01-05",
+            "Sent" => 115
+          }
+        ],
+        "Sent" => 615
+      }
+    end
+    let(:http_client) { subject.http_client }
+
+    it 'converts response to ruby format' do
+      http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo' }) { response }
+      r = subject.get_stats_counts(:sends, :tag => 'foo')
+      r.should have_key(:days)
+      r.should have_key(:sent)
+
+      first_day = r[:days].first
+
+      first_day.should have_key(:date)
+      first_day.should have_key(:sent)
+    end
+
+    it 'uses fromdate that is passed in' do
+      http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo', :fromdate => '2015-01-01' }) { response }
+      r = subject.get_stats_counts(:sends, :tag => 'foo', :fromdate => '2015-01-01')
+      r.should have_key(:days)
+      r.should have_key(:sent)
+
+      first_day = r[:days].first
+
+      first_day.should have_key(:date)
+      first_day.should have_key(:sent)
+    end
+
+    it 'uses stats type that is passed in' do
+      http_client.should_receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo', :type => :readtimes }) { response }
+      r = subject.get_stats_counts(:opens, :type => :readtimes, :tag => 'foo')
+      r.should have_key(:days)
+      r.should have_key(:sent)
+
+      first_day = r[:days].first
+
+      first_day.should have_key(:date)
+      first_day.should have_key(:sent)
     end
   end
 end

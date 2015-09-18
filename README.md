@@ -564,6 +564,11 @@ If you ever need to access your messages or their metadata (i.e. open tracking i
 
 [The Templates API](https://github.com/wildbit/postmark-gem/wiki/The-Templates-API-support) can be used to fully manage your templates.
 
+## The Stats API Support
+
+[The Stats API](https://github.com/wildbit/postmark-gem/wiki/) can be used to access statistics on your emails sent by date and tag.
+
+
 ## ActiveModel-like Interface For Bounces
 
 To provide an interface similar to ActiveModel for bounces, the Postmark gem adds
