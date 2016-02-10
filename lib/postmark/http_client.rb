@@ -105,6 +105,7 @@ module Postmark
       http.read_timeout = self.http_read_timeout
       http.open_timeout = self.http_open_timeout
       http.use_ssl = !!self.secure
+      http.ssl_version = :TLSv1
       http
     end
 
