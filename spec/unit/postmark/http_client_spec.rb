@@ -40,6 +40,11 @@ describe Postmark::HttpClient do
     its(:path_prefix) { should eq '/' }
     its(:http_read_timeout) { should eq 15 }
     its(:http_open_timeout) { should eq 5 }
+
+    it 'uses TLS encryption', :skip_ruby_version => ['1.8.7'] do
+      http_client = subject.http
+      http_client.ssl_version.should == :TLSv1
+    end
   end
 
   context "when it is created with options" do
