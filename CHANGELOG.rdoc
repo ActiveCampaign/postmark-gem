@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.7.1
+
+* Explicitly set TLS version used by the client.
+
 == 1.7.0
 
 * Add methods to access stats API endpoints.
