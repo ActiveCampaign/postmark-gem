@@ -144,7 +144,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 ## Sending to multiple recipients
 
 You can pass multiple recipient addresses in the `:to` field and the optional
-`:cc` and `:bcc` fields. Note that Postmark has a limit of twenty recipients
+`:cc` and `:bcc` fields. Note that Postmark has a limit of 50 recipients
 per message in total. You need to take care not to exceed that limit.
 Otherwise, you will get an error.
 
