@@ -4,6 +4,7 @@ describe Postmark::Bounce do
   let(:bounce_data) { {:type => "HardBounce",
                        :message_id => "d12c2f1c-60f3-4258-b163-d17052546ae4",
                        :type_code => 1,
+                       :description => "The server was unable to deliver your message (ex: unknown user, mailbox not found).",
                        :details => "test bounce",
                        :email => "jim@test.com",
                        :bounced_at => "2013-04-22 18:06:48 +0800",
@@ -24,6 +25,7 @@ describe Postmark::Bounce do
     it { should respond_to(:email) }
     it { should respond_to(:bounced_at) }
     it { should respond_to(:type) }
+    it { should respond_to(:description) }
     it { should respond_to(:details) }
     it { should respond_to(:name) }
     it { should respond_to(:id) }
@@ -50,6 +52,7 @@ describe Postmark::Bounce do
 
     its(:type) { should eq bounce_data[:type] }
     its(:message_id) { should eq bounce_data[:message_id] }
+    its(:description) { should eq bounce_data[:description] }
     its(:details) { should eq bounce_data[:details] }
     its(:email) { should eq bounce_data[:email] }
     its(:bounced_at) { should == Time.parse(bounce_data[:bounced_at]) }
