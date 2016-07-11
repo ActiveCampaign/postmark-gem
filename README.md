@@ -340,6 +340,16 @@ Delivery method accepts all options supported by `Postmark::ApiClient`
 documented above. A new instance of `Postmark::ApiClient` is created every time
 you deliver a message to preserve thread safety.
 
+If you would prefer to use Postmark as the default delivery method for all
+`Mail::Message` instances, you can call `Mail.defaults` method during the initialization
+step of your app:
+
+``` ruby
+Mail.defaults do
+  delivery_method Mail::Postmark, api_token: 'your-postmark-api-token'
+end
+```
+
 ## Plain text message
 
 ``` ruby
