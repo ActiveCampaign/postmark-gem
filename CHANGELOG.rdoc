@@ -1,5 +1,11 @@
 = Changelog
 
+== 1.8.0
+
+* Added missing `description` attribute to `Postmark::Bounce` #50.
+* Restricted `rake` dependency to `< 11.0.0` for Ruby < 1.9 via gemspec.
+* Restricted `json` dependency to `< 2.0.0` for Ruby < 2.0 via gemspec.
+
 == 1.7.1
 
 * Explicitly set TLS version used by the client.
