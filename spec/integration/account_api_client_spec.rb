@@ -6,7 +6,7 @@ describe 'Account API client usage' do
                                            :http_open_timeout => 15,
                                            :http_read_timeout => 15) }
   let(:unique_token) { rand(36**32).to_s(36) }
-  let(:unique_from_email) { ENV['POSTMARK_CI_RECIPIENT'].gsub(/(\+.+)?@/, "+#{unique_token}@") }
+  let(:unique_from_email) { ENV['POSTMARK_CI_SENDER'].gsub(/(\+.+)?@/, "+#{unique_token}@") }
 
   it 'can be used to manage senders' do
     new_sender = nil
@@ -32,7 +32,7 @@ describe 'Account API client usage' do
     expect(updated_sender[:id]).to eq(new_sender[:id])
 
     # spf
-    expect(subject.verified_sender_spf?(new_sender[:id])).to be_false
+    expect(subject.verified_sender_spf?(new_sender[:id])).to be_true
 
     # resend
     expect { subject.resend_sender_confirmation(new_sender[:id]) }.not_to raise_error
