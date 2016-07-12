@@ -10,12 +10,17 @@ env:
     - secure: "BjCKS4oNN1n2pQx31tA9kmfcim4BkAsO2Rg1clezEu1kEbsGzn6sjoVVeXZSHhfkZ0Gk6qW8y1fQm0gnyMQyugh8wlz8UfIS7m5CIR7ZwrWroToisbF6sHPVtoBuY8+hvtB89PXyoKKv9TBjnLEPTZFKnxP9vcYsbi45Sm06MOg="
 language: ruby
 rvm:
-- 1.8.7
-- 1.9.3
-- 2.0.0
-- 2.1.6
-- 2.2.2
-- jruby-19mode
+  - 2.0.0
+  - 2.1.9
+  - 2.2.5
+  - 2.3.1
+  - jruby-19mode
+matrix:
+  include:
+    - rvm: 1.8.7
+      gemfile: gemfiles/Gemfile.legacy
+    - rvm: 1.9.3
+      gemfile: gemfiles/Gemfile.legacy
 script: bundle exec rake spec
 before_install:
   - gem update --system

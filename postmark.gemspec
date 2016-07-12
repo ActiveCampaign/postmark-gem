@@ -33,8 +33,8 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = ">= 1.3.7"
 
-  s.add_dependency "rake", ("< 11.0.0" if RUBY_VERSION < "1.9")
-  s.add_dependency "json", ("< 2.0.0" if RUBY_VERSION < "2.0")
+  s.add_dependency "rake"
+  s.add_dependency "json"
 
   s.add_development_dependency "mail"
 end
