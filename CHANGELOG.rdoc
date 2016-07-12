@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.8.1
+
+* Technical release. Fixed gemspec.
+
 == 1.8.0
 
 * Added missing `description` attribute to `Postmark::Bounce` #50.
