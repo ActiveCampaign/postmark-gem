@@ -323,6 +323,221 @@ describe Postmark::AccountApiClient do
       end
 
     end
+    
+    describe '#domains' do
+
+      let(:response) {
+        {
+          'TotalCount' => 10, 'Domains' => [{}, {}]
+        }
+      }
+
+      it 'returns an enumerator' do
+        expect(subject.domains).to be_kind_of(Enumerable)
+      end
+
+      it 'lazily loads domains' do
+        allow(subject.http_client).to receive(:get).
+            with('domains', an_instance_of(Hash)).and_return(response)
+        subject.domains.take(1000)
+      end
+
+    end
+
+    describe '#get_domains' do
+
+      let(:response) {
+        {
+          "TotalCount" => 1,
+          "Domains" => [{
+            "Name" => "example.com",
+            "ID" => 8139
+          }]
+        }
+      }
+
+      it 'performs a GET request to /domains endpoint' do
+        allow(subject.http_client).to receive(:get).
+            with('domains', :offset => 0, :count => 30).
+            and_return(response)
+        subject.get_domains
+      end
+
+      it 'formats the keys of returned list of domains' do
+        allow(subject.http_client).to receive(:get).and_return(response)
+        keys = subject.get_domains.map { |s| s.keys }.flatten
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+
+      it 'accepts offset and count options' do
+        allow(subject.http_client).to receive(:get).
+            with('domains', :offset => 10, :count => 42).
+            and_return(response)
+        subject.get_domains(:offset => 10, :count => 42)
+      end
+
+    end
+
+    describe '#get_domains_count' do
+
+      let(:response) { {'TotalCount' => 42} }
+
+      it 'returns a total number of domains' do
+        allow(subject.http_client).to receive(:get).
+            with('domains', an_instance_of(Hash)).and_return(response)
+        expect(subject.get_domains_count).to eq(42)
+      end
+
+    end
+
+    describe '#get_domain' do
+
+      let(:response) {
+        {
+          "Name" => "example.com",
+          "ID" => 8139
+        }
+      }
+
+      it 'performs a GET request to /domains/:id endpoint' do
+        allow(subject.http_client).to receive(:get).with("domains/42").
+                                                    and_return(response)
+        subject.get_domain(42)
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:get).and_return(response)
+        keys = subject.get_domain(42).keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+    end
+
+    describe '#create_domain' do
+
+      let(:response) {
+        {
+          "Name" => "example.com",
+          "ID" => 8139
+        }
+      }
+
+      it 'performs a POST request to /domains endpoint' do
+        allow(subject.http_client).to receive(:post).
+            with("domains", an_instance_of(String)).and_return(response)
+        subject.create_domain(:name => 'example.com')
+      end
+
+      it 'converts the domain attributes names to camel case' do
+        allow(subject.http_client).to receive(:post).
+            with("domains", {'FooBar' => 'bar'}.to_json).and_return(response)
+        subject.create_domain(:foo_bar => 'bar')
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:post).and_return(response)
+        keys = subject.create_domain(:foo => 'bar').keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+    end
+
+    describe '#update_domain' do
+
+      let(:response) {
+        {
+          "Name" => "example.com",
+          "ReturnPathDomain" => "return.example.com",
+          "ID" => 8139
+        }
+      }
+
+      it 'performs a PUT request to /domains/:id endpoint' do
+        allow(subject.http_client).to receive(:put).
+            with('domains/42', an_instance_of(String)).and_return(response)
+        subject.update_domain(42, :return_path_domain => 'updated-return.example.com')
+      end
+
+      it 'converts the domain attributes names to camel case' do
+        allow(subject.http_client).to receive(:put).
+            with('domains/42', {'FooBar' => 'bar'}.to_json).and_return(response)
+        subject.update_domain(42, :foo_bar => 'bar')
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:put).and_return(response)
+        keys = subject.update_domain(42, :foo => 'bar').keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+
+    end
+
+    describe '#verified_domain_spf?' do
+
+      let(:response) { {"SPFVerified" => true} }
+      let(:false_response) { {"SPFVerified" => false} }
+
+      it 'performs a POST request to /domains/:id/verifyspf endpoint' do
+        allow(subject.http_client).to receive(:post).
+            with('domains/42/verifyspf').and_return(response)
+        subject.verified_domain_spf?(42)
+      end
+
+      it 'returns false when SPFVerified field of the response is false' do
+        allow(subject.http_client).to receive(:post).and_return(false_response)
+        expect(subject.verified_domain_spf?(42)).to be_false
+      end
+
+      it 'returns true when SPFVerified field of the response is true' do
+        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.verified_domain_spf?(42)).to be_true
+      end
+
+    end
+
+    describe '#rotate_domain_dkim' do
+
+      let(:response) {
+        {
+          "Name" => "example.com",
+          "ID" => 8139
+        }
+      }
+
+      it 'performs a POST request to /domains/:id/rotatedkim endpoint' do
+        allow(subject.http_client).to receive(:post).
+            with('domains/42/rotatedkim').and_return(response)
+        subject.rotate_domain_dkim(42)
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:post).and_return(response)
+        keys = subject.rotate_domain_dkim(42).keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+
+    end
+
+    describe '#delete_domain' do
+
+      let(:response) {
+        {
+          "ErrorCode" => 0,
+          "Message" => "Domain example.com removed."
+        }
+      }
+
+      it 'performs a DELETE request to /domains/:id endpoint' do
+        allow(subject.http_client).to receive(:delete).
+            with('domains/42').and_return(response)
+        subject.delete_domain(42)
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:delete).and_return(response)
+        keys = subject.delete_sender(42).keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+      end
+
+    end
 
     describe '#servers' do
 

@@ -31,6 +31,7 @@ describe 'Account API client usage' do
     expect(updated_sender[:name]).to eq('New Name')
     expect(updated_sender[:id]).to eq(new_sender[:id])
 
+
     # spf
     expect(subject.verified_sender_spf?(new_sender[:id])).to be_true
 
@@ -44,6 +45,44 @@ describe 'Account API client usage' do
 
     # delete
     expect { subject.delete_sender(new_sender[:id]) }.not_to raise_error
+  end
+
+  it 'can be used to manage domains' do
+    new_domain = nil
+    domain_name = "#{unique_token}-gem-integration.test"
+    return_path = "return.#{domain_name}"
+    updated_return_path = "updated-return.#{domain_name}"
+
+    # create & count
+    new_domain = subject.create_domain(:name => domain_name,
+                                       :return_path_domain => return_path)
+    expect(subject.get_domains_count).to be > 0
+
+    # get
+    expect(subject.get_domain(new_domain[:id])[:id]).to eq(new_domain[:id])
+
+    # list
+    domains = subject.get_domains(:count => 50)
+    expect(domains.map { |d| d[:id] }).to include(new_domain[:id])
+
+    # collection
+    expect(subject.domains.map { |d| d[:id] }).to include(new_domain[:id])
+
+    # update
+    updated_domain = subject.update_domain(new_domain[:id], :return_path_domain => updated_return_path)
+    expect(updated_domain[:return_path_domain]).to eq(updated_return_path)
+    expect(updated_domain[:id]).to eq(new_domain[:id])
+
+    # spf
+    expect(subject.verified_domain_spf?(new_domain[:id])).to be_false
+
+    # dkim
+    expect { subject.rotate_domain_dkim(new_domain[:id]) }.
+        to raise_error(Postmark::InvalidMessageError,
+                       'This DKIM is already being renewed.')
+
+    # delete
+    expect { subject.delete_domain(new_domain[:id]) }.not_to raise_error
   end
 
   it 'can be used to manage servers' do
