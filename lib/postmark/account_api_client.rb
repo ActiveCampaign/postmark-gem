@@ -61,6 +61,46 @@ module Postmark
     end
     alias_method :delete_signature, :delete_sender
 
+    def domains(options = {})
+      find_each('domains', 'Domains', options)
+    end
+
+    def get_domains(options = {})
+      load_batch('domains', 'Domains', options).last
+    end
+
+    def get_domains_count(options = {})
+      get_resource_count('domains', options)
+    end
+
+    def get_domain(id)
+      format_response http_client.get("domains/#{id.to_i}")
+    end
+
+    def create_domain(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+
+      format_response http_client.post('domains', data)
+    end
+
+    def update_domain(id, attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+
+      format_response http_client.put("domains/#{id.to_i}", data)
+    end
+
+    def verified_domain_spf?(id)
+      !!http_client.post("domains/#{id.to_i}/verifyspf")['SPFVerified']
+    end
+
+    def rotate_domain_dkim(id)
+      format_response http_client.post("domains/#{id.to_i}/rotatedkim")
+    end
+
+    def delete_domain(id)
+      format_response http_client.delete("domains/#{id.to_i}")
+    end
+
     def servers(options = {})
       find_each('servers', 'Servers', options)
     end

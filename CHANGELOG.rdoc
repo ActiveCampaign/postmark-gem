@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.9.0
+
+* Added methods to access domains API endoints
+
 == 1.8.1
 
 * Technical release. Fixed gemspec.

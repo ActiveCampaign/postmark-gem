@@ -21,6 +21,7 @@ matrix:
     - rvm: 1.9.3
       gemfile: gemfiles/Gemfile.legacy
     - rvm: jruby-19mode
+      jdk: oraclejdk8 
       gemfile: gemfiles/Gemfile.legacy
 script: bundle exec rake spec
 before_install:
