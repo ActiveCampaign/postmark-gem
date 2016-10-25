@@ -1,5 +1,10 @@
 = Changelog
 
+== 1.9.1
+
+* Fix a bug when port setting is not respected.
+* Made `Postmark::HttpClient#protocol` method public.
+
 == 1.9.0
 
 * Added methods to access domains API endoints
