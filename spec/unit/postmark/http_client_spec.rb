@@ -54,7 +54,7 @@ describe Postmark::HttpClient do
     let(:proxy_user) { "provided proxy user" }
     let(:proxy_pass) { "provided proxy pass" }
     let(:host) { "providedhostname.org" }
-    let(:port) { 443 }
+    let(:port) { 4443 }
     let(:path_prefix) { "/provided/path/prefix" }
     let(:http_open_timeout) { 42 }
     let(:http_read_timeout) { 42 }
@@ -83,6 +83,20 @@ describe Postmark::HttpClient do
     its(:path_prefix) { should == path_prefix }
     its(:http_open_timeout) { should == http_open_timeout }
     its(:http_read_timeout) { should == http_read_timeout }
+
+    it 'uses port 80 for plain HTTP connections' do
+      expect(Postmark::HttpClient.new(api_token, :secure => false).port).to eq(80)
+    end
+
+    it 'uses port 443 for secure HTTP connections' do
+      expect(Postmark::HttpClient.new(api_token, :secure => true).port).to eq(443)
+    end
+
+    it 'respects port over secure option' do
+      client = Postmark::HttpClient.new(api_token, :port => 80, :secure => true)
+      expect(client.port).to eq(80)
+      expect(client.protocol).to eq('https')
+    end
   end
 
   describe "#post" do

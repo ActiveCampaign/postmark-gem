@@ -42,6 +42,10 @@ module Postmark
       do_request { |client| client.delete(url_path(path + to_query_string(query)), headers) }
     end
 
+    def protocol
+      self.secure ? 'https' : 'http'
+    end
+
     protected
 
     def apply_options(options = {})
@@ -49,16 +53,12 @@ module Postmark
       DEFAULTS.merge(options).each_pair do |name, value|
         instance_variable_set(:"@#{name}", value)
       end
-      @port = options[:port] || @secure ? 443 : 80
+      @port = options[:port] || (@secure ? 443 : 80)
     end
 
     def to_query_string(hash)
       return "" if hash.empty?
       "?" + hash.map { |key, value| "#{CGI.escape(key.to_s)}=#{CGI.escape(value.to_s)}" }.join("&")
-    end
-
-    def protocol
-      self.secure ? "https" : "http"
     end
 
     def url
