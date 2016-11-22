@@ -16,11 +16,12 @@ module Mail
     end
 
     def track_opens(val = nil)
-      default 'TRACK-OPENS', !!val
+      default 'TRACK-OPENS', (!!val).to_s unless val.nil?
+      header['TRACK-OPENS'].to_s
     end
 
     def track_opens=(val)
-      header['TRACK-OPENS'] = !!val
+      header['TRACK-OPENS'] = (!!val).to_s
     end
 
     def postmark_attachments=(value)
