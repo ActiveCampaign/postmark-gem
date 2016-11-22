@@ -15,7 +15,7 @@ describe Postmark::MailMessageConverter do
   end
 
   let(:mail_html_message) do
-    mail = Mail.new do
+    Mail.new do
       from          "sheldon@bigbangtheory.com"
       to            "lenard@bigbangtheory.com"
       subject       "Hello!"
@@ -25,7 +25,7 @@ describe Postmark::MailMessageConverter do
   end
 
   let(:mail_message_with_tracking) do
-    mail = Mail.new do
+    Mail.new do
       from          "sheldon@bigbangtheory.com"
       to            "lenard@bigbangtheory.com"
       subject       "Hello!"
@@ -35,6 +35,28 @@ describe Postmark::MailMessageConverter do
     end
   end
 
+  let(:mail_message_with_tracking_set_variable) do
+    mail = mail_html_message
+    mail.track_opens=true
+    mail
+  end
+
+  let(:mail_message_with_tracking_disabled_set_variable) do
+    mail = mail_html_message
+    mail.track_opens=true
+    mail
+  end
+
+  let(:mail_message_with_tracking_disabled) do
+    Mail.new do
+      from          "sheldon@bigbangtheory.com"
+      to            "lenard@bigbangtheory.com"
+      subject       "Hello!"
+      content_type  'text/html; charset=UTF-8'
+      body          "<b>Hello Sheldon!</b>"
+      track_opens   false
+    end
+  end
 
   let(:tagged_mail_message) do
     Mail.new do
@@ -55,7 +77,7 @@ describe Postmark::MailMessageConverter do
   end
 
   let(:mail_multipart_message) do
-    mail = Mail.new do
+    Mail.new do
       from          "sheldon@bigbangtheory.com"
       to            "lenard@bigbangtheory.com"
       subject       "Hello!"
@@ -123,8 +145,7 @@ describe Postmark::MailMessageConverter do
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
-        "To" => "lenard@bigbangtheory.com",
-        'TrackOpens' => false}
+        "To" => "lenard@bigbangtheory.com"}
   end
 
   it 'converts tagged text messages correctly' do
@@ -133,16 +154,14 @@ describe Postmark::MailMessageConverter do
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
         "Tag" => "sheldon",
-        "To"=>"lenard@bigbangtheory.com",
-        'TrackOpens' => false}
+        "To"=>"lenard@bigbangtheory.com"}
   end
 
   it 'converts plain text messages without body correctly' do
     subject.new(mail_message_without_body).run.should == {
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
-        "To" => "lenard@bigbangtheory.com",
-        'TrackOpens' => false}
+        "To" => "lenard@bigbangtheory.com"}
   end
 
   it 'converts html messages correctly' do
@@ -150,8 +169,7 @@ describe Postmark::MailMessageConverter do
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "HtmlBody" => "<b>Hello Sheldon!</b>",
-        "To" => "lenard@bigbangtheory.com",
-        'TrackOpens' => false}
+        "To" => "lenard@bigbangtheory.com"}
   end
 
   it 'converts multipart messages correctly' do
@@ -160,8 +178,7 @@ describe Postmark::MailMessageConverter do
         "Subject" => "Hello!",
         "HtmlBody" => "<b>Hello Sheldon!</b>",
         "TextBody" => "Hello Sheldon!",
-        "To" => "lenard@bigbangtheory.com",
-        'TrackOpens' => false}
+        "To" => "lenard@bigbangtheory.com"}
   end
 
   it 'converts messages with attachments correctly' do
@@ -172,8 +189,7 @@ describe Postmark::MailMessageConverter do
                            "Content"=>encoded_empty_gif_data,
                            "ContentType"=>"image/gif"}],
         "TextBody"=>"Hello Sheldon!",
-        "To"=>"lenard@bigbangtheory.com",
-        'TrackOpens' => false}
+        "To"=>"lenard@bigbangtheory.com"}
   end
 
   it 'converts messages with named addresses correctly' do
@@ -182,18 +198,55 @@ describe Postmark::MailMessageConverter do
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
         "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
-        "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>',
-        'TrackOpens' => false
-    }
+        "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>'}
   end
 
-  it 'recognizes when open tracking is enabled' do
-    subject.new(mail_message_with_tracking).run.should == {
-        "From" => "sheldon@bigbangtheory.com",
-        "Subject" => "Hello!",
-        "HtmlBody" => "<b>Hello Sheldon!</b>",
-        "To" => "lenard@bigbangtheory.com",
-        "TrackOpens" => true}
+  context 'recognizes open tracking' do
+
+    context 'setup inside of mail' do
+
+      it 'is enabled' do
+        subject.new(mail_message_with_tracking).run.should == {
+            "From" => "sheldon@bigbangtheory.com",
+            "Subject" => "Hello!",
+            "HtmlBody" => "<b>Hello Sheldon!</b>",
+            "To" => "lenard@bigbangtheory.com",
+            "TrackOpens" => true}
+      end
+
+      it 'is disabled' do
+        subject.new(mail_message_with_tracking_disabled).run.should == {
+            "From" => "sheldon@bigbangtheory.com",
+            "Subject" => "Hello!",
+            "HtmlBody" => "<b>Hello Sheldon!</b>",
+            "To" => "lenard@bigbangtheory.com",
+            "TrackOpens" => false}
+      end
+
+    end
+
+    context 'setup with tracking variable' do
+
+      it 'is enabled' do
+        subject.new(mail_message_with_tracking_set_variable).run.should == {
+            "From" => "sheldon@bigbangtheory.com",
+            "Subject" => "Hello!",
+            "HtmlBody" => "<b>Hello Sheldon!</b>",
+            "To" => "lenard@bigbangtheory.com",
+            "TrackOpens" => true}
+      end
+
+      it 'is disabled' do
+        subject.new(mail_message_with_tracking_disabled_set_variable).run.should == {
+            "From" => "sheldon@bigbangtheory.com",
+            "Subject" => "Hello!",
+            "HtmlBody" => "<b>Hello Sheldon!</b>",
+            "To" => "lenard@bigbangtheory.com",
+            "TrackOpens" => true}
+      end
+
+    end
+
   end
 
   it 'correctly decodes unicode in messages transfered as quoted-printable' do
