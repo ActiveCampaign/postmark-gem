@@ -30,7 +30,7 @@ module Postmark
         'Subject' => @message.subject,
         'Headers' => @message.export_headers,
         'Tag' => @message.tag.to_s,
-        'TrackOpens' => cast_to_bool(@message.track_opens)
+        'TrackOpens' => @message.track_opens
       }
     end
 
