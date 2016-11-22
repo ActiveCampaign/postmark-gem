@@ -16,7 +16,7 @@ module Mail
     end
 
     def track_opens(val = nil)
-      default 'TRACK-OPENS', (!!val).to_s unless val.nil?
+      self.track_opens=(val) unless val.nil?
       header['TRACK-OPENS'].to_s
     end
 
