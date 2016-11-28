@@ -680,10 +680,13 @@ Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl are also suppor
 
 * Fork the project.
 * Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-* Send me a pull request. Bonus points for topic branches.
+* Add tests for it. This is important to prevent future regressions.
+* Do not mess with rakefile, version, or history
+* Update the CHANGELOG, list your changes under Unreleased.
+* Update the README if necessary.
+* Write short, descriptive commit messages, following the format used in the repo.
+* Send a pull request. Bonus points for topic branches.
 
 ## Copyright
 
-Copyright © 2014 Wildbit LLC. See LICENSE for details.
+Copyright © 2016 Wildbit LLC. See LICENSE for details.
