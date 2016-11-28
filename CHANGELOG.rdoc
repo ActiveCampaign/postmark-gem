@@ -1,5 +1,10 @@
 = Changelog
 
+== Unreleased
+
+* Fix a bug when open tracking flag is set to false by default, when open tracking flag is not set by a user.
+* Added support for link tracking
+
 == 1.9.1
 
 * Fix a bug when port setting is not respected.

@@ -66,7 +66,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:45:16.2059023-04:00", :message_id=>"b2b268e3-6a70-xxxx-b897-49c9eb8b1d2e", :error_code=>0, :message=>"OK"}
 ```
 
-## Sending an HTML message (with open tracking!)
+## Sending an HTML message with open tracking
 
 Simply pass an HTML document as html_body parameter to `#deliver`. You can also enable open tracking by setting `track_opens` to `true`.
 
@@ -78,6 +78,22 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
                           'General rule of thumb is 36 adults or 70 ' \
                           'children.</p>',
                track_opens: true)
+# => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
+```
+## Sending a message with link tracking
+
+To track visited links for emails you send, make sure to have links in html_body, text_body or both when passing them to `#deliver`. You need to enable link tracking by setting `track_links` parameter to one of the following options: `:html_only`, `:text_only`, `:html_and_text` or `:none`.
+Depending on parameter you set, link tracking will be enabled on plain text body, html body, both or none. Optionally you can also use string values as parameters 'HtmlOnly', 'TextOnly', 'HtmlAndText' or 'None'.
+
+``` ruby
+client.deliver(from: 'sheldon@bigbangtheory.com',
+               to: 'Leonard Hofstadter <leonard@bigbangtheory.com>',
+               subject: 'Re: What, to you, is a large crowd?',
+               html_body: '<p>Any group big enough to trample me to death. ' \
+                          'General <a href="http://www.example.com">rule of thumb</a> is 36 adults or 70 ' \
+                          'children.</p>',
+               text_body: 'Any group big enough to trample me to death. General rule of thumb is 36 adults or 70 children - http://www.example.com.',
+               track_links: :html_and_text)
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
 ```
 
@@ -398,6 +414,41 @@ end
 
 message.deliver
 # => #<Mail::Message:70355902117460, Multipart: false, Headers: <From: sheldon@bigbangtheory.com>, <To: leonard@bigbangtheory.com>, <Message-ID: 3a9370a2-6c24-4304-a03c-320a54cc59f7>, <Subject: Re: What, to you, is a large crowd?>, <Content-Type: text/html; charset=UTF-8>>
+```
+
+## Multipart message (with link tracking)
+
+Notice that we set `track_links` field to `:html_and_text`, to enable link tracking for both plain text and html parts for this message.
+
+``` ruby
+require 'rubygems'
+require 'postmark'
+require 'mail'
+require 'json'
+
+message = Mail.new do
+  from            'sheldon@bigbangtheory.com'
+  to              'Leonard Hofstadter <leonard@bigbangtheory.com>'
+  subject         'Re: What, to you, is a large crowd?'
+
+  text_part do
+    body          'Any group big enough to trample me to death. General rule of thumb is 36 adults or 70 children - http://www.example.com.'
+  end
+
+  html_part do
+    content_type  'text/html; charset=UTF-8'
+    body          '<p>Any group big enough to trample me to death. ' \
+                  'General <a href="http://www.example.com">rule of thumb</a> is 36 adults or 70 ' \
+                  'children.</p>'
+  end
+
+  track_links     :html_and_text
+
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
+end
+
+message.deliver
+# => #<Mail::Message:70355902117460, Multipart: true, Headers: <From: sheldon@bigbangtheory.com>, <To: leonard@bigbangtheory.com>, <Message-ID: 1a1370a1-6c21-4304-a03c-320a54cc59f7>, <Subject: Re: What, to you, is a large crowd?>, <Content-Type: multipart/alternative; boundary=--==_mimepart_58380d6029b17_20543fd48543fa14977a>, <TRACK-LINKS: HtmlAndText>>
 ```
 
 ## Message with attachments
