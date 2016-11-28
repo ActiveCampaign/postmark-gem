@@ -15,6 +15,15 @@ module Mail
       header['TAG'] = val
     end
 
+    def track_links(val = nil)
+      self.track_links=(val) unless val.nil?
+      header['TRACK-LINKS'].to_s
+    end
+
+    def track_links=(val)
+      header['TRACK-LINKS'] = ::Postmark::Inflector.to_postmark(val)
+    end
+
     def track_opens(val = nil)
       self.track_opens=(val) unless val.nil?
       header['TRACK-OPENS'].to_s
@@ -117,7 +126,7 @@ module Mail
         cc           bcc
         subject      tag
         attachment   to
-        track-opens
+        track-opens  track-links
       ]
     end
 

@@ -24,7 +24,7 @@ describe Postmark::MailMessageConverter do
     end
   end
 
-  let(:mail_message_with_tracking) do
+  let(:mail_message_with_open_tracking) do
     Mail.new do
       from          "sheldon@bigbangtheory.com"
       to            "lenard@bigbangtheory.com"
@@ -35,19 +35,7 @@ describe Postmark::MailMessageConverter do
     end
   end
 
-  let(:mail_message_with_tracking_set_variable) do
-    mail = mail_html_message
-    mail.track_opens=true
-    mail
-  end
-
-  let(:mail_message_with_tracking_disabled_set_variable) do
-    mail = mail_html_message
-    mail.track_opens=true
-    mail
-  end
-
-  let(:mail_message_with_tracking_disabled) do
+  let(:mail_message_with_open_tracking_disabled) do
     Mail.new do
       from          "sheldon@bigbangtheory.com"
       to            "lenard@bigbangtheory.com"
@@ -56,6 +44,42 @@ describe Postmark::MailMessageConverter do
       body          "<b>Hello Sheldon!</b>"
       track_opens   false
     end
+  end
+
+  let(:mail_message_with_open_tracking_set_variable) do
+    mail = mail_html_message
+    mail.track_opens=true
+    mail
+  end
+
+  let(:mail_message_with_open_tracking_disabled_set_variable) do
+    mail = mail_html_message
+    mail.track_opens=false
+    mail
+  end
+
+  let(:mail_message_with_link_tracking_all) do
+    mail = mail_html_message
+    mail.track_links   :html_and_text
+    mail
+  end
+
+  let(:mail_message_with_link_tracking_html) do
+    mail = mail_html_message
+    mail.track_links = :html_only
+    mail
+  end
+
+  let(:mail_message_with_link_tracking_text) do
+    mail = mail_html_message
+    mail.track_links = :text_only
+    mail
+  end
+
+  let(:mail_message_with_link_tracking_none) do
+    mail = mail_html_message
+    mail.track_links = :none
+    mail
   end
 
   let(:tagged_mail_message) do
@@ -205,46 +229,86 @@ describe Postmark::MailMessageConverter do
 
     context 'setup inside of mail' do
 
-      it 'is enabled' do
-        subject.new(mail_message_with_tracking).run.should == {
+      it 'enabled' do
+        expect(subject.new(mail_message_with_open_tracking).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
             "To" => "lenard@bigbangtheory.com",
-            "TrackOpens" => true}
+            "TrackOpens" => true})
       end
 
-      it 'is disabled' do
-        subject.new(mail_message_with_tracking_disabled).run.should == {
+      it 'disabled' do
+        expect(subject.new(mail_message_with_open_tracking_disabled).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
             "To" => "lenard@bigbangtheory.com",
-            "TrackOpens" => false}
+            "TrackOpens" => false})
       end
 
     end
 
     context 'setup with tracking variable' do
 
-      it 'is enabled' do
-        subject.new(mail_message_with_tracking_set_variable).run.should == {
+      it 'enabled' do
+        expect(subject.new(mail_message_with_open_tracking_set_variable).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
             "To" => "lenard@bigbangtheory.com",
-            "TrackOpens" => true}
+            "TrackOpens" => true})
       end
 
-      it 'is disabled' do
-        subject.new(mail_message_with_tracking_disabled_set_variable).run.should == {
+      it 'disabled' do
+        expect(subject.new(mail_message_with_open_tracking_disabled_set_variable).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
             "To" => "lenard@bigbangtheory.com",
-            "TrackOpens" => true}
+            "TrackOpens" => false})
       end
 
+    end
+
+  end
+
+  context 'link tracking' do
+
+    it 'html and text' do
+      expect(subject.new(mail_message_with_link_tracking_all).run).to eq ({
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
+          "HtmlBody" => "<b>Hello Sheldon!</b>",
+          "To" => "lenard@bigbangtheory.com",
+          "TrackLinks" => 'HtmlAndText'})
+    end
+
+    it 'html only' do
+      expect(subject.new(mail_message_with_link_tracking_html).run).to eq ({
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
+          "HtmlBody" => "<b>Hello Sheldon!</b>",
+          "To" => "lenard@bigbangtheory.com",
+          "TrackLinks" => 'HtmlOnly'})
+    end
+
+    it 'text only' do
+      expect(subject.new(mail_message_with_link_tracking_text).run).to eq ({
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
+          "HtmlBody" => "<b>Hello Sheldon!</b>",
+          "To" => "lenard@bigbangtheory.com",
+          "TrackLinks" => 'TextOnly'})
+    end
+
+    it 'none' do
+      expect(subject.new(mail_message_with_link_tracking_none).run).to eq ({
+          "From" => "sheldon@bigbangtheory.com",
+          "Subject" => "Hello!",
+          "HtmlBody" => "<b>Hello Sheldon!</b>",
+          "To" => "lenard@bigbangtheory.com",
+          "TrackLinks" => 'None'})
     end
 
   end

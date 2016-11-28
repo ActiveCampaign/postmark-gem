@@ -18,6 +18,10 @@ module Postmark
         message[:attachments] = attachments_to_postmark(message[:attachments])
       end
 
+      if message[:track_links]
+        message[:track_links] = ::Postmark::Inflector.to_postmark(message[:track_links])
+      end
+
       HashHelper.to_postmark(message)
     end
 

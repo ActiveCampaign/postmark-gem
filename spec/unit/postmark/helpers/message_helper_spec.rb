@@ -80,46 +80,92 @@ describe Postmark::MessageHelper do
       message.merge(:track_opens => true)
     }
 
+    let(:message_with_open_tracking_false) {
+      message.merge(:track_opens => false)
+    }
+
     let(:postmark_message_with_open_tracking) {
       postmark_message.merge("TrackOpens" => true)
     }
 
+    let(:postmark_message_with_open_tracking_false) {
+      postmark_message.merge("TrackOpens" => false)
+    }
+
     it 'converts messages without custom headers and attachments correctly' do
-      subject.to_postmark(message).should == postmark_message
+      expect(subject.to_postmark(message)).to eq postmark_message
     end
 
     it 'converts messages with custom headers and without attachments correctly' do
-      subject.to_postmark(message_with_headers).should == postmark_message_with_headers
+      expect(subject.to_postmark(message_with_headers)).to eq postmark_message_with_headers
     end
 
     it 'converts messages with custom headers and attachments correctly' do
-      subject.to_postmark(message_with_headers_and_attachments).should == postmark_message_with_headers_and_attachments
+      expect(subject.to_postmark(message_with_headers_and_attachments)).to eq postmark_message_with_headers_and_attachments
     end
 
-    it 'includes open tracking flag when specified' do
-      expect(subject.to_postmark(message_with_open_tracking)).to eq(postmark_message_with_open_tracking)
+    context 'open tracking flag set' do
+
+      it 'true' do
+        expect(subject.to_postmark(message_with_open_tracking)).to eq(postmark_message_with_open_tracking)
+      end
+
+      it 'false' do
+        expect(subject.to_postmark(message_with_open_tracking_false)).to eq(postmark_message_with_open_tracking_false)
+      end
+
+    end
+
+    context 'link tracking flag set' do
+
+      let(:message_with_link_tracking_html) { message.merge(:track_links => :html_only) }
+      let(:message_with_link_tracking_text) { message.merge(:track_links => :text_only) }
+      let(:message_with_link_tracking_all) { message.merge(:track_links => :html_and_text) }
+      let(:message_with_link_tracking_none) { message.merge(:track_links => :none) }
+
+      let(:postmark_message_with_link_tracking_html) { postmark_message.merge("TrackLinks" => 'HtmlOnly') }
+      let(:postmark_message_with_link_tracking_text) { postmark_message.merge("TrackLinks" => 'TextOnly') }
+      let(:postmark_message_with_link_tracking_all) { postmark_message.merge("TrackLinks" => 'HtmlAndText') }
+      let(:postmark_message_with_link_tracking_none) { postmark_message.merge("TrackLinks" => 'None') }
+
+      it 'html' do
+        expect(subject.to_postmark(message_with_link_tracking_html)).to eq(postmark_message_with_link_tracking_html)
+      end
+
+      it 'text' do
+        expect(subject.to_postmark(message_with_link_tracking_text)).to eq(postmark_message_with_link_tracking_text)
+      end
+
+      it 'html and text' do
+        expect(subject.to_postmark(message_with_link_tracking_all)).to eq(postmark_message_with_link_tracking_all)
+      end
+
+      it 'none' do
+        expect(subject.to_postmark(message_with_link_tracking_none)).to eq(postmark_message_with_link_tracking_none)
+      end
+
     end
 
   end
 
   describe ".headers_to_postmark" do
     it 'converts headers to Postmark format' do
-      subject.headers_to_postmark(headers).should == postmark_headers
+      expect(subject.headers_to_postmark(headers)).to eq postmark_headers
     end
 
     it 'accepts single header as a non-array' do
-      subject.headers_to_postmark(headers.first).should == [postmark_headers.first]
+      expect(subject.headers_to_postmark(headers.first)).to eq [postmark_headers.first]
     end
   end
 
   describe ".attachments_to_postmark" do
 
     it 'converts attachments to Postmark format' do
-      subject.attachments_to_postmark(attachments).should == postmark_attachments
+      expect(subject.attachments_to_postmark(attachments)).to eq postmark_attachments
     end
 
     it 'accepts single attachment as a non-array' do
-      subject.attachments_to_postmark(attachments.first).should == [postmark_attachments.first]
+      expect(subject.attachments_to_postmark(attachments.first)).to eq [postmark_attachments.first]
     end
 
   end

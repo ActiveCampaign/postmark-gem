@@ -15,7 +15,7 @@ describe Mail::Message do
   end
 
   let(:mail_html_message) do
-    mail = Mail.new do
+    Mail.new do
       from          "sheldon@bigbangtheory.com"
       to            "lenard@bigbangtheory.com"
       subject       "Hello!"
@@ -38,24 +38,102 @@ describe Mail::Message do
     mail_message.header['Tag'] = 'bogus-tag'
     mail_message.header['Attachment'] = 'anydatahere'
     mail_message.header['Allowed-Header'] = 'value'
+    mail_message.header['TRACK-OPENS'] = 'true'
+    mail_message.header['TRACK-LINKS'] = 'HtmlOnly'
     mail_message
+  end
+
+  describe '#tag' do
+
+    it 'value set on tag=' do
+      mail_message.tag='value'
+      expect(mail_message.tag).to eq 'value'
+    end
+
+    it 'value set on tag()' do
+      mail_message.tag('value')
+      expect(mail_message.tag).to eq 'value'
+    end
+
+  end
+
+  describe '#track_opens' do
+
+    context 'flag set on track_opens=' do
+
+      it 'true' do
+        mail_message.track_opens = true
+        expect(mail_message.track_opens).to eq 'true'
+      end
+
+      it 'false' do
+        mail_message.track_opens = false
+        expect(mail_message.track_opens).to eq 'false'
+      end
+
+      it 'not set' do
+        expect(mail_message.track_opens).to eq ''
+      end
+
+    end
+
+    context 'flag set on track_opens()' do
+
+      it 'true' do
+        mail_message.track_opens(true)
+        expect(mail_message.track_opens).to eq 'true'
+      end
+
+      it 'false' do
+        mail_message.track_opens(false)
+        expect(mail_message.track_opens).to eq 'false'
+      end
+
+    end
+
+  end
+
+  describe '#track_links' do
+
+    context 'flag set on track_links=' do
+
+      it 'set' do
+        mail_message.track_links=:html_only
+        expect(mail_message.track_links).to eq 'HtmlOnly'
+      end
+
+      it 'not set' do
+        expect(mail_message.track_links).to eq ''
+      end
+
+    end
+
+    context 'flag set on track_links()' do
+
+      it 'set' do
+        mail_message.track_links(:html_only)
+        expect(mail_message.track_links).to eq 'HtmlOnly'
+      end
+
+    end
+
   end
 
   describe "#html?" do
     it 'is true for html only email' do
-      mail_html_message.should be_html
+      expect(mail_html_message).to be_html
     end
   end
 
   describe "#body_html" do
     it 'returns html body if present' do
-      mail_html_message.body_html.should == "<b>Hello Sheldon!</b>"
+      expect(mail_html_message.body_html).to eq "<b>Hello Sheldon!</b>"
     end
   end
 
   describe "#body_text" do
     it 'returns text body if present' do
-      mail_message.body_text.should == "Hello Sheldon!"
+      expect(mail_message.body_text).to eq "Hello Sheldon!"
     end
   end
 
@@ -65,7 +143,7 @@ describe Mail::Message do
 
     it "stores attachments as an array" do
       mail_message.postmark_attachments = attached_hash
-      mail_message.instance_variable_get(:@_attachments).should include(attached_hash)
+      expect(mail_message.instance_variable_get(:@_attachments)).to include(attached_hash)
     end
 
     it "is deprecated" do
@@ -93,8 +171,8 @@ describe Mail::Message do
       mail_message.postmark_attachments = [attached_hash, attached_file]
       attachments = mail_message.export_attachments
 
-      attachments.should include(attached_hash)
-      attachments.should include(exported_file)
+      expect(attachments).to include(attached_hash)
+      expect(attachments).to include(exported_file)
     end
 
     it "is deprecated" do
@@ -116,13 +194,13 @@ describe Mail::Message do
 
       it "exports native attachments" do
         mail_message.attachments["face.jpeg"] = file_data
-        mail_message.export_attachments.should include(exported_data)
+        expect(mail_message.export_attachments).to include(exported_data)
       end
 
       it "still supports the deprecated attachments API" do
         mail_message.attachments["face.jpeg"] = file_data
         mail_message.postmark_attachments = exported_data
-        mail_message.export_attachments.should == [exported_data, exported_data]
+        expect(mail_message.export_attachments).to eq [exported_data, exported_data]
       end
 
     end
@@ -132,10 +210,11 @@ describe Mail::Message do
       it "exports the attachment with related content id" do
         mail_message.attachments.inline["face.jpeg"] = file_data
         attachments = mail_message.export_attachments
-        attachments.count.should_not be_zero
-        attachments.first.should include(exported_data)
-        attachments.first.should have_key('ContentID')
-        attachments.first['ContentID'].should start_with('cid:')
+
+        expect(attachments.count).to_not be_zero
+        expect(attachments.first).to include(exported_data)
+        expect(attachments.first).to have_key('ContentID')
+        expect(attachments.first['ContentID']).to start_with('cid:')
       end
 
     end
@@ -146,8 +225,8 @@ describe Mail::Message do
     let(:headers) { mail_message_with_bogus_headers.export_headers }
     let(:header_names) { headers.map { |h| h['Name'] } }
 
-    specify { header_names.should include('Allowed-Header') }
-    specify { header_names.count.should == 1 }
+    specify { expect(header_names).to include('Allowed-Header') }
+    specify { expect(header_names.count).to eq 1 }
   end
 
   describe "#to_postmark_hash" do
