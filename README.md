@@ -346,7 +346,7 @@ To send a `Mail::Message` via Postmark you’ll need to specify `Mail::Postmark`
 a delivery method for the message:
 
 ``` ruby
-message = Mail.new do
+Mail.defaults do
   # ...
   delivery_method Mail::Postmark, api_token: 'your-postmark-api-token'
 end
