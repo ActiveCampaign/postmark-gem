@@ -74,7 +74,7 @@ describe 'Account API client usage' do
     expect(updated_domain[:id]).to eq(new_domain[:id])
 
     # spf
-    expect(subject.verified_domain_spf?(new_domain[:id])).to be_false
+    expect(subject.verified_domain_spf?(new_domain[:id])).to be_true
 
     # dkim
     expect { subject.rotate_domain_dkim(new_domain[:id]) }.
