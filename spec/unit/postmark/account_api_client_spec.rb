@@ -77,7 +77,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned list of senders' do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_senders.map { |s| s.keys }.flatten
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
       it 'accepts offset and count options' do
@@ -132,7 +132,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_sender(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
     end
 
@@ -168,7 +168,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:post).and_return(response)
         keys = subject.create_sender(:foo => 'bar').keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
     end
 
@@ -205,7 +205,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:put).and_return(response)
         keys = subject.update_sender(42, :foo => 'bar').keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -233,7 +233,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:post).and_return(response)
         keys = subject.resend_sender_confirmation(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -255,12 +255,12 @@ describe Postmark::AccountApiClient do
 
       it 'returns false when SPFVerified field of the response is false' do
         allow(subject.http_client).to receive(:post).and_return(false_response)
-        expect(subject.verified_sender_spf?(42)).to be_false
+        expect(subject.verified_sender_spf?(42)).to be false
       end
 
       it 'returns true when SPFVerified field of the response is true' do
         allow(subject.http_client).to receive(:post).and_return(response)
-        expect(subject.verified_sender_spf?(42)).to be_true
+        expect(subject.verified_sender_spf?(42)).to be true
       end
 
     end
@@ -292,7 +292,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:post).and_return(response)
         keys = subject.request_new_sender_dkim(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -319,7 +319,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:delete).and_return(response)
         keys = subject.delete_sender(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -366,7 +366,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned list of domains' do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_domains.map { |s| s.keys }.flatten
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
       it 'accepts offset and count options' do
@@ -408,7 +408,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_domain(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
     end
 
@@ -436,7 +436,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:post).and_return(response)
         keys = subject.create_domain(:foo => 'bar').keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
     end
 
@@ -465,7 +465,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:put).and_return(response)
         keys = subject.update_domain(42, :foo => 'bar').keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -483,12 +483,12 @@ describe Postmark::AccountApiClient do
 
       it 'returns false when SPFVerified field of the response is false' do
         allow(subject.http_client).to receive(:post).and_return(false_response)
-        expect(subject.verified_domain_spf?(42)).to be_false
+        expect(subject.verified_domain_spf?(42)).to be false
       end
 
       it 'returns true when SPFVerified field of the response is true' do
         allow(subject.http_client).to receive(:post).and_return(response)
-        expect(subject.verified_domain_spf?(42)).to be_true
+        expect(subject.verified_domain_spf?(42)).to be true
       end
 
     end
@@ -511,7 +511,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:post).and_return(response)
         keys = subject.rotate_domain_dkim(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -534,7 +534,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:delete).and_return(response)
         keys = subject.delete_sender(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -590,7 +590,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned list of servers' do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_servers.map { |s| s.keys }.flatten
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
       it 'accepts offset and count options' do
@@ -631,7 +631,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_server(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -678,7 +678,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:post).and_return(response)
         keys = subject.create_server(:foo => 'bar').keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -720,7 +720,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:put).and_return(response)
         keys = subject.update_server(42, :foo => 'bar').keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end
@@ -743,7 +743,7 @@ describe Postmark::AccountApiClient do
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:delete).and_return(response)
         keys = subject.delete_server(42).keys
-        expect(keys.all? { |k| k.is_a?(Symbol) }).to be_true
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
     end

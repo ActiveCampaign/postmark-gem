@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Mail::Message do
   before do
-    Kernel.stub(:warn)
+    allow(Kernel).to receive(:warn)
   end
 
   let(:mail_message) do
@@ -147,7 +147,7 @@ describe Mail::Message do
     end
 
     it "is deprecated" do
-      Kernel.should_receive(:warn).with(/deprecated/)
+      expect(Kernel).to receive(:warn).with(/deprecated/)
       mail_message.postmark_attachments = attached_hash
     end
   end
@@ -161,12 +161,12 @@ describe Mail::Message do
                            'Content' => ''} }
 
     before do
-      attached_file.stub(:is_a?) { |arg| arg == File ? true : false }
-      attached_file.stub(:path) { '/tmp/file.jpeg' }
+      allow(attached_file).to receive(:is_a?) { |arg| arg == File ? true : false }
+      allow(attached_file).to receive(:path) { '/tmp/file.jpeg' }
     end
 
     it "supports multiple attachment formats" do
-      IO.should_receive(:read).with("/tmp/file.jpeg").and_return("")
+      expect(IO).to receive(:read).with("/tmp/file.jpeg").and_return("")
 
       mail_message.postmark_attachments = [attached_hash, attached_file]
       attachments = mail_message.export_attachments
@@ -177,7 +177,7 @@ describe Mail::Message do
 
     it "is deprecated" do
       mail_message.postmark_attachments = attached_hash
-      Kernel.should_receive(:warn).with(/deprecated/)
+      expect(Kernel).to receive(:warn).with(/deprecated/)
       mail_message.postmark_attachments
     end
   end

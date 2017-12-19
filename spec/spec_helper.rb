@@ -10,7 +10,7 @@ require 'json'
 require 'fakeweb'
 require 'fakeweb_matcher'
 require 'rspec'
-require 'rspec/autorun'
+require 'rspec/its'
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'shared_examples.rb')
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'helpers.rb')
 
@@ -22,6 +22,8 @@ end
 
 RSpec.configure do |config|
   include Postmark::RSpecHelpers
+
+  config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
 
 	config.filter_run_excluding :skip_for_platform => lambda { |platform|
     RUBY_PLATFORM.to_s =~ /^#{platform.to_s}/

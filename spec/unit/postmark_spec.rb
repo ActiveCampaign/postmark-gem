@@ -99,7 +99,7 @@ describe Postmark do
     context "when shared client instance does not exist" do
 
       it 'creates a new instance of Postmark::ApiClient' do
-        Postmark::ApiClient.should_receive(:new).
+        allow(Postmark::ApiClient).to receive(:new).
                             with(api_token,
                                  :secure => secure,
                                  :proxy_host => proxy_host,
@@ -127,12 +127,12 @@ describe Postmark do
     end
 
     it 'delegates the method to the shared api client instance' do
-      api_client.should_receive(:deliver_message).with(message)
+      allow(api_client).to receive(:deliver_message).with(message)
       subject.deliver_message(message)
     end
 
     it 'is also accessible as .send_through_postmark' do
-      api_client.should_receive(:deliver_message).with(message)
+      allow(api_client).to receive(:deliver_message).with(message)
       subject.send_through_postmark(message)
     end
   end
@@ -146,7 +146,7 @@ describe Postmark do
     end
 
     it 'delegates the method to the shared api client instance' do
-      api_client.should_receive(:deliver_messages).with(message)
+      allow(api_client).to receive(:deliver_messages).with(message)
       subject.deliver_messages(message)
     end
   end
@@ -159,7 +159,7 @@ describe Postmark do
     end
 
     it 'delegates the method to the shared api client instance' do
-      api_client.should_receive(:delivery_stats)
+      allow(api_client).to receive(:delivery_stats)
       subject.delivery_stats
     end
   end  

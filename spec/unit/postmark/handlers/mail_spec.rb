@@ -15,19 +15,19 @@ describe Mail::Postmark do
   end
 
   it "wraps Postmark.send_through_postmark" do
-    Postmark::ApiClient.any_instance.should_receive(:deliver_message).with(message)
+    allow_any_instance_of(Postmark::ApiClient).to receive(:deliver_message).with(message)
     message.delivery_method Mail::Postmark
     message.deliver
   end
 
   it "returns self by default" do
-    Postmark::ApiClient.any_instance.should_receive(:deliver_message).with(message)
+    allow_any_instance_of(Postmark::ApiClient).to receive(:deliver_message).with(message)
     message.delivery_method Mail::Postmark
     message.deliver.should eq message
   end
 
   it "returns the actual response if :return_response setting is present" do
-    Postmark::ApiClient.any_instance.should_receive(:deliver_message).with(message)
+    allow_any_instance_of(Postmark::ApiClient).to receive(:deliver_message).with(message)
     message.delivery_method Mail::Postmark, :return_response => true
     message.deliver.should eq message
   end
@@ -39,13 +39,13 @@ describe Mail::Postmark do
 
   it 'uses provided API token' do
     message.delivery_method Mail::Postmark, :api_token => 'api-token'
-    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(:deliver_message => true))
+    expect(Postmark::ApiClient).to receive(:new).with('api-token', {}).and_return(double(:deliver_message => true))
     message.deliver
   end
 
   it 'uses API token provided as legacy api_key' do
     message.delivery_method Mail::Postmark, :api_key => 'api-token'
-    Postmark::ApiClient.should_receive(:new).with('api-token', {}).and_return(double(:deliver_message => true))
+    expect(Postmark::ApiClient).to receive(:new).with('api-token', {}).and_return(double(:deliver_message => true))
     message.deliver
   end
 end

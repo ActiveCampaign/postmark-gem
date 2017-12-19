@@ -43,11 +43,11 @@ describe Postmark::Bounce do
     end
 
     it 'allows to activate the bounce' do
-      subject.can_activate?.should be_true
+      subject.can_activate?.should be true
     end
 
     it 'has an available dump' do
-      subject.dump_available?.should be_true
+      subject.dump_available?.should be true
     end
 
     its(:type) { should eq bounce_data[:type] }
@@ -69,11 +69,11 @@ describe Postmark::Bounce do
     end
 
     it 'allows to activate the bounce' do
-      subject.can_activate?.should be_true
+      subject.can_activate?.should be true
     end
 
     it 'has an available dump' do
-      subject.dump_available?.should be_true
+      subject.dump_available?.should be true
     end
 
     its(:type) { should eq bounce_data[:type] }
@@ -93,7 +93,7 @@ describe Postmark::Bounce do
     let(:api_client) { Postmark.api_client }
 
     it "calls #dump_bounce on shared api_client instance" do
-      Postmark.api_client.should_receive(:dump_bounce).with(bounce.id) { response }
+      expect(Postmark.api_client).to receive(:dump_bounce).with(bounce.id) { response }
       bounce.dump.should == bounce_body
     end
 
@@ -104,7 +104,7 @@ describe Postmark::Bounce do
     let(:api_client) { Postmark.api_client }
 
     it "calls #activate_bounce on shared api_client instance" do
-      api_client.should_receive(:activate_bounce).with(bounce.id) { bounce_data }
+      expect(api_client).to receive(:activate_bounce).with(bounce.id) { bounce_data }
       bounce.activate.should be_a Postmark::Bounce
     end
 
@@ -114,7 +114,7 @@ describe Postmark::Bounce do
     let(:api_client) { Postmark.api_client }
 
     it "calls #get_bounce on shared api_client instance" do
-      api_client.should_receive(:get_bounce).with(42) { bounce_data }
+      expect(api_client).to receive(:get_bounce).with(42) { bounce_data }
       Postmark::Bounce.find(42).should be_a Postmark::Bounce
     end
   end
@@ -125,8 +125,8 @@ describe Postmark::Bounce do
     let(:api_client) { Postmark.api_client }
 
     it "calls #get_bounces on shared api_client instance" do
-      api_client.should_receive(:get_bounces) { response }
-      Postmark::Bounce.all.should have(3).bounces
+      expect(api_client).to receive(:get_bounces) { response }
+      Postmark::Bounce.all.count.should eq(3)
     end
 
   end
@@ -137,7 +137,7 @@ describe Postmark::Bounce do
     let(:tags) { ["tag1", "tag2"] }
 
     it "calls #get_bounced_tags on shared api_client instance" do
-      api_client.should_receive(:get_bounced_tags) { tags }
+      expect(api_client).to receive(:get_bounced_tags) { tags }
       Postmark::Bounce.tags.should == tags
     end
   end
