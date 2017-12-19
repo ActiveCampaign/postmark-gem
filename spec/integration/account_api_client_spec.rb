@@ -33,7 +33,7 @@ describe 'Account API client usage' do
 
 
     # spf
-    expect(subject.verified_sender_spf?(new_sender[:id])).to be_true
+    expect(subject.verified_sender_spf?(new_sender[:id])).to be true
 
     # resend
     expect { subject.resend_sender_confirmation(new_sender[:id]) }.not_to raise_error
@@ -74,7 +74,7 @@ describe 'Account API client usage' do
     expect(updated_domain[:id]).to eq(new_domain[:id])
 
     # spf
-    expect(subject.verified_domain_spf?(new_domain[:id])).to be_true
+    expect(subject.verified_domain_spf?(new_domain[:id])).to be true
 
     # dkim
     expect { subject.rotate_domain_dkim(new_domain[:id]) }.

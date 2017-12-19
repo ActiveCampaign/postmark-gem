@@ -38,7 +38,7 @@ describe Postmark::ApiClient do
     its(:max_retries) { should eq max_retries }
 
     it 'passes other options to HttpClient instance' do
-      Postmark::HttpClient.should_receive(:new).with(api_token, :foo => :bar)
+      allow(Postmark::HttpClient).to receive(:new).with(api_token, :foo => :bar)
       subject.should be
     end
 
@@ -67,20 +67,18 @@ describe Postmark::ApiClient do
     let(:response) { {"MessageID" => 42} }
 
     it 'converts message hash to Postmark format and posts it to /email' do
-      http_client.should_receive(:post).with('email', email_json) { response }
+      allow(http_client).to receive(:post).with('email', email_json) { response }
       subject.deliver(message_hash)
     end
 
     it 'retries 3 times' do
-      2.times do
-        http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
-      end
-      http_client.should_receive(:post) { response }
+      expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
+      expect(http_client).to receive(:post) { response }
       expect { subject.deliver(message_hash) }.not_to raise_error
     end
 
     it 'converts response to ruby format' do
-      http_client.should_receive(:post).with('email', email_json) { response }
+      expect(http_client).to receive(:post).with('email', email_json) { response }
       r = subject.deliver(message_hash)
       r.should have_key(:message_id)
     end
@@ -94,12 +92,12 @@ describe Postmark::ApiClient do
     let(:response) { [{'ErrorCode' => 0}, {'ErrorCode' => 0}, {'ErrorCode' => 0}] }
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
-      http_client.should_receive(:post).with('email/batch', emails_json) { response }
+      expect(http_client).to receive(:post).with('email/batch', emails_json) { response }
       subject.deliver_in_batches([message_hash, message_hash, message_hash])
     end
 
     it 'converts response to ruby format' do
-      http_client.should_receive(:post).with('email/batch', emails_json) { response }
+      expect(http_client).to receive(:post).with('email/batch', emails_json) { response }
       response = subject.deliver_in_batches([message_hash, message_hash, message_hash])
       response.first.should have_key(:error_code)
     end
@@ -111,26 +109,26 @@ describe Postmark::ApiClient do
     let(:http_client) { subject.http_client }
 
     it 'turns message into a JSON document and posts it to /email' do
-      http_client.should_receive(:post).with('email', email_json)
+      expect(http_client).to receive(:post).with('email', email_json)
       subject.deliver_message(message)
     end
 
     it "retries 3 times" do
       2.times do
-        http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
       end
-      http_client.should_receive(:post)
+      expect(http_client).to receive(:post)
       expect { subject.deliver_message(message) }.not_to raise_error
     end
 
     it "retries on timeout" do
-      http_client.should_receive(:post).and_raise(Postmark::TimeoutError)
-      http_client.should_receive(:post)
+      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect(http_client).to receive(:post)
       expect { subject.deliver_message(message) }.not_to raise_error
     end
 
     it "proxies errors" do
-      http_client.stub(:post).and_raise(Postmark::TimeoutError)
+      allow(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
       expect { subject.deliver_message(message) }.to raise_error(Postmark::TimeoutError)
     end
 
@@ -145,21 +143,21 @@ describe Postmark::ApiClient do
     let(:response) { [{}, {}, {}] }
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
-      http_client.should_receive(:post).with('email/batch', emails_json) { response }
+      expect(http_client).to receive(:post).with('email/batch', emails_json) { response }
       subject.deliver_messages([message, message, message])
     end
 
     it "should retry 3 times" do
       2.times do
-        http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
       end
-      http_client.should_receive(:post) { response }
+      expect(http_client).to receive(:post) { response }
       expect { subject.deliver_messages([message, message, message]) }.not_to raise_error
     end
 
     it "should retry on timeout" do
-      http_client.should_receive(:post).and_raise(Postmark::TimeoutError)
-      http_client.should_receive(:post) { response }
+      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect(http_client).to receive(:post) { response }
       expect { subject.deliver_messages([message, message, message]) }.not_to raise_error
     end
 
@@ -170,7 +168,7 @@ describe Postmark::ApiClient do
     let(:response) { {"Bounces" => [{"Foo" => "Bar"}]} }
 
     it 'requests data at /deliverystats' do
-      http_client.should_receive(:get).with("deliverystats") { response }
+      expect(http_client).to receive(:get).with("deliverystats") { response }
       subject.delivery_stats.should have_key(:bounces)
     end
   end
@@ -224,7 +222,7 @@ describe Postmark::ApiClient do
       let(:response) { {"TotalCount" => 1, "Messages" => [{}]} }
 
       it 'requests data at /messages/outbound' do
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
                     with('messages/outbound', :offset => 50, :count => 50).
                     and_return(response)
         subject.get_messages(:offset => 50, :count => 50)
@@ -236,7 +234,7 @@ describe Postmark::ApiClient do
       let(:response) { {"TotalCount" => 1, "InboundMessages" => [{}]} }
 
       it 'requests data at /messages/inbound' do
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
                     with('messages/inbound', :offset => 50, :count => 50).
                     and_return(response)
         subject.get_messages(:inbound => true, :offset => 50, :count => 50).
@@ -281,7 +279,7 @@ describe Postmark::ApiClient do
     context 'given outbound' do
 
       it 'requests a single message by id at /messages/outbound/:id/details' do
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
                     with("messages/outbound/#{id}/details", {}).
                     and_return(response)
         subject.get_message(id).should have_key(:to)
@@ -292,7 +290,7 @@ describe Postmark::ApiClient do
     context 'given inbound' do
 
       it 'requests a single message by id at /messages/inbound/:id/details' do
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
                     with("messages/inbound/#{id}/details", {}).
                     and_return(response)
         subject.get_message(id, :inbound => true).should have_key(:to)
@@ -309,7 +307,7 @@ describe Postmark::ApiClient do
     context 'given outbound' do
 
       it 'requests a single message by id at /messages/outbound/:id/dump' do
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
                     with("messages/outbound/#{id}/dump", {}).
                     and_return(response)
         subject.dump_message(id).should have_key(:body)
@@ -320,7 +318,7 @@ describe Postmark::ApiClient do
     context 'given inbound' do
 
       it 'requests a single message by id at /messages/inbound/:id/dump' do
-        http_client.should_receive(:get).
+        expect(http_client).to receive(:get).
                     with("messages/inbound/#{id}/dump", {}).
                     and_return(response)
         subject.dump_message(id, :inbound => true).should have_key(:body)
@@ -360,7 +358,7 @@ describe Postmark::ApiClient do
     let(:http_client) { subject.http_client }
 
     it 'requests data at /bounces/tags' do
-      http_client.should_receive(:get).with("bounces/tags")
+      expect(http_client).to receive(:get).with("bounces/tags")
       subject.get_bounced_tags
     end
   end
@@ -370,7 +368,7 @@ describe Postmark::ApiClient do
     let(:id) { 42 }
 
     it 'requests a single bounce by ID at /bounces/:id' do
-      http_client.should_receive(:get).with("bounces/#{id}")
+      expect(http_client).to receive(:get).with("bounces/#{id}")
       subject.get_bounce(id)
     end
   end
@@ -380,7 +378,7 @@ describe Postmark::ApiClient do
     let(:id) { 42 }
 
     it 'requests a specific bounce data at /bounces/:id/dump' do
-      http_client.should_receive(:get).with("bounces/#{id}/dump")
+      expect(http_client).to receive(:get).with("bounces/#{id}/dump")
       subject.dump_bounce(id)
     end
   end
@@ -391,7 +389,7 @@ describe Postmark::ApiClient do
     let(:response) { {"Bounce" => {}} }
 
     it 'activates a specific bounce by sending a PUT request to /bounces/:id/activate' do
-      http_client.should_receive(:put).with("bounces/#{id}/activate") { response }
+      expect(http_client).to receive(:put).with("bounces/#{id}/activate") { response }
       subject.activate_bounce(id)
     end
   end
@@ -553,7 +551,7 @@ describe Postmark::ApiClient do
                       "SmtpApiActivated" => true} }
 
     it 'requests server info from Postmark and converts it to ruby format' do
-      http_client.should_receive(:get).with('server') { response }
+      expect(http_client).to receive(:get).with('server') { response }
       subject.server_info.should have_key(:inbound_hash)
     end
   end
@@ -567,8 +565,8 @@ describe Postmark::ApiClient do
     let(:update) { {:smtp_api_activated => false} }
 
     it 'updates server info in Postmark and converts it to ruby format' do
-      http_client.should_receive(:put).with('server', anything) { response }
-      subject.update_server_info(update)[:smtp_api_activated].should be_false
+      expect(http_client).to receive(:put).with('server', anything) { response }
+      subject.update_server_info(update)[:smtp_api_activated].should be false
     end
   end
 
@@ -593,7 +591,7 @@ describe Postmark::ApiClient do
     end
 
     it 'gets templates info and converts it to ruby format' do
-      http_client.should_receive(:get).with('templates', :offset => 0, :count => 2).and_return(response)
+      expect(http_client).to receive(:get).with('templates', :offset => 0, :count => 2).and_return(response)
 
       count, templates = subject.get_templates(:count => 2)
 
@@ -631,7 +629,7 @@ describe Postmark::ApiClient do
     end
 
     it 'gets single template and converts it to ruby format' do
-      http_client.should_receive(:get).with('templates/123').and_return(response)
+      expect(http_client).to receive(:get).with('templates/123').and_return(response)
 
       template = subject.get_template('123')
 
@@ -654,7 +652,7 @@ describe Postmark::ApiClient do
     it 'performs a POST request to /templates with the given attributes' do
       expected_json = { 'Name' => 'template name' }.to_json
 
-      http_client.should_receive(:post).with('templates', expected_json).and_return(response)
+      expect(http_client).to receive(:post).with('templates', expected_json).and_return(response)
 
       template = subject.create_template(:name => 'template name')
 
@@ -676,7 +674,7 @@ describe Postmark::ApiClient do
     it 'performs a PUT request to /templates with the given attributes' do
       expected_json = { 'Name' => 'template name' }.to_json
 
-      http_client.should_receive(:put).with('templates/123', expected_json).and_return(response)
+      expect(http_client).to receive(:put).with('templates/123', expected_json).and_return(response)
 
       template = subject.update_template(123, :name => 'template name')
 
@@ -695,7 +693,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a DELETE request to /templates/:id' do
-      http_client.should_receive(:delete).with('templates/123').and_return(response)
+      expect(http_client).to receive(:delete).with('templates/123').and_return(response)
 
       resp = subject.delete_template(123)
 
@@ -738,14 +736,14 @@ describe Postmark::ApiClient do
           'Subject' => '{{MyName}}'
         }.to_json
 
-        http_client.should_receive(:post).with('templates/validate', expected_template_json).and_return(response)
+        expect(http_client).to receive(:post).with('templates/validate', expected_template_json).and_return(response)
 
         resp = subject.validate_template(:html_body => '{{MyName}}',
                                          :text_body => '{{MyName}}',
                                          :subject => '{{MyName}}')
 
-        expect(resp[:all_content_is_valid]).to be_true
-        expect(resp[:html_body][:content_is_valid]).to be_true
+        expect(resp[:all_content_is_valid]).to be true
+        expect(resp[:html_body][:content_is_valid]).to be true
         expect(resp[:html_body][:validation_errors]).to be_empty
         expect(resp[:suggested_template_model]['MyName']).to eq('MyName_Value')
       end
@@ -787,15 +785,15 @@ describe Postmark::ApiClient do
           'Subject' => '{{MyName}}'
         }.to_json
 
-        http_client.should_receive(:post).with('templates/validate', expected_template_json).and_return(response)
+        expect(http_client).to receive(:post).with('templates/validate', expected_template_json).and_return(response)
 
         resp = subject.validate_template(:html_body => '{{#each}}',
                                          :text_body => '{{MyName}}',
                                          :subject => '{{MyName}}')
 
-        expect(resp[:all_content_is_valid]).to be_false
-        expect(resp[:text_body][:content_is_valid]).to be_true
-        expect(resp[:html_body][:content_is_valid]).to be_false
+        expect(resp[:all_content_is_valid]).to be false
+        expect(resp[:text_body][:content_is_valid]).to be true
+        expect(resp[:html_body][:content_is_valid]).to be false
         expect(resp[:html_body][:validation_errors].first[:character_position]).to eq(1)
         expect(resp[:html_body][:validation_errors].first[:message]).to eq('The \'each\' block being opened requires a model path to be specified in the form \'{#each <name>}\'.')
       end
@@ -809,20 +807,20 @@ describe Postmark::ApiClient do
     let(:response) { {"MessageID" => 42} }
 
     it 'converts message hash to Postmark format and posts it to /email/withTemplate' do
-      http_client.should_receive(:post).with('email/withTemplate', email_json) { response }
+      expect(http_client).to receive(:post).with('email/withTemplate', email_json) { response }
       subject.deliver_with_template(message_hash)
     end
 
     it 'retries 3 times' do
       2.times do
-        http_client.should_receive(:post).and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
       end
-      http_client.should_receive(:post) { response }
+      expect(http_client).to receive(:post) { response }
       expect { subject.deliver_with_template(message_hash) }.not_to raise_error
     end
 
     it 'converts response to ruby format' do
-      http_client.should_receive(:post).with('email/withTemplate', email_json) { response }
+      expect(http_client).to receive(:post).with('email/withTemplate', email_json) { response }
       r = subject.deliver_with_template(message_hash)
       r.should have_key(:message_id)
     end
@@ -838,7 +836,7 @@ describe Postmark::ApiClient do
     let(:http_client) { subject.http_client }
 
     it 'converts response to ruby format' do
-      http_client.should_receive(:get).with('stats/outbound', { :tag => 'foo' }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound', { :tag => 'foo' }) { response }
       r = subject.get_stats_totals(:tag => 'foo')
       r.should have_key(:sent)
       r.should have_key(:bounce_rate)
@@ -872,7 +870,7 @@ describe Postmark::ApiClient do
     let(:http_client) { subject.http_client }
 
     it 'converts response to ruby format' do
-      http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo' }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound/sends', { :tag => 'foo' }) { response }
       r = subject.get_stats_counts(:sends, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)
@@ -884,7 +882,7 @@ describe Postmark::ApiClient do
     end
 
     it 'uses fromdate that is passed in' do
-      http_client.should_receive(:get).with('stats/outbound/sends', { :tag => 'foo', :fromdate => '2015-01-01' }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound/sends', { :tag => 'foo', :fromdate => '2015-01-01' }) { response }
       r = subject.get_stats_counts(:sends, :tag => 'foo', :fromdate => '2015-01-01')
       r.should have_key(:days)
       r.should have_key(:sent)
@@ -896,7 +894,7 @@ describe Postmark::ApiClient do
     end
 
     it 'uses stats type that is passed in' do
-      http_client.should_receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo', :type => :readtimes }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo', :type => :readtimes }) { response }
       r = subject.get_stats_counts(:opens, :type => :readtimes, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)

@@ -4,11 +4,12 @@ source "http://rubygems.org"
 gemspec
 
 group :test do
-  gem 'rspec', '~> 2.14.0'
-  gem 'fakeweb'
+  gem 'rspec', '~> 3.7'
+  gem 'rspec-its', '~> 1.2'
+  gem 'fakeweb', :git => 'https://github.com/chrisk/fakeweb.git'
   gem 'fakeweb-matcher'
-  gem 'mime-types', '~> 1.25.1'
-  gem 'activesupport', '~> 3.2.0'
+  gem 'mime-types'
+  gem 'activesupport'
   gem 'i18n', '~> 0.6.0'
   gem 'yajl-ruby', '~> 1.0', :platforms => [:mingw, :mswin, :ruby]
 end

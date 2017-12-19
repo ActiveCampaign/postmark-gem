@@ -36,7 +36,7 @@ describe Postmark::HttpClient do
     its(:api_key) { should eq api_token }
     its(:host) { should eq 'api.postmarkapp.com' }
     its(:port) { should eq 443 }
-    its(:secure) { should be_true }
+    its(:secure) { should be true }
     its(:path_prefix) { should eq '/' }
     its(:http_read_timeout) { should eq 15 }
     its(:http_open_timeout) { should eq 5 }
@@ -128,8 +128,7 @@ describe Postmark::HttpClient do
     end
 
     it "raises a custom error when the request times out" do
-      subject.http.should_receive(:post).at_least(:once).
-                                             and_raise(Timeout::Error)
+      expect(subject.http).to receive(:post).at_least(:once).and_raise(Timeout::Error)
       expect { subject.post(target_path) }.to raise_error Postmark::TimeoutError
     end
 
@@ -170,7 +169,7 @@ describe Postmark::HttpClient do
     end
 
     it "raises a custom error when the request times out" do
-      subject.http.should_receive(:get).at_least(:once).and_raise(Timeout::Error)
+      expect(subject.http).to receive(:get).at_least(:once).and_raise(Timeout::Error)
       expect { subject.get(target_path) }.to raise_error Postmark::TimeoutError
     end
 
@@ -211,7 +210,7 @@ describe Postmark::HttpClient do
     end
 
     it "raises a custom error when the request times out" do
-      subject.http.should_receive(:put).at_least(:once).and_raise(Timeout::Error)
+      expect(subject.http).to receive(:put).at_least(:once).and_raise(Timeout::Error)
       expect { subject.put(target_path) }.to raise_error Postmark::TimeoutError
     end
 

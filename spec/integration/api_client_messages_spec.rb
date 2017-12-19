@@ -91,14 +91,14 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
       api_client.deliver_messages(valid_messages)
 
       expect(valid_messages.all? { |m| m.message_id =~ postmark_message_id_format }).
-          to be_true
+          to be true
     end
 
     it 'updates delivered messages with related Postmark responses' do
       api_client.deliver_messages(valid_messages)
 
       expect(valid_messages.all? { |m| m.postmark_response["To"] == m.to[0] }).
-          to be_true
+          to be true
     end
 
     it 'returns as many responses as many messages were sent' do
@@ -114,7 +114,7 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
         api_client.deliver_messages(valid_messages)
 
         expect(valid_messages.all? { |m| m.postmark_response["To"] == m.to[0] }).
-            to be_true
+            to be true
       end
 
       it 'returns as many responses as many messages were sent' do
