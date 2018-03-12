@@ -1,5 +1,7 @@
 = Changelog
 
+* Added support for retrieving message clicks using the Messages API.
+
 == 1.10.0
 
 * Fix a bug when open tracking flag is set to false by default, when open tracking flag is not set by a user.
