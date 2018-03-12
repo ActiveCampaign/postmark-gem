@@ -31,7 +31,7 @@ module Postmark
         'Headers' => @message.export_headers,
         'Tag' => @message.tag.to_s,
         'TrackOpens' => (cast_to_bool(@message.track_opens) unless @message.track_opens.empty?),
-        'TrackLinks' => (@message.track_links unless @message.track_links.empty?)
+        'TrackLinks' => (::Postmark::Inflector.to_postmark(@message.track_links) unless @message.track_links.empty?)
       }
     end
 
