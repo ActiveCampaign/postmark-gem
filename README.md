@@ -682,4 +682,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Copyright
 
-Copyright © 2016 Wildbit LLC. See LICENSE for details.
+Copyright © 2018 Wildbit LLC. See LICENSE for details.
