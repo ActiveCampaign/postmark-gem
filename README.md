@@ -678,14 +678,7 @@ Postmark.response_parser_class = :Json # :ActiveSupport or :Yajl are also suppor
 
 ## Note on Patches/Pull Requests
 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important to prevent future regressions.
-* Do not mess with rakefile, version, or history
-* Update the CHANGELOG, list your changes under Unreleased.
-* Update the README if necessary.
-* Write short, descriptive commit messages, following the format used in the repo.
-* Send a pull request. Bonus points for topic branches.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Copyright
 
