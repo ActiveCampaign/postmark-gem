@@ -409,6 +409,19 @@ describe Postmark::ApiClient do
 
   end
 
+  describe '#clicks' do
+    it 'returns an Enumerator' do
+      expect(subject.clicks).to be_kind_of(Enumerable)
+    end
+
+    it 'performs a GET request to /clicks/tags' do
+      allow(subject.http_client).to receive(:get).
+          with('messages/outbound/clicks', an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Clicks' => [{}])
+      expect(subject.clicks.first(5).count).to eq(1)
+    end
+  end
+
   describe '#get_opens' do
     let(:http_client) { subject.http_client }
     let(:options) { {:offset => 5} }
@@ -418,6 +431,18 @@ describe Postmark::ApiClient do
       allow(http_client).to receive(:get).with('messages/outbound/opens', options) { response }
       expect(subject.get_opens(options)).to be_an(Array)
       expect(subject.get_opens(options).count).to be_zero
+    end
+  end
+
+  describe '#get_clicks' do
+    let(:http_client) { subject.http_client }
+    let(:options) { {:offset => 5} }
+    let(:response) { {'Clicks' => [], 'TotalCount' => 0} }
+
+    it 'performs a GET request to /messages/outbound/clicks' do
+      allow(http_client).to receive(:get).with('messages/outbound/clicks', options) { response }
+      expect(subject.get_clicks(options)).to be_an(Array)
+      expect(subject.get_clicks(options).count).to be_zero
     end
   end
 
@@ -437,6 +462,22 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#get_clicks_by_message_id' do
+    let(:http_client) { subject.http_client }
+    let(:message_id) { 42 }
+    let(:options) { {:offset => 5} }
+    let(:response) { {'Clicks' => [], 'TotalCount' => 0} }
+
+    it 'performs a GET request to /messages/outbound/clicks' do
+      allow(http_client).
+          to receive(:get).with("messages/outbound/clicks/#{message_id}",
+                                options).
+                           and_return(response)
+      expect(subject.get_clicks_by_message_id(message_id, options)).to be_an(Array)
+      expect(subject.get_clicks_by_message_id(message_id, options).count).to be_zero
+    end
+  end
+
   describe '#opens_by_message_id' do
     let(:message_id) { 42 }
 
@@ -449,6 +490,21 @@ describe Postmark::ApiClient do
           with("messages/outbound/opens/#{message_id}", an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Opens' => [{}])
       expect(subject.opens_by_message_id(message_id).first(5).count).to eq(1)
+    end
+  end
+
+  describe '#clicks_by_message_id' do
+    let(:message_id) { 42 }
+
+    it 'returns an Enumerator' do
+      expect(subject.clicks_by_message_id(message_id)).to be_kind_of(Enumerable)
+    end
+
+    it 'performs a GET request to /clicks/tags' do
+      allow(subject.http_client).to receive(:get).
+          with("messages/outbound/clicks/#{message_id}", an_instance_of(Hash)).
+          and_return('TotalCount' => 1, 'Clicks' => [{}])
+      expect(subject.clicks_by_message_id(message_id).first(5).count).to eq(1)
     end
   end
 

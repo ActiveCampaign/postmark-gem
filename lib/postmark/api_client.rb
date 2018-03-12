@@ -113,20 +113,40 @@ module Postmark
       find_each('messages/outbound/opens', 'Opens', options)
     end
 
+    def clicks(options = {})
+      find_each('messages/outbound/clicks', 'Clicks', options)
+    end
+
     def get_opens(options = {})
       _, batch = load_batch('messages/outbound/opens', 'Opens', options)
       batch
     end
 
-    def get_opens_by_message_id(message_id, options ={})
+    def get_clicks(options = {})
+      _, batch = load_batch('messages/outbound/clicks', 'Clicks', options)
+      batch
+    end
+
+    def get_opens_by_message_id(message_id, options = {})
       _, batch = load_batch("messages/outbound/opens/#{message_id}",
                             'Opens',
                             options)
       batch
     end
 
+    def get_clicks_by_message_id(message_id, options = {})
+      _, batch = load_batch("messages/outbound/clicks/#{message_id}",
+                            'Clicks',
+                            options)
+      batch
+    end
+
     def opens_by_message_id(message_id, options = {})
       find_each("messages/outbound/opens/#{message_id}", 'Opens', options)
+    end
+
+    def clicks_by_message_id(message_id, options = {})
+      find_each("messages/outbound/clicks/#{message_id}", 'Clicks', options)
     end
 
     def create_trigger(type, options)
