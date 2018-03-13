@@ -662,7 +662,7 @@ bounce.activate # reactivate hard bounce
 
 ## Error handling
 
-For the gem version `1.11.0` and above, use the following template to handle the errors you care:
+For the gem version `1.11.0` and above, use the following template to handle the errors you care about:
 
 ``` ruby
 def handle_postmark_errors
