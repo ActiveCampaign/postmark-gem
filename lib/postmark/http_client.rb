@@ -66,17 +66,10 @@ module Postmark
     end
 
     def handle_response(response)
-      case response.code.to_i
-      when 200
-        return Postmark::Json.decode(response.body)
-      when 401
-        raise error(InvalidApiKeyError, response.body)
-      when 422
-        raise error(InvalidMessageError, response.body)
-      when 500
-        raise error(InternalServerError, response.body)
+      if response.code.to_i == 200
+        Postmark::Json.decode(response.body)
       else
-        raise UnknownError, response
+        raise HttpServerError.build(response.code, response.body)
       end
     end
 
@@ -92,8 +85,10 @@ module Postmark
       @request_mutex.synchronize do
         handle_response(yield(http))
       end
-    rescue Timeout::Error
-      raise TimeoutError.new($!)
+    rescue Timeout::Error => e
+      raise TimeoutError.new(e)
+    rescue Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError => e
+      raise HttpClientError.new(e.message)
     end
 
     def build_http
@@ -107,19 +102,6 @@ module Postmark
       http.use_ssl = !!self.secure
       http.ssl_version = :TLSv1 if http.respond_to?(:ssl_version=)
       http
-    end
-
-    def error_message(response_body)
-      Postmark::Json.decode(response_body)["Message"]
-    end
-
-    def error_message_and_code(response_body)
-      reply = Postmark::Json.decode(response_body)
-      [reply["Message"], reply["ErrorCode"], reply]
-    end
-
-    def error(clazz, response_body)
-      clazz.send(:new, *error_message_and_code(response_body))
     end
   end
 end

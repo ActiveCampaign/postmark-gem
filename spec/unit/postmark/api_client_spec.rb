@@ -869,7 +869,7 @@ describe Postmark::ApiClient do
 
     it 'retries 3 times' do
       2.times do
-        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500)
       end
       expect(http_client).to receive(:post) { response }
       expect { subject.deliver_with_template(message_hash) }.not_to raise_error

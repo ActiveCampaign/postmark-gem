@@ -660,6 +660,66 @@ bounce.activate # reactivate hard bounce
 # => #<Postmark::Bounce:0x007ff09c04ae18 @id=580516117, @email="sheldon@bigbangtheory.com", @bounced_at=2012-10-21 00:01:56 +0800, @type="HardBounce", @name=nil, @details="smtp;550 5.1.1 The email account that you tried to reach does not exist. Please try double-checking the recipient's email address for typos or unnecessary spaces. Learn more at http://support.google.com/mail/bin/answer.py?answer=6596 c13si5382730vcw.23", @tag=nil, @dump_available=false, @inactive=true, @can_activate=true, @message_id="876d40fe-ab2a-4925-9d6f-8d5e4f4926f5", @subject="Re: What, to you, is a large crowd?">
 ```
 
+## Error handling
+
+For the gem version `1.11.0` and above, use the following template to handle the errors you care:
+
+``` ruby
+def handle_postmark_errors
+  # Any Postmark request
+  yield
+  error
+rescue Postmark::InvalidApiKeyError => error
+  # Authentication error
+  # TODO: Make sure your API token is correct
+  puts error
+  error
+rescue Postmark::TimeoutError => error
+  # Network timeout, auto-retried :max_retries times
+  # TODO: Save message locally, try again once the network issues are resolved
+  # Consider increasing `http_open_timeout` and `http_read_timeout`.
+  puts error
+  error
+rescue Postmark::InternalServerError => error
+  # Postmark server error, auto-retried :max_retries times
+  # TODO: Save message locally, try again later.
+  puts error
+  error
+rescue Postmark::HttpClientError => error
+  # Corrupted response from Postmark, auto-retried :max_retries times
+  # TODO: Save message locally, try again later.
+  puts error
+  error
+rescue Postmark::InactiveRecipientError => error
+  # You tried to send to one or more recipients marked as inactive in
+  # Postmark
+  # TODO: Mark listed recipients as inactive in your local db or reactivate
+  # using the Bounces API
+  puts "Inactive recipients: #{error.recipients.join(', ')}"
+  puts error
+  error
+rescue Postmark::ApiInputError => error
+  # Postmark rejected your request as invalid
+  # TODO: Look up the error code and resolve the problem in your app
+  # List of supported error codes:
+  # https://postmarkapp.com/developer/api/overview#error-codes
+  puts "#{error.error_code} #{error.message}"
+  puts error
+  error
+rescue Postmark::Error => error
+  # All other Postmark errors
+  # TODO: Log and review as needed
+  puts error
+  error
+rescue Errno::EINVAL, Errno::ECONNRESET, Errno::ECONNREFUSED,
+       EOFError, Net::ProtocolError, SocketError => error
+  # Standard Ruby network errors, auto-retried :max_reties times
+  # TODO: Save message locally, resolve network issues, try again.
+  puts error
+  error
+end
+```
+
 ## Requirements
 
 You will need a Postmark account, server and sender signature set up to use it.

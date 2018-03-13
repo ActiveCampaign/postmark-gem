@@ -37,12 +37,15 @@ module Postmark
 
     def with_retries
       yield
-    rescue DeliveryError
+    rescue HttpServerError, TimeoutError, Errno::EINVAL, Errno::ECONNRESET,
+           Errno::ECONNREFUSED, EOFError, Net::ProtocolError, SocketError => e
       retries = retries ? retries + 1 : 1
-      if retries < self.max_retries
+      retriable = !e.respond_to?(:retry?) || e.retry?
+
+      if retriable && retries < self.max_retries
         retry
       else
-        raise
+        raise e
       end
     end
 
@@ -52,7 +55,7 @@ module Postmark
 
     def take_response_of
       [yield, nil]
-    rescue DeliveryError => e
+    rescue HttpServerError => e
       [e.full_response || {}, e]
     end
 
