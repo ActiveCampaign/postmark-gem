@@ -37,8 +37,9 @@ module Postmark
 
     def with_retries
       yield
-    rescue HttpServerError, TimeoutError, Errno::EINVAL, Errno::ECONNRESET,
-           Errno::ECONNREFUSED, EOFError, Net::ProtocolError, SocketError => e
+    rescue HttpServerError, HttpClientError, TimeoutError, Errno::EINVAL,
+           Errno::ECONNRESET, Errno::ECONNREFUSED, EOFError,
+           Net::ProtocolError, SocketError => e
       retries = retries ? retries + 1 : 1
       retriable = !e.respond_to?(:retry?) || e.retry?
 
