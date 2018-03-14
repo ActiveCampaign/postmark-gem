@@ -1,6 +1,11 @@
 = Changelog
 
+== 1.11.0
+
+* New, improved, and backwards-compatible gem errors (see README).
 * Added support for retrieving message clicks using the Messages API.
+* Added support for sending templated message in batches.
+* Added support for assigning link tracking mode via `Mail::Message` headers.
 
 == 1.10.0
 

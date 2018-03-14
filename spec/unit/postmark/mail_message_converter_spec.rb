@@ -311,6 +311,12 @@ describe Postmark::MailMessageConverter do
           "TrackLinks" => 'None'})
     end
 
+    it 'converts link tracking options when set via header' do
+      msg = mail_html_message
+      msg[:track_links] = :html_and_text
+      expect(subject.new(msg).run).to include('TrackLinks' => 'HtmlAndText')
+    end
+
   end
 
   it 'correctly decodes unicode in messages transfered as quoted-printable' do

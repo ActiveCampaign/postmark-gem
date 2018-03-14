@@ -10,6 +10,7 @@ require 'postmark/mail_message_converter'
 require 'postmark/bounce'
 require 'postmark/inbound'
 require 'postmark/json'
+require 'postmark/error'
 require 'postmark/http_client'
 require 'postmark/client'
 require 'postmark/api_client'
@@ -18,24 +19,6 @@ require 'postmark/message_extensions/mail'
 require 'postmark/handlers/mail'
 
 module Postmark
-
-  class DeliveryError < StandardError
-    attr_accessor :error_code, :full_response
-
-    def initialize(message = nil, error_code = nil, full_response = nil)
-      super(message)
-      self.error_code = error_code
-      self.full_response = full_response
-    end
-  end
-
-  class UnknownError        < DeliveryError; end
-  class InvalidApiKeyError  < DeliveryError; end
-  class InvalidMessageError < DeliveryError; end
-  class InternalServerError < DeliveryError; end
-  class UnknownMessageType  < DeliveryError; end
-  class TimeoutError        < DeliveryError; end
-
   module ResponseParsers
     autoload :Json,          'postmark/response_parsers/json'
     autoload :ActiveSupport, 'postmark/response_parsers/active_support'
