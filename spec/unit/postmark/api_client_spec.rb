@@ -897,11 +897,9 @@ describe Postmark::ApiClient do
 
     let(:message_hashes) do
       Array.new((factor * max_batch_size).to_i) do
-        rid = (Random.rand * 100_000).to_i
-
         {
-          :template_id => rid,
-          :alias => "a-#{rid}",
+          :template_id => 42,
+          :alias => 'alias',
           :template_model => { :Foo => 'attr_value' },
           :from => 'sender@example.org',
           :to => 'recipient@example.org'
