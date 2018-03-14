@@ -12,6 +12,7 @@ require 'fakeweb_matcher'
 require 'rspec'
 require 'rspec/its'
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'shared_examples.rb')
+require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'custom_matchers.rb')
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'helpers.rb')
 
 if ENV['JSONGEM']

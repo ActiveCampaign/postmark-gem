@@ -241,6 +241,17 @@ module Postmark
       end
     end
 
+    def deliver_in_batches_with_templates(message_hashes)
+      in_batches(message_hashes) do |batch, offset|
+        mapped = batch.map { |h| MessageHelper.to_postmark(h) }
+        data = serialize(:Messages => mapped)
+
+        with_retries do
+          http_client.post('email/batchWithTemplates', data)
+        end
+      end
+    end
+
     def get_stats_totals(options = {})
       format_response(http_client.get('stats/outbound', options))
     end

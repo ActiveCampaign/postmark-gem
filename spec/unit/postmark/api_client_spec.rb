@@ -882,6 +882,64 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#deliver_in_batches_with_templates' do
+    let(:max_batch_size) { 50 }
+    let(:factor) { 3.5 }
+    let(:http_client) { subject.http_client }
+    let(:postmark_response) do
+      {
+        'ErrorCode' => 0,
+        'Message' => 'OK',
+        'SubmittedAt' => '2018-03-14T09:56:50.4288265-04:00',
+        'To' => 'recipient@example.org'
+      }
+    end
+
+    let(:message_hashes) do
+      Array.new((factor * max_batch_size).to_i) do
+        rid = (Random.rand * 100_000).to_i
+
+        {
+          :template_id => rid,
+          :alias => "a-#{rid}",
+          :template_model => { :Foo => 'attr_value' },
+          :from => 'sender@example.org',
+          :to => 'recipient@example.org'
+        }
+      end
+    end
+
+    before { subject.max_batch_size = max_batch_size }
+
+    it 'performs a total of (bath_size / max_batch_size) requests' do
+      expect(http_client).
+        to receive(:post).with('email/batchWithTemplates', a_postmark_json).
+        at_most(factor.to_i).times do
+        Array.new(max_batch_size) { postmark_response }
+      end
+
+      expect(http_client).
+        to receive(:post).with('email/batchWithTemplates', a_postmark_json).
+        exactly((factor - factor.to_i).ceil).times do
+        response = Array.new(((factor - factor.to_i) * max_batch_size).to_i) do
+          postmark_response
+        end
+        response
+      end
+
+      response = subject.deliver_in_batches_with_templates(message_hashes)
+      expect(response).to be_an Array
+      expect(response.size).to eq message_hashes.size
+
+      response.each do |message_status|
+        expect(message_status).to have_key(:error_code)
+        expect(message_status).to have_key(:message)
+        expect(message_status).to have_key(:to)
+        expect(message_status).to have_key(:submitted_at)
+      end
+    end
+  end
+
   describe '#get_stats_totals' do
     let(:response) do
       {
