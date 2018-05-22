@@ -93,6 +93,34 @@ describe Mail::Message do
 
   end
 
+  describe '#metadata' do
+
+    let(:metadata) { [test: "test"]}
+
+    context 'flag set on metadata=' do
+
+      it 'set' do
+        mail_message.metadata=metadata
+        expect(mail_message.metadata).to eq metadata
+      end
+
+      it 'not set' do
+        expect(mail_message.metadata).to eq nil
+      end
+
+    end
+
+    context 'flag set on metadata()' do
+
+      it 'set' do
+        mail_message.metadata(metadata)
+        expect(mail_message.metadata).to eq metadata
+      end
+
+    end
+
+  end
+
   describe '#track_links' do
 
     context 'flag set on track_links=' do

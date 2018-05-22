@@ -116,6 +116,14 @@ describe Postmark::MessageHelper do
 
     end
 
+    context 'metadata' do
+      it 'simple data set' do
+        metadata = ["test" => "value"]
+        data= message.merge(:metadata => metadata)
+        expect(subject.to_postmark(data)).to include(postmark_message.merge("Metadata" => metadata))
+      end
+    end
+
     context 'link tracking flag set' do
 
       let(:message_with_link_tracking_html) { message.merge(:track_links => :html_only) }

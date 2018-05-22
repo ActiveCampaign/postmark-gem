@@ -319,6 +319,34 @@ describe Postmark::MailMessageConverter do
 
   end
 
+  context 'metadata' do
+
+    let(:max_fields_count) { 10 }
+    let(:max_field_name_length) { 20 }
+    let(:max_field_value_length) { 80 }
+
+    it 'converts single metadata field' do
+      metadata = [{test: "test"}]
+      msg = mail_html_message
+      msg.metadata = metadata
+      expect(subject.new(msg).run).to include('Metadata' => metadata)
+    end
+
+    it 'converts unicode metadata field metadata' do
+      metadata = [{test: "Велик"}]
+      msg = mail_html_message
+      msg.metadata = metadata
+      expect(subject.new(msg).run).to include('Metadata' => metadata)
+    end
+
+    it 'converts multiple metadata fields' do
+      metadata = Array.new(max_fields_count).each_with_index.map { |x,i| {"test#{i+1}" => "t"*max_field_value_length} }
+      msg = mail_html_message
+      msg.metadata = metadata
+      expect(subject.new(msg).run).to include('Metadata' => metadata)
+    end
+  end
+
   it 'correctly decodes unicode in messages transfered as quoted-printable' do
     subject.new(mail_message_quoted_printable).run.should \
       include('TextBody' => 'Он здесь бывал: еще не в галифе.')
