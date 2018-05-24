@@ -313,14 +313,14 @@ describe Postmark::MailMessageConverter do
 
   context 'metadata' do
     it 'converts single metadata field' do
-      metadata = [{test: "test"}]
+      metadata = [{:test => 'test'}]
       msg = mail_html_message
       msg.metadata = metadata
       expect(subject.new(msg).run).to include('Metadata' => metadata)
     end
 
     it 'converts unicode metadata field metadata' do
-      metadata = [{test: "Велик"}]
+      metadata = [{:test => "Велик"}]
       msg = mail_html_message
       msg.metadata = metadata
       expect(subject.new(msg).run).to include('Metadata' => metadata)
