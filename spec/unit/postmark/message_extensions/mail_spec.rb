@@ -58,27 +58,23 @@ describe Mail::Message do
   end
 
   describe '#track_opens' do
+    it 'returns nil if unset' do
+      expect(mail_message.track_opens).to eq ''
+    end
 
-    context 'flag set on track_opens=' do
-
-      it 'true' do
+    context 'when assigned via #track_opens=' do
+      it 'returns assigned value to track opens' do
         mail_message.track_opens = true
         expect(mail_message.track_opens).to eq 'true'
       end
 
-      it 'false' do
+      it 'returns assigned value to not track opens' do
         mail_message.track_opens = false
         expect(mail_message.track_opens).to eq 'false'
       end
-
-      it 'not set' do
-        expect(mail_message.track_opens).to eq ''
-      end
-
     end
 
     context 'flag set on track_opens()' do
-
       it 'true' do
         mail_message.track_opens(true)
         expect(mail_message.track_opens).to eq 'true'
@@ -88,63 +84,49 @@ describe Mail::Message do
         mail_message.track_opens(false)
         expect(mail_message.track_opens).to eq 'false'
       end
-
     end
-
   end
 
   describe '#metadata' do
-
     let(:metadata) { [test: "test"]}
 
-    context 'flag set on metadata=' do
+    it 'returns nil if unset' do
+      expect(mail_message.metadata).to eq nil
+    end
 
-      it 'set' do
+    context 'when assigned via #metadata=' do
+      it 'returns assigned value' do
         mail_message.metadata=metadata
         expect(mail_message.metadata).to eq metadata
       end
-
-      it 'not set' do
-        expect(mail_message.metadata).to eq nil
-      end
-
     end
 
-    context 'flag set on metadata()' do
-
-      it 'set' do
+    context 'when assigned via metadata()' do
+      it 'returns assigned value' do
         mail_message.metadata(metadata)
         expect(mail_message.metadata).to eq metadata
       end
-
     end
-
   end
 
   describe '#track_links' do
+    it 'return empty string when if unset' do
+      expect(mail_message.track_links).to eq ''
+    end
 
-    context 'flag set on track_links=' do
-
-      it 'set' do
+    context 'when assigned via #track_links=' do
+      it 'returns track html only body value in Postmark format' do
         mail_message.track_links=:html_only
         expect(mail_message.track_links).to eq 'HtmlOnly'
       end
-
-      it 'not set' do
-        expect(mail_message.track_links).to eq ''
-      end
-
     end
 
-    context 'flag set on track_links()' do
-
-      it 'set' do
+    context 'when assigned via track_links()' do
+      it 'returns track html only body value in Postmark format' do
         mail_message.track_links(:html_only)
         expect(mail_message.track_links).to eq 'HtmlOnly'
       end
-
     end
-
   end
 
   describe "#html?" do

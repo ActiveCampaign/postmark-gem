@@ -225,11 +225,9 @@ describe Postmark::MailMessageConverter do
         "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>'}
   end
 
-  context 'recognizes open tracking' do
-
+  context 'open tracking' do
     context 'setup inside of mail' do
-
-      it 'enabled' do
+      it 'converts open tracking enabled messages correctly' do
         expect(subject.new(mail_message_with_open_tracking).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
@@ -238,7 +236,7 @@ describe Postmark::MailMessageConverter do
             "TrackOpens" => true})
       end
 
-      it 'disabled' do
+      it 'converts open tracking disabled messages correctly' do
         expect(subject.new(mail_message_with_open_tracking_disabled).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
@@ -246,12 +244,10 @@ describe Postmark::MailMessageConverter do
             "To" => "lenard@bigbangtheory.com",
             "TrackOpens" => false})
       end
-
     end
 
     context 'setup with tracking variable' do
-
-      it 'enabled' do
+      it 'converts open tracking enabled messages correctly' do
         expect(subject.new(mail_message_with_open_tracking_set_variable).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
@@ -260,7 +256,7 @@ describe Postmark::MailMessageConverter do
             "TrackOpens" => true})
       end
 
-      it 'disabled' do
+      it 'converts open tracking disabled messages correctly' do
         expect(subject.new(mail_message_with_open_tracking_disabled_set_variable).run).to eq ({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
@@ -268,14 +264,11 @@ describe Postmark::MailMessageConverter do
             "To" => "lenard@bigbangtheory.com",
             "TrackOpens" => false})
       end
-
     end
-
   end
 
   context 'link tracking' do
-
-    it 'html and text' do
+    it 'converts html and text link tracking enabled messages correctly' do
       expect(subject.new(mail_message_with_link_tracking_all).run).to eq ({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
@@ -284,7 +277,7 @@ describe Postmark::MailMessageConverter do
           "TrackLinks" => 'HtmlAndText'})
     end
 
-    it 'html only' do
+    it 'converts html only link tracking enabled messages correctly' do
       expect(subject.new(mail_message_with_link_tracking_html).run).to eq ({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
@@ -293,7 +286,7 @@ describe Postmark::MailMessageConverter do
           "TrackLinks" => 'HtmlOnly'})
     end
 
-    it 'text only' do
+    it 'converts text only link tracking enabled messages correctly' do
       expect(subject.new(mail_message_with_link_tracking_text).run).to eq ({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
@@ -302,7 +295,7 @@ describe Postmark::MailMessageConverter do
           "TrackLinks" => 'TextOnly'})
     end
 
-    it 'none' do
+    it 'converts link tracking disabled messages correctly' do
       expect(subject.new(mail_message_with_link_tracking_none).run).to eq ({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
@@ -316,15 +309,9 @@ describe Postmark::MailMessageConverter do
       msg[:track_links] = :html_and_text
       expect(subject.new(msg).run).to include('TrackLinks' => 'HtmlAndText')
     end
-
   end
 
   context 'metadata' do
-
-    let(:max_fields_count) { 10 }
-    let(:max_field_name_length) { 20 }
-    let(:max_field_value_length) { 80 }
-
     it 'converts single metadata field' do
       metadata = [{test: "test"}]
       msg = mail_html_message
@@ -340,7 +327,7 @@ describe Postmark::MailMessageConverter do
     end
 
     it 'converts multiple metadata fields' do
-      metadata = Array.new(max_fields_count).each_with_index.map { |x,i| {"test#{i+1}" => "t"*max_field_value_length} }
+      metadata = Array.new(10) { |i| {"test#{i+1}" => "t"*80 } }
       msg = mail_html_message
       msg.metadata = metadata
       expect(subject.new(msg).run).to include('Metadata' => metadata)
