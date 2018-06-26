@@ -99,7 +99,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 
 ## Sending a message with metadata
 
-To send metadata for emails you send, all you need to do is provide metadata for your messages in form of array of hashes.
+To send metadata for emails you send, all you need to do is provide metadata for your messages in form of hash map.
 
 ``` ruby
 client.deliver(from: 'sheldon@bigbangtheory.com',
@@ -109,7 +109,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
                           'General <a href="http://www.example.com">rule of thumb</a> is 36 adults or 70 ' \
                           'children.</p>',
                text_body: 'Any group big enough to trample me to death. General rule of thumb is 36 adults or 70 children - http://www.example.com.',
-               metadata: [{'Example1' => 'value'}, {'Example2' => 'value'}])
+               metadata: {'Example1' => 'value', 'Example2' => 'value'})
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
 ```
 
@@ -476,7 +476,7 @@ message = Mail.new do
   subject         'Have you seen these pictures of yours?'
   body            'You look like a real geek!'
   add_file        '1.jpeg'
-  metadata        [{"Example1"=>"value"}, {"Example2"=>"value"}]
+  metadata        {"Example1"=>"value","Example2"=>"value"}
 
   delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
 end

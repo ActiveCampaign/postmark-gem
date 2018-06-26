@@ -88,7 +88,7 @@ describe Mail::Message do
   end
 
   describe '#metadata' do
-    let(:metadata) { [{:test => "test"}]}
+    let(:metadata) {{:test => "test"}}
 
     it 'returns nil if unset' do
       expect(mail_message.metadata).to eq nil

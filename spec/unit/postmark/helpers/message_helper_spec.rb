@@ -118,7 +118,7 @@ describe Postmark::MessageHelper do
 
     context 'metadata' do
       it 'converts messages with metadata correctly' do
-        metadata = ["test" => "value"]
+        metadata = {"test" => "value"}
         data= message.merge(:metadata => metadata)
         expect(subject.to_postmark(data)).to include(postmark_message.merge("Metadata" => metadata))
       end
