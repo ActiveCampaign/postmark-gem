@@ -104,20 +104,27 @@ describe Postmark::MessageHelper do
       expect(subject.to_postmark(message_with_headers_and_attachments)).to eq postmark_message_with_headers_and_attachments
     end
 
-    context 'open tracking flag set' do
+    context 'open tracking' do
 
-      it 'true' do
+      it 'converts messages with open tracking flag set to true correctly' do
         expect(subject.to_postmark(message_with_open_tracking)).to eq(postmark_message_with_open_tracking)
       end
 
-      it 'false' do
+      it 'converts messages with open tracking flag set to false correctly' do
         expect(subject.to_postmark(message_with_open_tracking_false)).to eq(postmark_message_with_open_tracking_false)
       end
 
     end
 
-    context 'link tracking flag set' do
+    context 'metadata' do
+      it 'converts messages with metadata correctly' do
+        metadata = {"test" => "value"}
+        data= message.merge(:metadata => metadata)
+        expect(subject.to_postmark(data)).to include(postmark_message.merge("Metadata" => metadata))
+      end
+    end
 
+    context 'link tracking' do
       let(:message_with_link_tracking_html) { message.merge(:track_links => :html_only) }
       let(:message_with_link_tracking_text) { message.merge(:track_links => :text_only) }
       let(:message_with_link_tracking_all) { message.merge(:track_links => :html_and_text) }
@@ -128,24 +135,22 @@ describe Postmark::MessageHelper do
       let(:postmark_message_with_link_tracking_all) { postmark_message.merge("TrackLinks" => 'HtmlAndText') }
       let(:postmark_message_with_link_tracking_none) { postmark_message.merge("TrackLinks" => 'None') }
 
-      it 'html' do
+      it 'converts html body link tracking to Postmark format' do
         expect(subject.to_postmark(message_with_link_tracking_html)).to eq(postmark_message_with_link_tracking_html)
       end
 
-      it 'text' do
+      it 'converts text body link tracking to Postmark format' do
         expect(subject.to_postmark(message_with_link_tracking_text)).to eq(postmark_message_with_link_tracking_text)
       end
 
-      it 'html and text' do
+      it 'converts html and text body link tracking to Postmark format' do
         expect(subject.to_postmark(message_with_link_tracking_all)).to eq(postmark_message_with_link_tracking_all)
       end
 
-      it 'none' do
+      it 'converts no link tracking to Postmark format' do
         expect(subject.to_postmark(message_with_link_tracking_none)).to eq(postmark_message_with_link_tracking_none)
       end
-
     end
-
   end
 
   describe ".headers_to_postmark" do
@@ -159,7 +164,6 @@ describe Postmark::MessageHelper do
   end
 
   describe ".attachments_to_postmark" do
-
     it 'converts attachments to Postmark format' do
       expect(subject.attachments_to_postmark(attachments)).to eq postmark_attachments
     end
@@ -167,7 +171,6 @@ describe Postmark::MessageHelper do
     it 'accepts single attachment as a non-array' do
       expect(subject.attachments_to_postmark(attachments.first)).to eq [postmark_attachments.first]
     end
-
   end
 
 end

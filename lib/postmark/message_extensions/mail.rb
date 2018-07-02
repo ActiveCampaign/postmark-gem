@@ -33,6 +33,15 @@ module Mail
       header['TRACK-OPENS'] = (!!val).to_s
     end
 
+    def metadata(val = nil)
+      @metadata=val unless val.nil?
+      @metadata
+    end
+
+    def metadata=(val)
+      @metadata = val
+    end
+
     def postmark_attachments=(value)
       Kernel.warn("Mail::Message#postmark_attachments= is deprecated and will " \
                   "be removed in the future. Please consider using the native " \

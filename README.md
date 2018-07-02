@@ -97,6 +97,22 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 # => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
 ```
 
+## Sending a message with metadata
+
+To send metadata for emails you send, all you need to do is provide metadata for your messages in form of hash map.
+
+``` ruby
+client.deliver(from: 'sheldon@bigbangtheory.com',
+               to: 'Leonard Hofstadter <leonard@bigbangtheory.com>',
+               subject: 'Re: What, to you, is a large crowd?',
+               html_body: '<p>Any group big enough to trample me to death. ' \
+                          'General <a href="http://www.example.com">rule of thumb</a> is 36 adults or 70 ' \
+                          'children.</p>',
+               text_body: 'Any group big enough to trample me to death. General rule of thumb is 36 adults or 70 children - http://www.example.com.',
+               metadata: {'Example1' => 'value', 'Example2' => 'value'})
+# => {:to=>"Leonard Hofstadter <leonard@bigbangtheory.com>", :submitted_at=>"2013-05-09T02:51:08.8789433-04:00", :message_id=>"75c28987-564e-xxxx-b6eb-e8071873ac06", :error_code=>0, :message=>"OK"}
+```
+
 ## Sending a message with attachments
 
 You can add
@@ -449,6 +465,24 @@ end
 
 message.deliver
 # => #<Mail::Message:70355902117460, Multipart: true, Headers: <From: sheldon@bigbangtheory.com>, <To: leonard@bigbangtheory.com>, <Message-ID: 1a1370a1-6c21-4304-a03c-320a54cc59f7>, <Subject: Re: What, to you, is a large crowd?>, <Content-Type: multipart/alternative; boundary=--==_mimepart_58380d6029b17_20543fd48543fa14977a>, <TRACK-LINKS: HtmlAndText>>
+```
+
+## Message with metadata
+
+``` ruby
+message = Mail.new do
+  from            'leonard@bigbangtheory.com'
+  to              'Dr. Sheldon Cooper <sheldon@bigbangtheory.com>'
+  subject         'Have you seen these pictures of yours?'
+  body            'You look like a real geek!'
+  add_file        '1.jpeg'
+  metadata        {"Example1"=>"value","Example2"=>"value"}
+
+  delivery_method Mail::Postmark, :api_token => 'your-postmark-api-token'
+end
+
+message.deliver
+# => #<Mail::Message:70185826686240, Multipart: true, Headers: <From: leonard@bigbangtheory.com>, <To: sheldon@bigbangtheory.com>, <Message-ID: ba644cc1-b5b1-4bcb-aaf8-2f290b5aad80>, <Subject: Have you seen these pictures of yours?>, <Content-Type: multipart/mixed; boundary=--==_mimepart_5121f9f1ec653_12c53fd569035ad817726>>
 ```
 
 ## Message with attachments
