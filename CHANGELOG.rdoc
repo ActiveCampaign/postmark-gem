@@ -1,5 +1,10 @@
 = Changelog
 
+== 1.13.0
+
+* Changed default value returned by Mail::Message#metadata to a mutable hash (makes things easier for postmark-rails).
+* All message JSON payloads now include an empty metadata object even if metadata is unset.
+
 == 1.12.0
 
 * Added support for attaching metadata to messages.

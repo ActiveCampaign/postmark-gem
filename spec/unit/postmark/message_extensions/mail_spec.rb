@@ -88,24 +88,20 @@ describe Mail::Message do
   end
 
   describe '#metadata' do
-    let(:metadata) {{:test => "test"}}
+    let(:metadata) { { :test => 'test' } }
 
-    it 'returns nil if unset' do
-      expect(mail_message.metadata).to eq nil
+    it 'returns a mutable empty hash if unset' do
+      expect(mail_message.metadata).to eq({})
+      expect(mail_message.metadata.equal?(mail_message.metadata)).to be true
     end
 
-    context 'when assigned via #metadata=' do
-      it 'returns assigned value' do
-        mail_message.metadata=metadata
-        expect(mail_message.metadata).to eq metadata
-      end
+    it 'supports assigning non-null values (for the builder DSL)' do
+      expect { mail_message.metadata(metadata) }.to change { mail_message.metadata }.to(metadata)
+      expect { mail_message.metadata(nil) }.to_not change { mail_message.metadata }
     end
 
-    context 'when assigned via metadata()' do
-      it 'returns assigned value' do
-        mail_message.metadata(metadata)
-        expect(mail_message.metadata).to eq metadata
-      end
+    it 'returns value assigned via metadata=' do
+      expect { mail_message.metadata = metadata }.to change { mail_message.metadata }.to(metadata)
     end
   end
 

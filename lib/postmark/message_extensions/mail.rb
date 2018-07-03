@@ -34,8 +34,11 @@ module Mail
     end
 
     def metadata(val = nil)
-      @metadata=val unless val.nil?
-      @metadata
+      if val
+        @metadata = val
+      else
+        @metadata ||= {}
+      end
     end
 
     def metadata=(val)

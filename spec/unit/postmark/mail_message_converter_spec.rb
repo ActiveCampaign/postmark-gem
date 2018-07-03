@@ -328,7 +328,7 @@ describe Postmark::MailMessageConverter do
 
     it 'converts multiple metadata fields' do
       metadata = {}
-      metadata = 10.times { |i| metadata["test#{i+1}"] = "t"*80 }
+      10.times { |i| metadata["test#{i+1}"] = "t"*80 }
       msg = mail_html_message
       msg.metadata = metadata
       expect(subject.new(msg).run).to include('Metadata' => metadata)
