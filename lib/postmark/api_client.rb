@@ -168,15 +168,18 @@ module Postmark
     end
 
     def get_triggers(type, options = {})
-      type = type.to_s.strip.downcase
-      type = (type == 'inboundrules')? 'InboundRules' : type.capitalize
+      type = type.to_s.strip.downcase.delete('_')
+      name = (type == 'inboundrules')? 'InboundRules' : type.capitalize
 
-      _, batch = load_batch("triggers/#{type}", type, options)
+      _, batch = load_batch("triggers/#{type}", name, options)
       batch
     end
 
     def triggers(type, options = {})
-      find_each("triggers/#{type}", 'Tags', options)
+      type = type.to_s.strip.downcase.delete('_')
+      name = (type == 'inboundrules')? 'InboundRules' : type.capitalize
+
+      find_each("triggers/#{type}", name, options)
     end
 
     def server_info

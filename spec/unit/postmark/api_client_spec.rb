@@ -575,12 +575,25 @@ describe Postmark::ApiClient do
   describe '#get_triggers' do
     let(:http_client) { subject.http_client }
     let(:options) { {:offset => 5} }
-    let(:response) { {'Tags' => [], 'TotalCount' => 0} }
 
-    it 'performs a GET request to /triggers/tags' do
-      allow(http_client).to receive(:get).with('triggers/tags', options) { response }
-      expect(subject.get_triggers(:tags, options)).to be_an(Array)
-      expect(subject.get_triggers(:tags, options).count).to be_zero
+    context 'tags' do
+      let(:response) { {'Tags' => [], 'TotalCount' => 0} }
+
+      it 'performs a GET request to /triggers/tags' do
+        allow(http_client).to receive(:get).with('triggers/tags', options) { response }
+        expect(subject.get_triggers(:tags, options)).to be_an(Array)
+        expect(subject.get_triggers(:tags, options).count).to be_zero
+      end
+    end
+
+    context 'inbound rules' do
+      let(:response) { {'InboundRules' => [], 'TotalCount' => 0} }
+
+      it 'performs a GET request to /triggers/inboundrules' do
+        allow(http_client).to receive(:get).with('triggers/inboundrules', options) { response }
+        expect(subject.get_triggers(:inbound_rules, options)).to be_an(Array)
+        expect(subject.get_triggers(:inbound_rules, options).count).to be_zero
+      end
     end
   end
 
