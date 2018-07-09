@@ -194,7 +194,8 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 
 ## Sending a templated email
 
-If you have a [template created](https://github.com/wildbit/postmark-gem/wiki/The-Templates-API-support) in Postmark you can send an email using that template. 
+If you have a [template created](https://github.com/wildbit/postmark-gem/wiki/The-Templates-API-support) in Postmark you can send an email using that template.
+For sending email you can reference template by it's ID or by it's alias name. 
 
 ``` ruby
 client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
@@ -206,6 +207,38 @@ client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
                              })
 
 # => {:to=>"Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T03:00:55.4454938-04:00", :message_id=>"34aed4b3-3a95-xxxx-bd1d-88064909cc93", :error_code=>0, :message=>"OK"}
+```
+
+Following example shows hot to send email using template alias:
+
+``` ruby
+client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
+                             to: 'Penny <penny@bigbangtheory.com>',
+                             template_alias: 'bigbangtheory',
+                             template_model: {
+                               name: 'Penny',
+                               message: 'Bazinga!'
+                             })
+
+# => {:to=>"Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T03:00:55.4454938-04:00", :message_id=>"34aed4b3-3a95-xxxx-bd1d-88064909cc93", :error_code=>0, :message=>"OK"}
+```
+
+## Sending a templated email in batches
+
+``` ruby
+client.deliver_with_template([{from: 'sheldon@bigbangtheory.com',
+                               to: 'Penny <penny@bigbangtheory.com>',
+                               template_alias: 'bigbangtheory',
+                               template_model: {
+                                name: 'Penny',
+                                message: 'Bazinga!'
+                               }
+                              },
+                              {from: 'tom@bigbangtheory.com',
+                               to: '<sheldon@bigbangtheory.com>',
+                               template_id: 53,
+                               template_model: {}
+                              }])
 ```
 
 ## Sending in batches
