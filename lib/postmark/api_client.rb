@@ -168,7 +168,10 @@ module Postmark
     end
 
     def get_triggers(type, options = {})
-      _, batch = load_batch("triggers/#{type}", 'Tags', options)
+      type = type.to_s.strip.downcase
+      type = (type == 'inboundrules')? 'InboundRules' : type.capitalize
+
+      _, batch = load_batch("triggers/#{type}", type, options)
       batch
     end
 
@@ -258,13 +261,10 @@ module Postmark
 
     def get_stats_counts(stat, options = {})
       url = "stats/outbound/#{stat}"
-
       url << "/#{options[:type]}" if options.has_key?(:type)
 
       response = format_response(http_client.get(url, options))
-
       response[:days].map! { |d| HashHelper.to_ruby(d) }
-
       response
     end
 
