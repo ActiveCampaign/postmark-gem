@@ -195,7 +195,7 @@ client.deliver(from: 'sheldon@bigbangtheory.com',
 ## Sending a templated email
 
 If you have a [template created](https://github.com/wildbit/postmark-gem/wiki/The-Templates-API-support) in Postmark you can send an email using that template.
-For sending email you can reference template by it's ID or by it's alias name. 
+For the purpose of sending emails, you can reference a template by its alias or ID. 
 
 ``` ruby
 client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
@@ -209,7 +209,7 @@ client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
 # => {:to=>"Penny <penny@bigbangtheory.com>", :submitted_at=>"2013-05-09T03:00:55.4454938-04:00", :message_id=>"34aed4b3-3a95-xxxx-bd1d-88064909cc93", :error_code=>0, :message=>"OK"}
 ```
 
-Following example shows hot to send email using template alias:
+Following example shows how to send email using template alias:
 
 ``` ruby
 client.deliver_with_template(from: 'sheldon@bigbangtheory.com',
