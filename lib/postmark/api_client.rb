@@ -150,6 +150,7 @@ module Postmark
     end
 
     def create_trigger(type, options)
+      type = Postmark::Inflector.to_postmark(type).downcase
       data = serialize(HashHelper.to_postmark(options))
       format_response http_client.post("triggers/#{type}", data)
     end
@@ -164,16 +165,19 @@ module Postmark
     end
 
     def delete_trigger(type, id)
+      type = Postmark::Inflector.to_postmark(type).downcase
       format_response http_client.delete("triggers/#{type}/#{id}")
     end
 
     def get_triggers(type, options = {})
-      _, batch = load_batch("triggers/#{type}", 'Tags', options)
+      type = Postmark::Inflector.to_postmark(type)
+      _, batch = load_batch("triggers/#{type.downcase}", type, options)
       batch
     end
 
     def triggers(type, options = {})
-      find_each("triggers/#{type}", 'Tags', options)
+      type = Postmark::Inflector.to_postmark(type)
+      find_each("triggers/#{type.downcase}", type, options)
     end
 
     def server_info
@@ -258,13 +262,10 @@ module Postmark
 
     def get_stats_counts(stat, options = {})
       url = "stats/outbound/#{stat}"
-
       url << "/#{options[:type]}" if options.has_key?(:type)
 
       response = format_response(http_client.get(url, options))
-
       response[:days].map! { |d| HashHelper.to_ruby(d) }
-
       response
     end
 

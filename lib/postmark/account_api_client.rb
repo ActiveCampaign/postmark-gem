@@ -89,6 +89,14 @@ module Postmark
       format_response http_client.put("domains/#{id.to_i}", data)
     end
 
+    def verify_domain_dkim(id)
+      format_response http_client.put("domains/#{id.to_i}/verifydkim")
+    end
+
+    def verify_domain_return_path(id)
+      format_response http_client.put("domains/#{id.to_i}/verifyreturnpath")
+    end
+
     def verified_domain_spf?(id)
       !!http_client.post("domains/#{id.to_i}/verifyspf")['SPFVerified']
     end

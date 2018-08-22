@@ -1,14 +1,9 @@
 require 'spec_helper'
 
 describe Postmark::ApiClient do
-
-  let(:api_token) { "provided-api-token" }
-  let(:max_retries) { 42 }
-  let(:message_hash) {
-    {
-      :from => "support@postmarkapp.com"
-    }
-  }
+  let(:api_token) {"provided-api-token"}
+  let(:max_retries) {42}
+  let(:message_hash) {{:from => "support@postmarkapp.com"}}
   let(:message) {
     Mail.new do
       from "support@postmarkapp.com"
@@ -16,37 +11,30 @@ describe Postmark::ApiClient do
     end
   }
 
-  let(:api_client) { Postmark::ApiClient.new(api_token) }
-  subject { api_client }
+  let(:api_client) {Postmark::ApiClient.new(api_token)}
+  subject {api_client}
 
   context "attr readers" do
-    it { should respond_to(:http_client) }
-    it { should respond_to(:max_retries) }
+    it {should respond_to(:http_client)}
+    it {should respond_to(:max_retries)}
   end
 
   context "when it's created without options" do
-
-    its(:max_retries) { should eq 3 }
-
+    its(:max_retries) {should eq 3}
   end
 
   context "when it's created with user options" do
-
-    subject { Postmark::ApiClient.new(api_token, :max_retries => max_retries,
-                                               :foo => :bar)}
-
-    its(:max_retries) { should eq max_retries }
+    subject {Postmark::ApiClient.new(api_token, :max_retries => max_retries, :foo => :bar)}
+    its(:max_retries) {should eq max_retries}
 
     it 'passes other options to HttpClient instance' do
       allow(Postmark::HttpClient).to receive(:new).with(api_token, :foo => :bar)
       subject.should be
     end
-
   end
 
   describe "#api_token=" do
-
-    let(:api_token) { "new-api-token-value" }
+    let(:api_token) {"new-api-token-value"}
 
     it 'assigns the api token to the http client instance' do
       subject.api_token = api_token
@@ -57,56 +45,55 @@ describe Postmark::ApiClient do
       subject.api_key = api_token
       subject.http_client.api_token.should == api_token
     end
-
   end
 
   describe "#deliver" do
-    let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
-    let(:email_json) { Postmark::Json.encode(email) }
-    let(:http_client) { subject.http_client }
-    let(:response) { {"MessageID" => 42} }
+    let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
+    let(:email_json) {Postmark::Json.encode(email)}
+    let(:http_client) {subject.http_client}
+    let(:response) {{"MessageID" => 42}}
 
     it 'converts message hash to Postmark format and posts it to /email' do
-      allow(http_client).to receive(:post).with('email', email_json) { response }
+      allow(http_client).to receive(:post).with('email', email_json) {response}
       subject.deliver(message_hash)
     end
 
     it 'retries 3 times' do
       expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
-      expect(http_client).to receive(:post) { response }
-      expect { subject.deliver(message_hash) }.not_to raise_error
+      expect(http_client).to receive(:post) {response}
+      expect {subject.deliver(message_hash)}.not_to raise_error
     end
 
     it 'converts response to ruby format' do
-      expect(http_client).to receive(:post).with('email', email_json) { response }
+      expect(http_client).to receive(:post).with('email', email_json) {response}
       r = subject.deliver(message_hash)
       r.should have_key(:message_id)
     end
   end
 
   describe "#deliver_in_batches" do
-    let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
-    let(:emails) { [email, email, email] }
-    let(:emails_json) { Postmark::Json.encode(emails) }
-    let(:http_client) { subject.http_client }
-    let(:response) { [{'ErrorCode' => 0}, {'ErrorCode' => 0}, {'ErrorCode' => 0}] }
+    let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
+    let(:emails) {[email, email, email]}
+    let(:emails_json) {Postmark::Json.encode(emails)}
+    let(:http_client) {subject.http_client}
+    let(:response) {[{'ErrorCode' => 0}, {'ErrorCode' => 0}, {'ErrorCode' => 0}]}
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
-      expect(http_client).to receive(:post).with('email/batch', emails_json) { response }
+      expect(http_client).to receive(:post).with('email/batch', emails_json) {response}
       subject.deliver_in_batches([message_hash, message_hash, message_hash])
     end
 
     it 'converts response to ruby format' do
-      expect(http_client).to receive(:post).with('email/batch', emails_json) { response }
+      expect(http_client).to receive(:post).with('email/batch', emails_json) {response}
       response = subject.deliver_in_batches([message_hash, message_hash, message_hash])
       response.first.should have_key(:error_code)
     end
   end
 
   describe "#deliver_message" do
-    let(:email) { message.to_postmark_hash }
-    let(:email_json) { Postmark::Json.encode(email) }
-    let(:http_client) { subject.http_client }
+    let(:email) {message.to_postmark_hash}
+    let(:email_json) {Postmark::Json.encode(email)}
+    let(:http_client) {subject.http_client}
 
     it 'turns message into a JSON document and posts it to /email' do
       expect(http_client).to receive(:post).with('email', email_json)
@@ -118,32 +105,31 @@ describe Postmark::ApiClient do
         expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
       end
       expect(http_client).to receive(:post)
-      expect { subject.deliver_message(message) }.not_to raise_error
+      expect {subject.deliver_message(message)}.not_to raise_error
     end
 
     it "retries on timeout" do
       expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
       expect(http_client).to receive(:post)
-      expect { subject.deliver_message(message) }.not_to raise_error
+      expect {subject.deliver_message(message)}.not_to raise_error
     end
 
     it "proxies errors" do
       allow(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
-      expect { subject.deliver_message(message) }.to raise_error(Postmark::TimeoutError)
+      expect {subject.deliver_message(message)}.to raise_error(Postmark::TimeoutError)
     end
 
   end
 
   describe "#deliver_messages" do
-
-    let(:email) { message.to_postmark_hash }
-    let(:emails) { [email, email, email] }
-    let(:emails_json) { Postmark::Json.encode(emails) }
-    let(:http_client) { subject.http_client }
-    let(:response) { [{}, {}, {}] }
+    let(:email) {message.to_postmark_hash}
+    let(:emails) {[email, email, email]}
+    let(:emails_json) {Postmark::Json.encode(emails)}
+    let(:http_client) {subject.http_client}
+    let(:response) {[{}, {}, {}]}
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
-      expect(http_client).to receive(:post).with('email/batch', emails_json) { response }
+      expect(http_client).to receive(:post).with('email/batch', emails_json) {response}
       subject.deliver_messages([message, message, message])
     end
 
@@ -151,36 +137,31 @@ describe Postmark::ApiClient do
       2.times do
         expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
       end
-      expect(http_client).to receive(:post) { response }
-      expect { subject.deliver_messages([message, message, message]) }.not_to raise_error
+      expect(http_client).to receive(:post) {response}
+      expect {subject.deliver_messages([message, message, message])}.not_to raise_error
     end
 
     it "should retry on timeout" do
       expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
-      expect(http_client).to receive(:post) { response }
-      expect { subject.deliver_messages([message, message, message]) }.not_to raise_error
+      expect(http_client).to receive(:post) {response}
+      expect {subject.deliver_messages([message, message, message])}.not_to raise_error
     end
 
   end
 
   describe "#delivery_stats" do
-    let(:http_client) { subject.http_client }
-    let(:response) { {"Bounces" => [{"Foo" => "Bar"}]} }
+    let(:http_client) {subject.http_client}
+    let(:response) {{"Bounces" => [{"Foo" => "Bar"}]}}
 
     it 'requests data at /deliverystats' do
-      expect(http_client).to receive(:get).with("deliverystats") { response }
+      expect(http_client).to receive(:get).with("deliverystats") {response}
       subject.delivery_stats.should have_key(:bounces)
     end
   end
 
   describe '#messages' do
-
     context 'given outbound' do
-
-      let(:response) {
-        {'TotalCount' => 5,
-         'Messages' => [{}].cycle(5).to_a}
-      }
+      let(:response) {{'TotalCount' => 5, 'Messages' => [{}].cycle(5).to_a}}
 
       it 'returns an enumerator' do
         expect(subject.messages).to be_kind_of(Enumerable)
@@ -191,15 +172,10 @@ describe Postmark::ApiClient do
             with('messages/outbound', an_instance_of(Hash)).and_return(response)
         expect(subject.messages.count).to eq(5)
       end
-
     end
 
     context 'given inbound' do
-
-      let(:response) {
-        {'TotalCount' => 5,
-         'InboundMessages' => [{}].cycle(5).to_a}
-      }
+      let(:response) {{'TotalCount' => 5, 'InboundMessages' => [{}].cycle(5).to_a}}
 
       it 'returns an enumerator' do
         expect(subject.messages(:inbound => true)).to be_kind_of(Enumerable)
@@ -216,37 +192,36 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_messages' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
 
     context 'given outbound' do
-      let(:response) { {"TotalCount" => 1, "Messages" => [{}]} }
+      let(:response) {{"TotalCount" => 1, "Messages" => [{}]}}
 
       it 'requests data at /messages/outbound' do
         expect(http_client).to receive(:get).
-                    with('messages/outbound', :offset => 50, :count => 50).
-                    and_return(response)
+            with('messages/outbound', :offset => 50, :count => 50).
+            and_return(response)
         subject.get_messages(:offset => 50, :count => 50)
       end
 
     end
 
     context 'given inbound' do
-      let(:response) { {"TotalCount" => 1, "InboundMessages" => [{}]} }
+      let(:response) {{"TotalCount" => 1, "InboundMessages" => [{}]}}
 
       it 'requests data at /messages/inbound' do
         expect(http_client).to receive(:get).
-                    with('messages/inbound', :offset => 50, :count => 50).
-                    and_return(response)
+            with('messages/inbound', :offset => 50, :count => 50).
+            and_return(response)
         subject.get_messages(:inbound => true, :offset => 50, :count => 50).
-                should be_an(Array)
+            should be_an(Array)
       end
 
     end
   end
 
   describe '#get_messages_count' do
-
-    let(:response) { {'TotalCount' => 42} }
+    let(:response) {{'TotalCount' => 42}}
 
     context 'given outbound' do
 
@@ -260,75 +235,66 @@ describe Postmark::ApiClient do
     end
 
     context 'given inbound' do
-
       it 'requests and returns inbound messages count' do
         allow(subject.http_client).to receive(:get).
             with('messages/inbound', an_instance_of(Hash)).and_return(response)
         expect(subject.get_messages_count(:inbound => true)).to eq(42)
       end
-
     end
 
   end
 
   describe '#get_message' do
-    let(:id) { '8ad0e8b0-xxxx-xxxx-951d-223c581bb467' }
-    let(:http_client) { subject.http_client }
-    let(:response) { {"To" => "leonard@bigbangtheory.com"} }
+    let(:id) {'8ad0e8b0-xxxx-xxxx-951d-223c581bb467'}
+    let(:http_client) {subject.http_client}
+    let(:response) {{"To" => "leonard@bigbangtheory.com"}}
 
     context 'given outbound' do
-
       it 'requests a single message by id at /messages/outbound/:id/details' do
         expect(http_client).to receive(:get).
-                    with("messages/outbound/#{id}/details", {}).
-                    and_return(response)
+            with("messages/outbound/#{id}/details", {}).
+            and_return(response)
         subject.get_message(id).should have_key(:to)
       end
-
     end
 
     context 'given inbound' do
-
       it 'requests a single message by id at /messages/inbound/:id/details' do
         expect(http_client).to receive(:get).
-                    with("messages/inbound/#{id}/details", {}).
-                    and_return(response)
+            with("messages/inbound/#{id}/details", {}).
+            and_return(response)
         subject.get_message(id, :inbound => true).should have_key(:to)
       end
-
     end
   end
 
   describe '#dump_message' do
-    let(:id) { '8ad0e8b0-xxxx-xxxx-951d-223c581bb467' }
-    let(:http_client) { subject.http_client }
-    let(:response) { {"Body" => "From: <leonard@bigbangtheory.com> \r\n ..."} }
+    let(:id) {'8ad0e8b0-xxxx-xxxx-951d-223c581bb467'}
+    let(:http_client) {subject.http_client}
+    let(:response) {{"Body" => "From: <leonard@bigbangtheory.com> \r\n ..."}}
 
     context 'given outbound' do
 
       it 'requests a single message by id at /messages/outbound/:id/dump' do
         expect(http_client).to receive(:get).
-                    with("messages/outbound/#{id}/dump", {}).
-                    and_return(response)
+            with("messages/outbound/#{id}/dump", {}).
+            and_return(response)
         subject.dump_message(id).should have_key(:body)
       end
 
     end
 
     context 'given inbound' do
-
       it 'requests a single message by id at /messages/inbound/:id/dump' do
         expect(http_client).to receive(:get).
-                    with("messages/inbound/#{id}/dump", {}).
-                    and_return(response)
+            with("messages/inbound/#{id}/dump", {}).
+            and_return(response)
         subject.dump_message(id, :inbound => true).should have_key(:body)
       end
-
     end
   end
 
   describe '#bounces' do
-
     it 'returns an Enumerator' do
       expect(subject.bounces).to be_kind_of(Enumerable)
     end
@@ -339,23 +305,22 @@ describe Postmark::ApiClient do
           and_return('TotalCount' => 1, 'Bounces' => [{}])
       expect(subject.bounces.first(5).count).to eq(1)
     end
-
   end
 
   describe "#get_bounces" do
-    let(:http_client) { subject.http_client }
-    let(:options) { {:foo => :bar} }
-    let(:response) { {"Bounces" => []} }
+    let(:http_client) {subject.http_client}
+    let(:options) {{:foo => :bar}}
+    let(:response) {{"Bounces" => []}}
 
     it 'requests data at /bounces' do
-      allow(http_client).to receive(:get).with("bounces", options) { response }
+      allow(http_client).to receive(:get).with("bounces", options) {response}
       expect(subject.get_bounces(options)).to be_an(Array)
       expect(subject.get_bounces(options).count).to be_zero
     end
   end
 
   describe "#get_bounced_tags" do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
 
     it 'requests data at /bounces/tags' do
       expect(http_client).to receive(:get).with("bounces/tags")
@@ -364,8 +329,8 @@ describe Postmark::ApiClient do
   end
 
   describe "#get_bounce" do
-    let(:http_client) { subject.http_client }
-    let(:id) { 42 }
+    let(:http_client) {subject.http_client}
+    let(:id) {42}
 
     it 'requests a single bounce by ID at /bounces/:id' do
       expect(http_client).to receive(:get).with("bounces/#{id}")
@@ -374,8 +339,8 @@ describe Postmark::ApiClient do
   end
 
   describe "#dump_bounce" do
-    let(:http_client) { subject.http_client }
-    let(:id) { 42 }
+    let(:http_client) {subject.http_client}
+    let(:id) {42}
 
     it 'requests a specific bounce data at /bounces/:id/dump' do
       expect(http_client).to receive(:get).with("bounces/#{id}/dump")
@@ -384,18 +349,17 @@ describe Postmark::ApiClient do
   end
 
   describe "#activate_bounce" do
-    let(:http_client) { subject.http_client }
-    let(:id) { 42 }
-    let(:response) { {"Bounce" => {}} }
+    let(:http_client) {subject.http_client}
+    let(:id) {42}
+    let(:response) {{"Bounce" => {}}}
 
     it 'activates a specific bounce by sending a PUT request to /bounces/:id/activate' do
-      expect(http_client).to receive(:put).with("bounces/#{id}/activate") { response }
+      expect(http_client).to receive(:put).with("bounces/#{id}/activate") {response}
       subject.activate_bounce(id)
     end
   end
 
   describe '#opens' do
-
     it 'returns an Enumerator' do
       expect(subject.opens).to be_kind_of(Enumerable)
     end
@@ -406,7 +370,6 @@ describe Postmark::ApiClient do
           and_return('TotalCount' => 1, 'Opens' => [{}])
       expect(subject.opens.first(5).count).to eq(1)
     end
-
   end
 
   describe '#clicks' do
@@ -423,63 +386,63 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_opens' do
-    let(:http_client) { subject.http_client }
-    let(:options) { {:offset => 5} }
-    let(:response) { {'Opens' => [], 'TotalCount' => 0} }
+    let(:http_client) {subject.http_client}
+    let(:options) {{:offset => 5}}
+    let(:response) {{'Opens' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/opens' do
-      allow(http_client).to receive(:get).with('messages/outbound/opens', options) { response }
+      allow(http_client).to receive(:get).with('messages/outbound/opens', options) {response}
       expect(subject.get_opens(options)).to be_an(Array)
       expect(subject.get_opens(options).count).to be_zero
     end
   end
 
   describe '#get_clicks' do
-    let(:http_client) { subject.http_client }
-    let(:options) { {:offset => 5} }
-    let(:response) { {'Clicks' => [], 'TotalCount' => 0} }
+    let(:http_client) {subject.http_client}
+    let(:options) {{:offset => 5}}
+    let(:response) {{'Clicks' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/clicks' do
-      allow(http_client).to receive(:get).with('messages/outbound/clicks', options) { response }
+      allow(http_client).to receive(:get).with('messages/outbound/clicks', options) {response}
       expect(subject.get_clicks(options)).to be_an(Array)
       expect(subject.get_clicks(options).count).to be_zero
     end
   end
 
   describe '#get_opens_by_message_id' do
-    let(:http_client) { subject.http_client }
-    let(:message_id) { 42 }
-    let(:options) { {:offset => 5} }
-    let(:response) { {'Opens' => [], 'TotalCount' => 0} }
+    let(:http_client) {subject.http_client}
+    let(:message_id) {42}
+    let(:options) {{:offset => 5}}
+    let(:response) {{'Opens' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/opens' do
       allow(http_client).
           to receive(:get).with("messages/outbound/opens/#{message_id}",
                                 options).
-                           and_return(response)
+              and_return(response)
       expect(subject.get_opens_by_message_id(message_id, options)).to be_an(Array)
       expect(subject.get_opens_by_message_id(message_id, options).count).to be_zero
     end
   end
 
   describe '#get_clicks_by_message_id' do
-    let(:http_client) { subject.http_client }
-    let(:message_id) { 42 }
-    let(:options) { {:offset => 5} }
-    let(:response) { {'Clicks' => [], 'TotalCount' => 0} }
+    let(:http_client) {subject.http_client}
+    let(:message_id) {42}
+    let(:options) {{:offset => 5}}
+    let(:response) {{'Clicks' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/clicks' do
       allow(http_client).
           to receive(:get).with("messages/outbound/clicks/#{message_id}",
                                 options).
-                           and_return(response)
+              and_return(response)
       expect(subject.get_clicks_by_message_id(message_id, options)).to be_an(Array)
       expect(subject.get_clicks_by_message_id(message_id, options).count).to be_zero
     end
   end
 
   describe '#opens_by_message_id' do
-    let(:message_id) { 42 }
+    let(:message_id) {42}
 
     it 'returns an Enumerator' do
       expect(subject.opens_by_message_id(message_id)).to be_kind_of(Enumerable)
@@ -494,7 +457,7 @@ describe Postmark::ApiClient do
   end
 
   describe '#clicks_by_message_id' do
-    let(:message_id) { 42 }
+    let(:message_id) {42}
 
     it 'returns an Enumerator' do
       expect(subject.clicks_by_message_id(message_id)).to be_kind_of(Enumerable)
@@ -509,25 +472,44 @@ describe Postmark::ApiClient do
   end
 
   describe '#create_trigger' do
-    let(:http_client) { subject.http_client }
-    let(:options) { {:foo => 'bar'} }
-    let(:response) { {'Foo' => 'Bar'} }
+    let(:http_client) {subject.http_client}
 
-    it 'performs a POST request to /triggers/tags with given options' do
-      allow(http_client).to receive(:post).with('triggers/tags',
-                                                {'Foo' => 'bar'}.to_json)
-      subject.create_trigger(:tags, options)
+    context 'tags' do
+      let(:options) {{:foo => 'bar'}}
+      let(:response) {{'Foo' => 'Bar'}}
+
+      it 'performs a POST request to /triggers/tags with given options' do
+        allow(http_client).to receive(:post).with('triggers/tags',
+                                                  {'Foo' => 'bar'}.to_json)
+        subject.create_trigger(:tags, options)
+      end
+
+      it 'symbolizes response keys' do
+        allow(http_client).to receive(:post).and_return(response)
+        expect(subject.create_trigger(:tags, options)).to eq(:foo => 'Bar')
+      end
     end
 
-    it 'symbolizes response keys' do
-      allow(http_client).to receive(:post).and_return(response)
-      expect(subject.create_trigger(:tags, options)).to eq(:foo => 'Bar')
+    context 'inbound rules' do
+      let(:options) {{:rule => 'example.com'}}
+      let(:response) {{'Rule' => 'example.com'}}
+
+      it 'performs a POST request to /triggers/inboundrules with given options' do
+        allow(http_client).to receive(:post).with('triggers/inboundrules',
+                                                  {'Rule' => 'example.com'}.to_json)
+        subject.create_trigger(:inbound_rules, options)
+      end
+
+      it 'symbolizes response keys' do
+        allow(http_client).to receive(:post).and_return(response)
+        expect(subject.create_trigger(:inbound_rules, options)).to eq(:rule => 'example.com')
+      end
     end
   end
 
   describe '#get_trigger' do
-    let(:http_client) { subject.http_client }
-    let(:id) { 42 }
+    let(:http_client) {subject.http_client}
+    let(:id) {42}
 
     it 'performs a GET request to /triggers/tags/:id' do
       allow(http_client).to receive(:get).with("triggers/tags/#{id}")
@@ -541,9 +523,9 @@ describe Postmark::ApiClient do
   end
 
   describe '#update_trigger' do
-    let(:http_client) { subject.http_client }
-    let(:options) { {:foo => 'bar'} }
-    let(:id) { 42 }
+    let(:http_client) {subject.http_client}
+    let(:options) {{:foo => 'bar'}}
+    let(:id) {42}
 
     it 'performs a PUT request to /triggers/tags/:id' do
       allow(http_client).to receive(:put).with("triggers/tags/#{id}",
@@ -558,34 +540,63 @@ describe Postmark::ApiClient do
   end
 
   describe '#delete_trigger' do
-    let(:http_client) { subject.http_client }
-    let(:id) { 42 }
+    let(:http_client) {subject.http_client}
 
-    it 'performs a DELETE request to /triggers/tags/:id' do
-      allow(http_client).to receive(:delete).with("triggers/tags/#{id}")
-      subject.delete_trigger(:tags, id)
+    context 'tags' do
+      let(:id) {42}
+
+      it 'performs a DELETE request to /triggers/tags/:id' do
+        allow(http_client).to receive(:delete).with("triggers/tags/#{id}")
+        subject.delete_trigger(:tags, id)
+      end
+
+      it 'symbolizes response keys' do
+        allow(http_client).to receive(:delete).and_return('Foo' => 'Bar')
+        expect(subject.delete_trigger(:tags, id)).to eq(:foo => 'Bar')
+      end
     end
+    
+    context 'inbound rules' do
+      let(:id) {42}
 
-    it 'symbolizes response keys' do
-      allow(http_client).to receive(:delete).and_return('Foo' => 'Bar')
-      expect(subject.delete_trigger(:tags, id)).to eq(:foo => 'Bar')
+      it 'performs a DELETE request to /triggers/inboundrules/:id' do
+        allow(http_client).to receive(:delete).with("triggers/inboundrules/#{id}")
+        subject.delete_trigger(:inbound_rules, id)
+      end
+
+      it 'symbolizes response keys' do
+        allow(http_client).to receive(:delete).and_return('Rule' => 'example.com')
+        expect(subject.delete_trigger(:tags, id)).to eq(:rule => 'example.com')
+      end
     end
   end
 
   describe '#get_triggers' do
-    let(:http_client) { subject.http_client }
-    let(:options) { {:offset => 5} }
-    let(:response) { {'Tags' => [], 'TotalCount' => 0} }
+    let(:http_client) {subject.http_client}
+    let(:options) {{:offset => 5}}
 
-    it 'performs a GET request to /triggers/tags' do
-      allow(http_client).to receive(:get).with('triggers/tags', options) { response }
-      expect(subject.get_triggers(:tags, options)).to be_an(Array)
-      expect(subject.get_triggers(:tags, options).count).to be_zero
+    context 'tags' do
+      let(:response) {{'Tags' => [], 'TotalCount' => 0}}
+
+      it 'performs a GET request to /triggers/tags' do
+        allow(http_client).to receive(:get).with('triggers/tags', options) {response}
+        expect(subject.get_triggers(:tags, options)).to be_an(Array)
+        expect(subject.get_triggers(:tags, options).count).to be_zero
+      end
+    end
+
+    context 'inbound rules' do
+      let(:response) {{'InboundRules' => [], 'TotalCount' => 0}}
+
+      it 'performs a GET request to /triggers/inboundrules' do
+        allow(http_client).to receive(:get).with('triggers/inboundrules', options) {response}
+        expect(subject.get_triggers(:inbound_rules, options)).to be_an(Array)
+        expect(subject.get_triggers(:inbound_rules, options).count).to be_zero
+      end
     end
   end
 
   describe '#triggers' do
-
     it 'returns an Enumerator' do
       expect(subject.triggers(:tags)).to be_kind_of(Enumerable)
     end
@@ -596,53 +607,52 @@ describe Postmark::ApiClient do
           and_return('TotalCount' => 1, 'Tags' => [{}])
       expect(subject.triggers(:tags).first(5).count).to eq(1)
     end
-
   end
 
   describe "#server_info" do
-    let(:http_client) { subject.http_client }
-    let(:response) { {"Name" => "Testing",
-                      "Color" => "blue",
-                      "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
-                      "SmtpApiActivated" => true} }
+    let(:http_client) {subject.http_client}
+    let(:response) {{"Name" => "Testing",
+                     "Color" => "blue",
+                     "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
+                     "SmtpApiActivated" => true}}
 
     it 'requests server info from Postmark and converts it to ruby format' do
-      expect(http_client).to receive(:get).with('server') { response }
+      expect(http_client).to receive(:get).with('server') {response}
       subject.server_info.should have_key(:inbound_hash)
     end
   end
 
   describe "#update_server_info" do
-    let(:http_client) { subject.http_client }
-    let(:response) { {"Name" => "Testing",
-                      "Color" => "blue",
-                      "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
-                      "SmtpApiActivated" => false} }
-    let(:update) { {:smtp_api_activated => false} }
+    let(:http_client) {subject.http_client}
+    let(:response) {{"Name" => "Testing",
+                     "Color" => "blue",
+                     "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
+                     "SmtpApiActivated" => false}}
+    let(:update) {{:smtp_api_activated => false}}
 
     it 'updates server info in Postmark and converts it to ruby format' do
-      expect(http_client).to receive(:put).with('server', anything) { response }
+      expect(http_client).to receive(:put).with('server', anything) {response}
       subject.update_server_info(update)[:smtp_api_activated].should be false
     end
   end
 
   describe '#get_templates' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
     let(:response) do
       {
-        'TotalCount' => 31,
-        'Templates' => [
-          {
-            'Active' => true,
-            'TemplateId' => 123,
-            'Name' => 'ABC'
-          },
-          {
-            'Active' => true,
-            'TemplateId' => 456,
-            'Name' => 'DEF'
-          }
-        ]
+          'TotalCount' => 31,
+          'Templates' => [
+              {
+                  'Active' => true,
+                  'TemplateId' => 123,
+                  'Name' => 'ABC'
+              },
+              {
+                  'Active' => true,
+                  'TemplateId' => 456,
+                  'Name' => 'DEF'
+              }
+          ]
       }
     end
 
@@ -671,16 +681,16 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_template' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
     let(:response) do
       {
-        'Name' => 'Template Name',
-        'TemplateId' => 123,
-        'Subject' => 'Subject',
-        'HtmlBody' => 'Html',
-        'TextBody' => 'Text',
-        'AssociatedServerId' => 456,
-        'Active' => true
+          'Name' => 'Template Name',
+          'TemplateId' => 123,
+          'Subject' => 'Subject',
+          'HtmlBody' => 'Html',
+          'TextBody' => 'Text',
+          'AssociatedServerId' => 456,
+          'Active' => true
       }
     end
 
@@ -696,17 +706,17 @@ describe Postmark::ApiClient do
   end
 
   describe '#create_template' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
     let(:response) do
       {
-        'TemplateId' => 123,
-        'Name' => 'template name',
-        'Active' => true
+          'TemplateId' => 123,
+          'Name' => 'template name',
+          'Active' => true
       }
     end
 
     it 'performs a POST request to /templates with the given attributes' do
-      expected_json = { 'Name' => 'template name' }.to_json
+      expected_json = {'Name' => 'template name'}.to_json
 
       expect(http_client).to receive(:post).with('templates', expected_json).and_return(response)
 
@@ -718,17 +728,17 @@ describe Postmark::ApiClient do
   end
 
   describe '#update_template' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
     let(:response) do
       {
-        'TemplateId' => 123,
-        'Name' => 'template name',
-        'Active' => true
+          'TemplateId' => 123,
+          'Name' => 'template name',
+          'Active' => true
       }
     end
 
     it 'performs a PUT request to /templates with the given attributes' do
-      expected_json = { 'Name' => 'template name' }.to_json
+      expected_json = {'Name' => 'template name'}.to_json
 
       expect(http_client).to receive(:put).with('templates/123', expected_json).and_return(response)
 
@@ -740,11 +750,11 @@ describe Postmark::ApiClient do
   end
 
   describe '#delete_template' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
     let(:response) do
       {
-        'ErrorCode' => 0,
-        'Message' => 'Template 123 removed.'
+          'ErrorCode' => 0,
+          'Message' => 'Template 123 removed.'
       }
     end
 
@@ -758,38 +768,38 @@ describe Postmark::ApiClient do
   end
 
   describe '#validate_template' do
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
 
     context 'when template is valid' do
       let(:response) do
         {
-          'AllContentIsValid' => true,
-          'HtmlBody' => {
-            'ContentIsValid' => true,
-            'ValidationErrors' => [],
-            'RenderedContent' => '<html><head></head><body>MyName_Value</body></html>'
-          },
-          'TextBody' => {
-            'ContentIsValid' => true,
-            'ValidationErrors' => [],
-            'RenderedContent' => 'MyName_Value'
-          },
-          'Subject' => {
-            'ContentIsValid' => true,
-            'ValidationErrors' => [],
-            'RenderedContent' => 'MyName_Value'
-          },
-          'SuggestedTemplateModel' => {
-            'MyName' => 'MyName_Value'
-          }
+            'AllContentIsValid' => true,
+            'HtmlBody' => {
+                'ContentIsValid' => true,
+                'ValidationErrors' => [],
+                'RenderedContent' => '<html><head></head><body>MyName_Value</body></html>'
+            },
+            'TextBody' => {
+                'ContentIsValid' => true,
+                'ValidationErrors' => [],
+                'RenderedContent' => 'MyName_Value'
+            },
+            'Subject' => {
+                'ContentIsValid' => true,
+                'ValidationErrors' => [],
+                'RenderedContent' => 'MyName_Value'
+            },
+            'SuggestedTemplateModel' => {
+                'MyName' => 'MyName_Value'
+            }
         }
       end
 
       it 'performs a POST request and returns unmodified suggested template model' do
         expected_template_json = {
-          'HtmlBody' => '{{MyName}}',
-          'TextBody' => '{{MyName}}',
-          'Subject' => '{{MyName}}'
+            'HtmlBody' => '{{MyName}}',
+            'TextBody' => '{{MyName}}',
+            'Subject' => '{{MyName}}'
         }.to_json
 
         expect(http_client).to receive(:post).with('templates/validate', expected_template_json).and_return(response)
@@ -808,37 +818,37 @@ describe Postmark::ApiClient do
     context 'when template is invalid' do
       let(:response) do
         {
-          'AllContentIsValid' => false,
-          'HtmlBody' => {
-            'ContentIsValid' => false,
-            'ValidationErrors' => [
-              {
-                'Message' => 'The \'each\' block being opened requires a model path to be specified in the form \'{#each <name>}\'.',
-                'Line' => 1,
-                'CharacterPosition' => 1
-              }
-            ],
-            'RenderedContent' => nil
-          },
-          'TextBody' => {
-            'ContentIsValid' => true,
-            'ValidationErrors' => [],
-            'RenderedContent' => 'MyName_Value'
-          },
-          'Subject' => {
-            'ContentIsValid' => true,
-            'ValidationErrors' => [],
-            'RenderedContent' => 'MyName_Value'
-          },
-          'SuggestedTemplateModel' => nil
+            'AllContentIsValid' => false,
+            'HtmlBody' => {
+                'ContentIsValid' => false,
+                'ValidationErrors' => [
+                    {
+                        'Message' => 'The \'each\' block being opened requires a model path to be specified in the form \'{#each <name>}\'.',
+                        'Line' => 1,
+                        'CharacterPosition' => 1
+                    }
+                ],
+                'RenderedContent' => nil
+            },
+            'TextBody' => {
+                'ContentIsValid' => true,
+                'ValidationErrors' => [],
+                'RenderedContent' => 'MyName_Value'
+            },
+            'Subject' => {
+                'ContentIsValid' => true,
+                'ValidationErrors' => [],
+                'RenderedContent' => 'MyName_Value'
+            },
+            'SuggestedTemplateModel' => nil
         }
       end
 
       it 'performs a POST request and returns validation errors' do
         expected_template_json = {
-          'HtmlBody' => '{{#each}}',
-          'TextBody' => '{{MyName}}',
-          'Subject' => '{{MyName}}'
+            'HtmlBody' => '{{#each}}',
+            'TextBody' => '{{MyName}}',
+            'Subject' => '{{MyName}}'
         }.to_json
 
         expect(http_client).to receive(:post).with('templates/validate', expected_template_json).and_return(response)
@@ -857,13 +867,13 @@ describe Postmark::ApiClient do
   end
 
   describe "#deliver_with_template" do
-    let(:email) { Postmark::MessageHelper.to_postmark(message_hash) }
-    let(:email_json) { Postmark::Json.encode(email) }
-    let(:http_client) { subject.http_client }
-    let(:response) { {"MessageID" => 42} }
+    let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
+    let(:email_json) {Postmark::Json.encode(email)}
+    let(:http_client) {subject.http_client}
+    let(:response) {{"MessageID" => 42}}
 
     it 'converts message hash to Postmark format and posts it to /email/withTemplate' do
-      expect(http_client).to receive(:post).with('email/withTemplate', email_json) { response }
+      expect(http_client).to receive(:post).with('email/withTemplate', email_json) {response}
       subject.deliver_with_template(message_hash)
     end
 
@@ -871,54 +881,54 @@ describe Postmark::ApiClient do
       2.times do
         expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500)
       end
-      expect(http_client).to receive(:post) { response }
-      expect { subject.deliver_with_template(message_hash) }.not_to raise_error
+      expect(http_client).to receive(:post) {response}
+      expect {subject.deliver_with_template(message_hash)}.not_to raise_error
     end
 
     it 'converts response to ruby format' do
-      expect(http_client).to receive(:post).with('email/withTemplate', email_json) { response }
+      expect(http_client).to receive(:post).with('email/withTemplate', email_json) {response}
       r = subject.deliver_with_template(message_hash)
       r.should have_key(:message_id)
     end
   end
 
   describe '#deliver_in_batches_with_templates' do
-    let(:max_batch_size) { 50 }
-    let(:factor) { 3.5 }
-    let(:http_client) { subject.http_client }
+    let(:max_batch_size) {50}
+    let(:factor) {3.5}
+    let(:http_client) {subject.http_client}
     let(:postmark_response) do
       {
-        'ErrorCode' => 0,
-        'Message' => 'OK',
-        'SubmittedAt' => '2018-03-14T09:56:50.4288265-04:00',
-        'To' => 'recipient@example.org'
+          'ErrorCode' => 0,
+          'Message' => 'OK',
+          'SubmittedAt' => '2018-03-14T09:56:50.4288265-04:00',
+          'To' => 'recipient@example.org'
       }
     end
 
     let(:message_hashes) do
       Array.new((factor * max_batch_size).to_i) do
         {
-          :template_id => 42,
-          :alias => 'alias',
-          :template_model => { :Foo => 'attr_value' },
-          :from => 'sender@example.org',
-          :to => 'recipient@example.org'
+            :template_id => 42,
+            :alias => 'alias',
+            :template_model => {:Foo => 'attr_value'},
+            :from => 'sender@example.org',
+            :to => 'recipient@example.org'
         }
       end
     end
 
-    before { subject.max_batch_size = max_batch_size }
+    before {subject.max_batch_size = max_batch_size}
 
     it 'performs a total of (bath_size / max_batch_size) requests' do
       expect(http_client).
-        to receive(:post).with('email/batchWithTemplates', a_postmark_json).
-        at_most(factor.to_i).times do
-        Array.new(max_batch_size) { postmark_response }
+          to receive(:post).with('email/batchWithTemplates', a_postmark_json).
+              at_most(factor.to_i).times do
+        Array.new(max_batch_size) {postmark_response}
       end
 
       expect(http_client).
-        to receive(:post).with('email/batchWithTemplates', a_postmark_json).
-        exactly((factor - factor.to_i).ceil).times do
+          to receive(:post).with('email/batchWithTemplates', a_postmark_json).
+              exactly((factor - factor.to_i).ceil).times do
         response = Array.new(((factor - factor.to_i) * max_batch_size).to_i) do
           postmark_response
         end
@@ -941,14 +951,14 @@ describe Postmark::ApiClient do
   describe '#get_stats_totals' do
     let(:response) do
       {
-        "Sent" => 615,
-        "BounceRate" => 10.406,
+          "Sent" => 615,
+          "BounceRate" => 10.406,
       }
     end
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
 
     it 'converts response to ruby format' do
-      expect(http_client).to receive(:get).with('stats/outbound', { :tag => 'foo' }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound', {:tag => 'foo'}) {response}
       r = subject.get_stats_totals(:tag => 'foo')
       r.should have_key(:sent)
       r.should have_key(:bounce_rate)
@@ -958,31 +968,31 @@ describe Postmark::ApiClient do
   describe '#get_stats_counts' do
     let(:response) do
       {
-        "Days" => [
-          {
-            "Date" => "2014-01-01",
-            "Sent" => 140
-          },
-          {
-            "Date" => "2014-01-02",
-            "Sent" => 160
-          },
-          {
-            "Date" => "2014-01-04",
-            "Sent" => 50
-          },
-          {
-            "Date" => "2014-01-05",
-            "Sent" => 115
-          }
-        ],
-        "Sent" => 615
+          "Days" => [
+              {
+                  "Date" => "2014-01-01",
+                  "Sent" => 140
+              },
+              {
+                  "Date" => "2014-01-02",
+                  "Sent" => 160
+              },
+              {
+                  "Date" => "2014-01-04",
+                  "Sent" => 50
+              },
+              {
+                  "Date" => "2014-01-05",
+                  "Sent" => 115
+              }
+          ],
+          "Sent" => 615
       }
     end
-    let(:http_client) { subject.http_client }
+    let(:http_client) {subject.http_client}
 
     it 'converts response to ruby format' do
-      expect(http_client).to receive(:get).with('stats/outbound/sends', { :tag => 'foo' }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound/sends', {:tag => 'foo'}) {response}
       r = subject.get_stats_counts(:sends, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)
@@ -994,7 +1004,7 @@ describe Postmark::ApiClient do
     end
 
     it 'uses fromdate that is passed in' do
-      expect(http_client).to receive(:get).with('stats/outbound/sends', { :tag => 'foo', :fromdate => '2015-01-01' }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound/sends', {:tag => 'foo', :fromdate => '2015-01-01'}) {response}
       r = subject.get_stats_counts(:sends, :tag => 'foo', :fromdate => '2015-01-01')
       r.should have_key(:days)
       r.should have_key(:sent)
@@ -1006,7 +1016,7 @@ describe Postmark::ApiClient do
     end
 
     it 'uses stats type that is passed in' do
-      expect(http_client).to receive(:get).with('stats/outbound/opens/readtimes', { :tag => 'foo', :type => :readtimes }) { response }
+      expect(http_client).to receive(:get).with('stats/outbound/opens/readtimes', {:tag => 'foo', :type => :readtimes}) {response}
       r = subject.get_stats_counts(:opens, :type => :readtimes, :tag => 'foo')
       r.should have_key(:days)
       r.should have_key(:sent)
