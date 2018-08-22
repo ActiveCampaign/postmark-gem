@@ -1,5 +1,11 @@
 = Changelog
 
+== 1.14.0
+
+* Added support for verifying DKIM/Return-Path.
+* Added support for searching inbound rules.
+* Updated README.
+
 == 1.13.0
 
 * Changed default value returned by Mail::Message#metadata to a mutable hash (makes things easier for postmark-rails).
@@ -28,7 +34,7 @@
 
 == 1.9.0
 
-* Added methods to access domains API endoints
+* Added methods to access domains API endoints.
 
 == 1.8.1
 
