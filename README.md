@@ -58,7 +58,7 @@ Please leave all comments, bugs, requests and issues on the Issues page.
 
 ## License
 
-The Postmark Java Library is licensed under the [MIT](http://www.opensource.org/licenses/mit-license.php) license. 
+The Postmark Ruby library is licensed under the [MIT](http://www.opensource.org/licenses/mit-license.php) license. 
 Refer to the [LICENSE](https://github.com/wildbit/postmark-gem/blob/master/LICENSE) file for more information.
 
 ## Copyright
