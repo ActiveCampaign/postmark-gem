@@ -5,6 +5,7 @@
 # Postmark Ruby Gem
 [![Build Status](https://travis-ci.org/wildbit/postmark-gem.svg?branch=master)](https://travis-ci.org/wildbit/postmark-gem) [![Code Climate](https://codeclimate.com/github/wildbit/postmark-gem/badges/gpa.svg)](https://codeclimate.com/github/wildbit/postmark-gem)
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
+[![Gem Version](https://badge.fury.io/rb/postmark.svg)](https://badge.fury.io/rb/postmark)
 
 Postmark allows you to send your emails with high delivery rates. It also includes detailed statistics. In addition, Postmark can parse incoming emails which are forwarded back to your application.
 
