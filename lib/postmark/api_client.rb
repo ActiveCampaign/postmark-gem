@@ -27,6 +27,11 @@ module Postmark
     end
 
     def deliver_message(message)
+      if message.templated?
+        raise ArgumentError,
+              "Please use #{self.class}#deliver_message_with_template to deliver messages with templates."
+      end
+
       data = serialize(message.to_postmark_hash)
 
       with_retries do
@@ -37,12 +42,49 @@ module Postmark
       end
     end
 
+    def deliver_message_with_template(message)
+      raise ArgumentError, 'Templated delivery requested, but the template is missing.' unless message.templated?
+
+      data = serialize(message.to_postmark_hash)
+
+      with_retries do
+        response, error = take_response_of { http_client.post("email/withTemplate", data) }
+        update_message(message, response)
+        raise error if error
+        format_response(response, true)
+      end
+    end
+
     def deliver_messages(messages)
+      if messages.any? { |m| m.templated? }
+        raise ArgumentError,
+              "Some of the provided messages have templates. Please use " \
+              "#{self.class}#deliver_messages_with_templates to deliver those."
+      end
+
       in_batches(messages) do |batch, offset|
         data = serialize(batch.map { |m| m.to_postmark_hash })
 
         with_retries do
           http_client.post("email/batch", data).tap do |response|
+            response.each_with_index do |r, i|
+              update_message(messages[offset + i], r)
+            end
+          end
+        end
+      end
+    end
+
+    def deliver_messages_with_templates(messages)
+      unless messages.all? { |m| m.templated? }
+        raise ArgumentError, 'Templated delivery requested, but one or more messages lack templates.'
+      end
+
+      in_batches(messages) do |batch, offset|
+        data = serialize(batch.map { |m| m.to_postmark_hash })
+
+        with_retries do
+          http_client.post("email/batchWithTemplates", data).tap do |response|
             response.each_with_index do |r, i|
               update_message(messages[offset + i], r)
             end

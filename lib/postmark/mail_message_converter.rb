@@ -7,10 +7,10 @@ module Postmark
     end
 
     def run
-      delete_blank_fields(convert)
+      delete_blank_fields(pick_fields(convert, @message.templated?))
     end
 
-    protected
+    private
 
     def convert
       headers_part.merge(content_part)
@@ -32,8 +32,20 @@ module Postmark
         'Tag' => @message.tag.to_s,
         'TrackOpens' => (cast_to_bool(@message.track_opens) unless @message.track_opens.empty?),
         'TrackLinks' => (::Postmark::Inflector.to_postmark(@message.track_links) unless @message.track_links.empty?),
-        'Metadata' => @message.metadata
+        'Metadata' => @message.metadata,
+        'TemplateAlias' => @message.template_alias,
+        'TemplateModel' => @message.template_model
       }
+    end
+
+    def pick_fields(message_hash, templated = false)
+      fields = if templated
+                 %w(Subject HtmlBody TextBody)
+               else
+                 %w(TemplateAlias TemplateModel)
+               end
+      fields.each { |key| message_hash.delete(key) }
+      message_hash
     end
 
     def content_part
@@ -43,8 +55,6 @@ module Postmark
         'TextBody' => @message.body_text
       }
     end
-
-    protected
 
     def cast_to_bool(val)
       if val.is_a?(TrueClass) || val.is_a?(FalseClass)
