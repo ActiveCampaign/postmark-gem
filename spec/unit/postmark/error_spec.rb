@@ -106,6 +106,15 @@ describe(Postmark::ApiInputError) do
   end
 end
 
+describe Postmark::InvalidTemplateError do
+  subject(:error) { Postmark::InvalidTemplateError.new(:foo => 'bar') }
+
+  it 'is created with a response' do
+    expect(error.message).to start_with('Failed to render the template.')
+    expect(error.postmark_response).to eq(:foo => 'bar')
+  end
+end
+
 describe(Postmark::TimeoutError) do
   it { is_expected.to be_a(Postmark::Error) }
   specify { expect(subject.retry?).to be true }
@@ -126,6 +135,10 @@ describe(Postmark::InternalServerError) do
 end
 
 describe(Postmark::UnexpectedHttpResponseError) do
+  it { is_expected.to be_a(Postmark::Error) }
+end
+
+describe(Postmark::MailAdapterError) do
   it { is_expected.to be_a(Postmark::Error) }
 end
 

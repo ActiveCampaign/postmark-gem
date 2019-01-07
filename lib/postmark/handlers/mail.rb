@@ -8,10 +8,11 @@ module Mail
     end
 
     def deliver!(mail)
-      settings = self.settings.dup
-      api_token = settings.delete(:api_token) || settings.delete(:api_key)
-      api_client = ::Postmark::ApiClient.new(api_token, settings)
-      response = api_client.deliver_message(mail)
+      response = if mail.templated?
+                   api_client.deliver_message_with_template(mail)
+                 else
+                   api_client.deliver_message(mail)
+                 end
 
       if settings[:return_response]
         response
@@ -20,5 +21,10 @@ module Mail
       end
     end
 
+    def api_client
+      settings = self.settings.dup
+      api_token = settings.delete(:api_token) || settings.delete(:api_key)
+      ::Postmark::ApiClient.new(api_token, settings)
+    end
   end
 end

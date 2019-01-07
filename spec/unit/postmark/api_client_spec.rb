@@ -10,6 +10,14 @@ describe Postmark::ApiClient do
       delivery_method Mail::Postmark
     end
   }
+  let(:templated_message) do
+    Mail.new do
+      from            "sheldon@bigbangtheory.com"
+      to              "lenard@bigbangtheory.com"
+      template_alias  "hello"
+      template_model  :name => "Sheldon"
+    end
+  end
 
   let(:api_client) {Postmark::ApiClient.new(api_token)}
   subject {api_client}
@@ -95,6 +103,11 @@ describe Postmark::ApiClient do
     let(:email_json) {Postmark::Json.encode(email)}
     let(:http_client) {subject.http_client}
 
+    it 'raises an error when given a templated message' do
+      expect { subject.deliver_message(templated_message) }.
+        to raise_error(ArgumentError, /Please use Postmark::ApiClient\#deliver_message_with_template/)
+    end
+
     it 'turns message into a JSON document and posts it to /email' do
       expect(http_client).to receive(:post).with('email', email_json)
       subject.deliver_message(message)
@@ -118,7 +131,41 @@ describe Postmark::ApiClient do
       allow(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
       expect {subject.deliver_message(message)}.to raise_error(Postmark::TimeoutError)
     end
+  end
 
+  describe "#deliver_message_with_template" do
+    let(:email) {templated_message.to_postmark_hash}
+    let(:email_json) {Postmark::Json.encode(email)}
+    let(:http_client) {subject.http_client}
+
+    it 'raises an error when given a non-templated message' do
+      expect { subject.deliver_message_with_template(message) }.
+        to raise_error(ArgumentError, 'Templated delivery requested, but the template is missing.')
+    end
+
+    it 'turns message into a JSON document and posts it to /email' do
+      expect(http_client).to receive(:post).with('email/withTemplate', email_json)
+      subject.deliver_message_with_template(templated_message)
+    end
+
+    it "retries 3 times" do
+      2.times do
+        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+      end
+      expect(http_client).to receive(:post)
+      expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
+    end
+
+    it "retries on timeout" do
+      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect(http_client).to receive(:post)
+      expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
+    end
+
+    it "proxies errors" do
+      allow(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect {subject.deliver_message_with_template(templated_message)}.to raise_error(Postmark::TimeoutError)
+    end
   end
 
   describe "#deliver_messages" do
@@ -127,6 +174,11 @@ describe Postmark::ApiClient do
     let(:emails_json) {Postmark::Json.encode(emails)}
     let(:http_client) {subject.http_client}
     let(:response) {[{}, {}, {}]}
+
+    it 'raises an error when given a templated message' do
+      expect { subject.deliver_messages([templated_message]) }.
+        to raise_error(ArgumentError, /Please use Postmark::ApiClient\#deliver_messages_with_templates/)
+    end
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
       expect(http_client).to receive(:post).with('email/batch', emails_json) {response}
@@ -146,7 +198,39 @@ describe Postmark::ApiClient do
       expect(http_client).to receive(:post) {response}
       expect {subject.deliver_messages([message, message, message])}.not_to raise_error
     end
+  end
 
+  describe "#deliver_messages_with_templates" do
+    let(:email) {templated_message.to_postmark_hash}
+    let(:emails) {[email, email, email]}
+    let(:emails_json) {Postmark::Json.encode(emails)}
+    let(:http_client) {subject.http_client}
+    let(:response) {[{}, {}, {}]}
+    let(:messages) { Array.new(3) { templated_message } }
+
+    it 'raises an error when given a templated message' do
+      expect { subject.deliver_messages_with_templates([message]) }.
+        to raise_error(ArgumentError, 'Templated delivery requested, but one or more messages lack templates.')
+    end
+
+    it 'turns array of messages into a JSON document and posts it to /email/batch' do
+      expect(http_client).to receive(:post).with('email/batchWithTemplates', emails_json) {response}
+      subject.deliver_messages_with_templates(messages)
+    end
+
+    it "should retry 3 times" do
+      2.times do
+        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+      end
+      expect(http_client).to receive(:post) {response}
+      expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
+    end
+
+    it "should retry on timeout" do
+      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect(http_client).to receive(:post) {response}
+      expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
+    end
   end
 
   describe "#delivery_stats" do

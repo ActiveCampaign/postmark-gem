@@ -61,6 +61,50 @@ module Mail
       ::Postmark::MessageHelper.attachments_to_postmark(@_attachments)
     end
 
+    def template_alias(val = nil)
+      return self[:postmark_template_alias] && self[:postmark_template_alias].to_s if val.nil?
+      self[:postmark_template_alias] = val
+    end
+
+    attr_writer :template_model
+    def template_model(model = nil)
+      return @template_model if model.nil?
+      @template_model = model
+    end
+
+    def templated?
+      !!template_alias
+    end
+
+    def prerender
+      raise ::Postmark::Error, 'Cannot prerender a message without an associated template alias' unless templated?
+
+      unless delivery_method.is_a?(::Mail::Postmark)
+        raise ::Postmark::MailAdapterError, "Cannot render templates via #{delivery_method.class} adapter."
+      end
+
+      client = delivery_method.api_client
+      template = client.get_template(template_alias)
+      response = client.validate_template(template.merge(:test_render_model => template_model || {}))
+
+      raise ::Postmark::InvalidTemplateError, response unless response[:all_content_is_valid]
+
+      self.body = nil
+
+      subject response[:subject][:rendered_content]
+
+      text_part do
+        body response[:text_body][:rendered_content]
+      end
+
+      html_part do
+        content_type 'text/html; charset=UTF-8'
+        body response[:html_body][:rendered_content]
+      end
+
+      self
+    end
+
     def text?
       if defined?(super)
         super
@@ -139,6 +183,7 @@ module Mail
         subject      tag
         attachment   to
         track-opens  track-links
+        postmark-template-alias
       ]
     end
 
