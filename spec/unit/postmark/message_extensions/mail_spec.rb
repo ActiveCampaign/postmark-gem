@@ -328,7 +328,7 @@ describe Mail::Message do
             to receive(:get_template).with(message.template_alias).
             and_return(template_response)
           expect_any_instance_of(Postmark::ApiClient).
-            to receive(:validate_template).with(template_response.merge(test_render_model: model)).
+            to receive(:validate_template).with(template_response.merge(:test_render_model => model)).
             and_return(render_response)
         end
 
