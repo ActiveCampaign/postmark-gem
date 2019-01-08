@@ -24,5 +24,3 @@ matrix:
       jdk: oraclejdk8 
       gemfile: gemfiles/Gemfile.legacy
 script: bundle exec rake spec
-before_install:
-  - gem install bundler
