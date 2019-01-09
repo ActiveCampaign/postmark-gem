@@ -28,3 +28,7 @@ RSpec::Matchers.define :a_postmark_json do |string|
     postmark_json?(actual)
   end
 end
+
+RSpec::Matchers.define :json_representation_of do |x|
+  match { |actual| Postmark::Json.decode(actual) == x }
+end
