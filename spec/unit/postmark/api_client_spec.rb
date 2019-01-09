@@ -800,9 +800,9 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a POST request to /templates with the given attributes' do
-      expected_json = {'Name' => 'template name'}.to_json
-
-      expect(http_client).to receive(:post).with('templates', expected_json).and_return(response)
+      expect(http_client).to receive(:post).
+        with('templates', json_representation_of('Name' => 'template name')).
+        and_return(response)
 
       template = subject.create_template(:name => 'template name')
 
@@ -822,9 +822,9 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a PUT request to /templates with the given attributes' do
-      expected_json = {'Name' => 'template name'}.to_json
-
-      expect(http_client).to receive(:put).with('templates/123', expected_json).and_return(response)
+      expect(http_client).to receive(:put).
+        with('templates/123', json_representation_of('Name' => 'template name')).
+        and_return(response)
 
       template = subject.update_template(123, :name => 'template name')
 
@@ -880,13 +880,12 @@ describe Postmark::ApiClient do
       end
 
       it 'performs a POST request and returns unmodified suggested template model' do
-        expected_template_json = {
-            'HtmlBody' => '{{MyName}}',
-            'TextBody' => '{{MyName}}',
-            'Subject' => '{{MyName}}'
-        }.to_json
-
-        expect(http_client).to receive(:post).with('templates/validate', expected_template_json).and_return(response)
+        expect(http_client).to receive(:post).
+          with('templates/validate',
+               json_representation_of('HtmlBody' => '{{MyName}}',
+                                      'TextBody' => '{{MyName}}',
+                                      'Subject' => '{{MyName}}')).
+          and_return(response)
 
         resp = subject.validate_template(:html_body => '{{MyName}}',
                                          :text_body => '{{MyName}}',
@@ -929,13 +928,11 @@ describe Postmark::ApiClient do
       end
 
       it 'performs a POST request and returns validation errors' do
-        expected_template_json = {
-            'HtmlBody' => '{{#each}}',
-            'TextBody' => '{{MyName}}',
-            'Subject' => '{{MyName}}'
-        }.to_json
-
-        expect(http_client).to receive(:post).with('templates/validate', expected_template_json).and_return(response)
+        expect(http_client).
+          to receive(:post).with('templates/validate',
+                                 json_representation_of('HtmlBody' => '{{#each}}',
+                                                        'TextBody' => '{{MyName}}',
+                                                        'Subject' => '{{MyName}}')).and_return(response)
 
         resp = subject.validate_template(:html_body => '{{#each}}',
                                          :text_body => '{{MyName}}',
@@ -952,12 +949,11 @@ describe Postmark::ApiClient do
 
   describe "#deliver_with_template" do
     let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
-    let(:email_json) {Postmark::Json.encode(email)}
     let(:http_client) {subject.http_client}
     let(:response) {{"MessageID" => 42}}
 
     it 'converts message hash to Postmark format and posts it to /email/withTemplate' do
-      expect(http_client).to receive(:post).with('email/withTemplate', email_json) {response}
+      expect(http_client).to receive(:post).with('email/withTemplate', json_representation_of(email)) {response}
       subject.deliver_with_template(message_hash)
     end
 
@@ -970,7 +966,7 @@ describe Postmark::ApiClient do
     end
 
     it 'converts response to ruby format' do
-      expect(http_client).to receive(:post).with('email/withTemplate', email_json) {response}
+      expect(http_client).to receive(:post).with('email/withTemplate', json_representation_of(email)) {response}
       r = subject.deliver_with_template(message_hash)
       r.should have_key(:message_id)
     end
