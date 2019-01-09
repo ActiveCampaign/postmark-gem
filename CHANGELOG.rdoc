@@ -1,5 +1,11 @@
 = Changelog
 
+== 1.15.0
+
+* Extended Mail::Message objects with support for Postmark templates.
+* Added ApiClient#deliver_message_with_template and ApiClient#deliver_messages_with_templates
+* Removed Rake from dependencies.
+
 == 1.14.0
 
 * Added support for verifying DKIM/Return-Path.
