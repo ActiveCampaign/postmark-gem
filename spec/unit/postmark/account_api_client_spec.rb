@@ -756,11 +756,11 @@ describe Postmark::AccountApiClient do
               {"Action"=>"Create", "TemplateId"=>nil, "Alias"=>"alias2", "Name"=>"Password reset"}]}
       }
 
-      let(:request_data) {{source_server_id: 1, destination_server_id:2, perform_changes: false}}
+      let(:request_data) {{:source_server_id => 1, :destination_server_id => 2, :perform_changes => false}}
 
       it 'gets templates info and converts it to ruby format' do
         allow(subject.http_client).to receive(:put).and_return(response)
-        templates = subject.push_templates({source_server_id: 1, destination_server_id:2, perform_changes: false} )
+        templates = subject.push_templates({:source_server_id => 1, :destination_server_id => 2, :perform_changes => false} )
 
         expect(templates.size).to eq(2)
         expect(templates.first[:action]).to eq('Create')
@@ -769,7 +769,7 @@ describe Postmark::AccountApiClient do
 
       it 'formats the keys of returned response' do
         allow(subject.http_client).to receive(:put).and_return(response)
-        templates = subject.push_templates({source_server_id: 1, destination_server_id:2, perform_changes: false} )
+        templates = subject.push_templates({:source_server_id => 1, :destination_server_id => 2, :perform_changes => false} )
 
         keys = templates.map { |template|  template.keys }.flatten
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
