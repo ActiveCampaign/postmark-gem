@@ -139,6 +139,12 @@ module Postmark
       format_response http_client.delete("servers/#{id.to_i}")
     end
 
+    def push_templates(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+      _, batch = format_batch_response(http_client.put('templates/push', data), "Templates")
+      batch
+    end
+
   end
 
 end

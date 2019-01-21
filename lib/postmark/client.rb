@@ -80,6 +80,10 @@ module Postmark
       options[:offset] ||= 0
       options[:count] ||= 30
       response = http_client.get(path, options)
+      format_batch_response(response, name)
+    end
+
+    def format_batch_response(response, name)
       [response['TotalCount'], format_response(response[name])]
     end
 
