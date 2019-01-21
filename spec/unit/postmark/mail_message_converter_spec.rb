@@ -164,6 +164,15 @@ describe Postmark::MailMessageConverter do
     end
   end
 
+  let(:templated_message) do
+    Mail.new do
+      from            "sheldon@bigbangtheory.com"
+      to              "lenard@bigbangtheory.com"
+      template_alias  "hello"
+      template_model  :name => "Sheldon"
+    end
+  end
+
   it 'converts plain text messages correctly' do
     subject.new(mail_message).run.should == {
         "From" => "sheldon@bigbangtheory.com",
@@ -223,6 +232,14 @@ describe Postmark::MailMessageConverter do
         "TextBody" => "Hello Sheldon!",
         "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
         "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>'}
+  end
+
+  it 'convertes templated messages correctly' do
+    expect(subject.new(templated_message).run).
+      to eq("From" => "sheldon@bigbangtheory.com",
+            "TemplateAlias" => "hello",
+            "TemplateModel" => { :name => "Sheldon" },
+            "To" => "lenard@bigbangtheory.com")
   end
 
   context 'open tracking' do

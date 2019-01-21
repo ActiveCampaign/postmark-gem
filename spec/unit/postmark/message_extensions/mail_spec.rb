@@ -24,6 +24,15 @@ describe Mail::Message do
     end
   end
 
+  let(:templated_message) do
+    Mail.new do
+      from           "sheldon@bigbangtheory.com"
+      to             "lenard@bigbangtheory.com"
+      template_alias "Hello!"
+      template_model :name => "Sheldon"
+    end
+  end
+
   let(:mail_message_with_bogus_headers) do
     mail_message.header['Return-Path'] = 'bounce@wildbit.com'
     mail_message.header['From'] = 'info@wildbit.com'
@@ -239,4 +248,109 @@ describe Mail::Message do
     # See mail_message_converter_spec.rb
   end
 
+  describe '#templated?' do
+    specify { expect(mail_message).to_not be_templated }
+    specify { expect(templated_message).to be_templated }
+  end
+
+  describe '#prerender' do
+    let(:model) { templated_message.template_model }
+    let(:model_text) { model[:name] }
+
+    let(:template_response) do
+      {
+        :html_body => '<html><body>{{ name }}</body></html>',
+        :text_body => '{{ name }}'
+      }
+    end
+
+    let(:successful_render_response) do
+      {
+        :all_content_is_valid => true,
+        :subject => {
+          :rendered_content => 'Subject'
+        },
+        :text_body => {
+          :rendered_content => model_text
+        },
+        :html_body => {
+          :rendered_content => "<html><body>#{model_text}</body></html>"
+        }
+      }
+    end
+
+    let(:failed_render_response) do
+      {
+        :all_content_is_valid => false,
+        :subject => {
+          :rendered_content => 'Subject'
+        },
+        :text_body => {
+          :rendered_content => model_text
+        },
+        :html_body => {
+          :rendered_content => nil,
+          :validation_errors => [
+            { :message => 'The syntax for this template is invalid.', :line => 1, :character_position => 1 }
+          ]
+        }
+      }
+    end
+
+    subject(:rendering) { message.prerender }
+
+    context 'when called on a non-templated message' do
+      let(:message) { mail_message }
+
+      it 'raises a Postmark::Error' do
+        expect { rendering }.to raise_error(Postmark::Error, /Cannot prerender/)
+      end
+    end
+
+    context 'when called on a templated message' do
+      let(:message) { templated_message }
+
+      before do
+        message.delivery_method delivery_method
+      end
+
+      context 'and using a non-Postmark delivery method' do
+        let(:delivery_method) { Mail::SMTP }
+
+        specify { expect { rendering }.to raise_error(Postmark::MailAdapterError) }
+      end
+
+      context 'and using a Postmark delivery method' do
+        let(:delivery_method) { Mail::Postmark }
+
+        before do
+          expect_any_instance_of(Postmark::ApiClient).
+            to receive(:get_template).with(message.template_alias).
+            and_return(template_response)
+          expect_any_instance_of(Postmark::ApiClient).
+            to receive(:validate_template).with(template_response.merge(:test_render_model => model)).
+            and_return(render_response)
+        end
+
+        context 'and rendering succeeds' do
+          let(:render_response) { successful_render_response }
+
+          it 'sets HTML and Text parts to rendered values' do
+            expect { rendering }.
+              to change { message.subject }.to(render_response[:subject][:rendered_content]).
+              and change { message.body_text }.to(render_response[:text_body][:rendered_content]).
+              and change { message.body_html }.to(render_response[:html_body][:rendered_content])
+          end
+        end
+
+        context 'and rendering fails' do
+          let(:render_response) { failed_render_response }
+
+          it 'raises Postmark::InvalidTemplateError' do
+            expect { rendering }.to raise_error(Postmark::InvalidTemplateError)
+          end
+        end
+      end
+    end
+  end
 end

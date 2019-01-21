@@ -99,12 +99,22 @@ module Postmark
     end
   end
 
+  class InvalidTemplateError < Error
+    attr_reader :postmark_response
+
+    def initialize(response)
+      @postmark_response = response
+      super('Failed to render the template. Please check #postmark_response on this error for details.')
+    end
+  end
+
   class TimeoutError < Error
     def retry?
       true
     end
   end
 
+  class MailAdapterError < Postmark::Error; end
   class UnknownMessageType < Error; end
   class InvalidApiKeyError < HttpServerError; end
   class InternalServerError < HttpServerError; end
