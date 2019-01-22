@@ -771,7 +771,7 @@ describe Postmark::AccountApiClient do
         allow(subject.http_client).to receive(:put).and_return(response)
         templates = subject.push_templates({:source_server_id => 1, :destination_server_id => 2, :perform_changes => false} )
 
-        keys = templates.map { |template|  template.keys }.flatten
+        keys = templates.map { |template| template.keys }.flatten
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
     end
