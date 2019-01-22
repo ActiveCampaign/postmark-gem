@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.16.0
+
+* Added support for template pushes.
+
 == 1.15.0
 
 * Extended Mail::Message objects with support for Postmark templates.
