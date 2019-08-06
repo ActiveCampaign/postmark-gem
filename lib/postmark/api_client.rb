@@ -328,6 +328,10 @@ module Postmark
       format_response http_client.delete("webhooks/#{id}")
     end
 
+    def get_message_streams(options = {})
+      load_batch('message-streams', 'MessageStreams', options)
+    end
+
     protected
 
     def in_batches(messages)
