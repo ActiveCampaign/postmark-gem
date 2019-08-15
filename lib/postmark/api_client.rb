@@ -323,7 +323,7 @@ module Postmark
 
     def update_message(message, response)
       response ||= {}
-      message['Message-ID'] = response['MessageID']
+      message['X-PM-Message-Id'] = response['MessageID']
       message.delivered = response['ErrorCode'] && response['ErrorCode'].zero?
       message.postmark_response = response
     end

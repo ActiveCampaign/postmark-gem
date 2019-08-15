@@ -8,7 +8,7 @@ describe 'Accessing server resources using the API' do
   let(:recipient) { ENV['POSTMARK_CI_RECIPIENT'] }
   let(:message) {
     {
-      :from => "tema+ci@wildbit.com",
+      :from => ENV['POSTMARK_CI_SENDER'],
       :to => recipient,
       :subject => "Mail::Message object",
       :text_body => "Lorem ipsum dolor sit amet, consectetur adipisicing elit, " \

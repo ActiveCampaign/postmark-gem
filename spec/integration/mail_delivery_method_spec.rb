@@ -53,9 +53,9 @@ describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
     expect { message.deliver }.to change{message.delivered?}.to(true)
   end
 
-  it 'updates a message object with Message-ID' do
+  it 'updates a message object with X-PM-Message-Id' do
     expect { message.deliver }.
-        to change{message['Message-ID'].to_s}.to(postmark_message_id_format)
+        to change{message['X-PM-Message-Id'].to_s}.to(postmark_message_id_format)
   end
 
   it 'updates a message object with full postmark response' do
