@@ -5,9 +5,9 @@ env:
     # POSTMARK_ACCOUNT_API_KEY=?
     - secure: "lau1m+ws6T5LBiRXwd+Q0b20Wjh62W/nHnCmzOSZc2+V97XTldl3MCJdXNV7J6X7O9CzFabcAG8FSbGGwPRiyhY/qhxkYSc/9pWE8RUjyCjbw5q2RzZQelMKizyKU92eOjd6jQw/wDSZcww1OceW/pgdRjqEo21Pk6XH2yzLAd8="
     # POSTMARK_CI_RECIPIENT=?
-    - secure: "V5GeJn1rch72qcAz/YI9tSEnZ2Zb4utWzq9ntr9gojRVFGpocgIbULmeslTKyIN7s5kF23qnhsGmPA9Olwz1ZqV9zhdWcsm4PUhUU/n3tVAnLWpUDjeneD5P+IOO6S+bCzVZX+Gk5/agBt2bQeAbVe+lVh5RZQJc3lsEvkVv7QM="
+    - secure: "YnccT2MM+hIfwxl1WtcTk48q+D9XY7p6FTHkeJbUoaT9PFXQqXyUCQpwk5wYAwzZbVWG/CgH4PitWyRbWBP6kAqYKlsnAkQip0FNjs0DbK0SH9YvcFFSDZsTAl9yfwSxlgnBZHGZ49LO3yISMPUOdNn1QmaF4Ndpl4hiycH7UA8="
     # POSTMARK_CI_SENDER=?
-    - secure: "qP1h4CajeKaVL7cUF3G9cKCm+KBjcTjTKRC3uOVN+X5dgQZFAuMQ9oJ3k1868AFMEJ2qqqfLCm177SlDXxqSisR7MEcCDIchiE+gUGH0YqZKLEYONyl00ts3/A6iMkQCODEB+kzLZAlByziO3CDZ6bHeLb6f7UJ4ExCSCQMYIyc="
+    - secure: "Cz/KfiXkd90GQr+47LunlZnal8clrRpKmZUd9K161RYd5bfkL+P6SnEmhMprwdzomUBqIcqleR9HjmECey2V/Zd9V8vtBaLVZ5CoeMTkz3Tu6SllfmpymkcuJKf7GGizs97gmhPMlJd9iMukL6eqW4/1C9HW0cLZFB/jlzqFHpE="
 language: ruby
 rvm:
   - 2.0.0
