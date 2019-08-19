@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.17.0
+
+* Update sent email message properly and not altering it's Message-ID with Postmark unique message id.
+
 == 1.16.0
 
 * Added support for template pushes.
