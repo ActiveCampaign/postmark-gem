@@ -46,8 +46,7 @@ describe "Sending messages as Ruby hashes with Postmark::ApiClient" do
     end
 
     it 'updates a message object with Message-ID' do
-      api_client.deliver(message)[:message_id].
-          should =~ postmark_message_id_format
+      expect(api_client.deliver(message)[:message_id]).to be =~ postmark_message_id_format
     end
 
     it 'returns full Postmark response' do
