@@ -143,10 +143,8 @@ module Mail
       [].tap do |headers|
         self.header.fields.each do |field|
           key, value = field.name, field.value
-          next if bogus_headers.include? key.downcase
-          name = key.split(/-/).map { |i| i.capitalize }.join('-')
-
-          headers << { "Name" => name, "Value" => value }
+          next if reserved_headers.include? key.downcase
+          headers << { "Name" => key, "Value" => value }
         end
       end
     end
@@ -173,7 +171,7 @@ module Mail
       end
     end
 
-    def bogus_headers
+    def reserved_headers
       %q[
         return-path  x-pm-rcpt
         from         reply-to

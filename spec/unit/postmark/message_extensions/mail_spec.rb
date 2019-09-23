@@ -33,7 +33,7 @@ describe Mail::Message do
     end
   end
 
-  let(:mail_message_with_bogus_headers) do
+  let(:mail_message_with_reserved_headers) do
     mail_message.header['Return-Path'] = 'bounce@wildbit.com'
     mail_message.header['From'] = 'info@wildbit.com'
     mail_message.header['Sender'] = 'info@wildbit.com'
@@ -237,7 +237,7 @@ describe Mail::Message do
   end
 
   describe "#export_headers" do
-    let(:headers) { mail_message_with_bogus_headers.export_headers }
+    let(:headers) { mail_message_with_reserved_headers.export_headers }
     let(:header_names) { headers.map { |h| h['Name'] } }
 
     specify { expect(header_names).to include('Allowed-Header') }
