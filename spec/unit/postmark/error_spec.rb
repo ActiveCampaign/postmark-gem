@@ -6,7 +6,7 @@ end
 
 describe(Postmark::HttpClientError) do
   it { is_expected.to be_a(Postmark::Error) }
-  specify { expect(subject.retry?).to be true }
+  it { expect(subject.retry?).to be true }
 end
 
 describe(Postmark::HttpServerError) do
@@ -85,7 +85,7 @@ describe(Postmark::ApiInputError) do
 
       shared_examples_for 'api input error' do
         its(:status_code) { is_expected. to eq 422 }
-        specify { expect(subject.retry?).to be false }
+        it { expect(subject.retry?).to be false }
         it { is_expected.to be_a(Postmark::ApiInputError) }
         it { is_expected.to be_a(Postmark::HttpServerError) }
       end
@@ -117,7 +117,7 @@ end
 
 describe(Postmark::TimeoutError) do
   it { is_expected.to be_a(Postmark::Error) }
-  specify { expect(subject.retry?).to be true }
+  it { expect(subject.retry?).to be true }
 end
 
 describe(Postmark::UnknownMessageType) do

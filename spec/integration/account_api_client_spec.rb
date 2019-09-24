@@ -8,12 +8,9 @@ describe 'Account API client usage' do
   let(:unique_token) { rand(36**32).to_s(36) }
   let(:unique_from_email) { ENV['POSTMARK_CI_SENDER'].gsub(/(\+.+)?@/, "+#{unique_token}@") }
 
-  it 'can be used to manage senders' do
-    new_sender = nil
-
+  it 'manage senders' do
     # create & count
-    new_sender = subject.create_sender(:name => 'Integration Test',
-                                       :from_email => unique_from_email)
+    new_sender = subject.create_sender(:name => 'Integration Test', :from_email => unique_from_email)
     expect(subject.get_senders_count).to be > 0
 
     # get
@@ -47,8 +44,7 @@ describe 'Account API client usage' do
     expect { subject.delete_sender(new_sender[:id]) }.not_to raise_error
   end
 
-  it 'can be used to manage domains' do
-    new_domain = nil
+  it 'manage domains' do
     domain_name = "#{unique_token}-gem-integration.test"
     return_path = "return.#{domain_name}"
     updated_return_path = "updated-return.#{domain_name}"
@@ -85,9 +81,7 @@ describe 'Account API client usage' do
     expect { subject.delete_domain(new_domain[:id]) }.not_to raise_error
   end
 
-  it 'can be used to manage servers' do
-    new_server = nil
-
+  it 'manage servers' do
     # create & count
     new_server = subject.create_server(:name => "server-#{unique_token}",
                                        :color => 'red')
@@ -111,5 +105,4 @@ describe 'Account API client usage' do
     # delete
     expect { subject.delete_server(new_server[:id]) }.not_to raise_error
   end
-
 end

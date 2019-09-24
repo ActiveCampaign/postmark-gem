@@ -17,11 +17,7 @@ describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
     end
   }
 
-  let(:tagged_message) {
-    message.tap do |m|
-      m.tag "postmark-gem"
-    end
-  }
+  let(:tagged_message) { message.tap { |m| m.tag "postmark-gem" } }
 
   let(:message_with_no_body) {
     Mail.new do
@@ -54,34 +50,36 @@ describe "Sending Mail::Messages with delivery_method Mail::Postmark" do
   end
 
   it 'updates a message object with X-PM-Message-Id' do
-    expect { message.deliver }.
-        to change{message['X-PM-Message-Id'].to_s}.to(postmark_message_id_format)
+    expect { message.deliver }.to change{message['X-PM-Message-Id'].to_s}.to(postmark_message_id_format)
   end
 
   it 'updates a message object with full postmark response' do
-    expect { message.deliver }.
-        to change{message.postmark_response}.from(nil)
+    expect { message.deliver }.to change{message.postmark_response}.from(nil)
   end
 
   it 'delivers a tagged message' do
-    expect { tagged_message.deliver }.
-        to change{message.delivered?}.to(true)
+    expect { tagged_message.deliver }.to change{message.delivered?}.to(true)
   end
 
   it 'delivers a message with attachment' do
-    expect { message_with_attachment.deliver }.
-        to change{message_with_attachment.delivered?}.to(true)
+    expect { message_with_attachment.deliver }.to change{message_with_attachment.delivered?}.to(true)
   end
 
-  it 'fails to deliver a message without body' do
-    expect { message_with_no_body.deliver! }.
-        to raise_error(Postmark::InvalidMessageError)
-    message_with_no_body.should_not be_delivered
-  end
+  context 'fails to deliver a message' do
+    it ' without body - raise error' do
+      expect { message_with_no_body.deliver! }.to raise_error(Postmark::InvalidMessageError)
+    end
 
-  it 'fails to deliver a message with invalid To address' do
-    expect { message_with_invalid_to.deliver! }.
-        to raise_error(Postmark::InvalidMessageError)
-    message_with_invalid_to.should_not be_delivered
+    it 'without body - do not deliver' do
+      expect(message_with_no_body).not_to be_delivered
+    end
+
+    it 'with invalid To address - raise error' do
+      expect { message_with_invalid_to.deliver! }.to raise_error(Postmark::InvalidMessageError)
+    end
+
+    it 'with invalid To address - do not deliver' do
+      expect(message_with_invalid_to).not_to be_delivered
+    end
   end
 end

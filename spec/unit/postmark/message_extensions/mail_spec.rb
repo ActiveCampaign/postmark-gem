@@ -33,25 +33,6 @@ describe Mail::Message do
     end
   end
 
-  let(:mail_message_with_reserved_headers) do
-    mail_message.header['Return-Path'] = 'bounce@wildbit.com'
-    mail_message.header['From'] = 'info@wildbit.com'
-    mail_message.header['Sender'] = 'info@wildbit.com'
-    mail_message.header['Received'] = 'from mta.pstmrk.it ([72.14.252.155]:54907)'
-    mail_message.header['Date'] = 'January 25, 2013 3:30:58 PM PDT'
-    mail_message.header['Content-Type'] = 'application/json'
-    mail_message.header['To'] = 'lenard@bigbangtheory.com'
-    mail_message.header['Cc'] = 'sheldon@bigbangtheory.com'
-    mail_message.header['Bcc'] = 'penny@bigbangtheory.com'
-    mail_message.header['Subject'] = 'You want not to use a bogus header'
-    mail_message.header['Tag'] = 'bogus-tag'
-    mail_message.header['Attachment'] = 'anydatahere'
-    mail_message.header['Allowed-Header'] = 'value'
-    mail_message.header['TRACK-OPENS'] = 'true'
-    mail_message.header['TRACK-LINKS'] = 'HtmlOnly'
-    mail_message
-  end
-
   describe '#tag' do
 
     it 'value set on tag=' do
@@ -237,11 +218,42 @@ describe Mail::Message do
   end
 
   describe "#export_headers" do
-    let(:headers) { mail_message_with_reserved_headers.export_headers }
-    let(:header_names) { headers.map { |h| h['Name'] } }
+    let(:mail_message_with_reserved_headers) do
+      mail_message.header['Return-Path'] = 'bounce@wildbit.com'
+      mail_message.header['From'] = 'info@wildbit.com'
+      mail_message.header['Sender'] = 'info@wildbit.com'
+      mail_message.header['Received'] = 'from mta.pstmrk.it ([72.14.252.155]:54907)'
+      mail_message.header['Date'] = 'January 25, 2013 3:30:58 PM PDT'
+      mail_message.header['Content-Type'] = 'application/json'
+      mail_message.header['To'] = 'lenard@bigbangtheory.com'
+      mail_message.header['Cc'] = 'sheldon@bigbangtheory.com'
+      mail_message.header['Bcc'] = 'penny@bigbangtheory.com'
+      mail_message.header['Subject'] = 'You want not to use a bogus header'
+      mail_message.header['Tag'] = 'bogus-tag'
+      mail_message.header['Attachment'] = 'anydatahere'
+      mail_message.header['Allowed-Header'] = 'value'
+      mail_message.header['TRACK-OPENS'] = 'true'
+      mail_message.header['TRACK-LINKS'] = 'HtmlOnly'
+      mail_message
+    end
 
-    specify { expect(header_names).to include('Allowed-Header') }
-    specify { expect(header_names.count).to eq 1 }
+
+    it 'only allowed headers' do
+      headers = mail_message_with_reserved_headers.export_headers
+      header_names = headers.map { |h| h['Name'] }
+
+      aggregate_failures do
+        expect(header_names).to include('Allowed-Header')
+        expect(header_names.count).to eq 1
+      end
+    end
+
+    it 'custom header character case preserved' do
+      custom_header = {"Name"=>"custom-Header", "Value"=>"cUsTomHeaderValue"}
+      mail_message.header[custom_header['Name']] = custom_header['Value']
+
+      expect(mail_message.export_headers.first).to match(custom_header)
+    end
   end
 
   describe "#to_postmark_hash" do
@@ -249,8 +261,8 @@ describe Mail::Message do
   end
 
   describe '#templated?' do
-    specify { expect(mail_message).to_not be_templated }
-    specify { expect(templated_message).to be_templated }
+    it { expect(mail_message).to_not be_templated }
+    it { expect(templated_message).to be_templated }
   end
 
   describe '#prerender' do
@@ -317,7 +329,7 @@ describe Mail::Message do
       context 'and using a non-Postmark delivery method' do
         let(:delivery_method) { Mail::SMTP }
 
-        specify { expect { rendering }.to raise_error(Postmark::MailAdapterError) }
+        it { expect { rendering }.to raise_error(Postmark::MailAdapterError) }
       end
 
       context 'and using a Postmark delivery method' do
