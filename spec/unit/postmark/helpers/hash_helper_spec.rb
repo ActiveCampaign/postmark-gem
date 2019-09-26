@@ -6,11 +6,11 @@ describe Postmark::HashHelper do
     let(:target) { {"From" => "support@postmarkapp.com", "ReplyTo" => "contact@wildbit.com"} }
 
     it 'converts Hash keys to Postmark format' do
-      subject.to_postmark(source).should == target
+      expect(subject.to_postmark(source)).to eq target
     end
 
     it 'acts idempotentely' do
-      subject.to_postmark(target).should == target
+      expect(subject.to_postmark(target)).to eq target
     end
   end
 
@@ -19,16 +19,15 @@ describe Postmark::HashHelper do
     let(:target) { {:from => "support@postmarkapp.com", :reply_to => "contact@wildbit.com"} }
 
     it 'converts Hash keys to Ruby format' do
-      subject.to_ruby(source).should == target
+      expect(subject.to_ruby(source)).to eq target
     end
 
     it 'has compatible mode' do
-      subject.to_ruby(source, true).should == target.merge(source)
+      expect(subject.to_ruby(source, true)).to eq target.merge(source)
     end
 
     it 'acts idempotentely' do
-      subject.to_ruby(target).should == target
+      expect(subject.to_ruby(target)).to eq target
     end
   end
-
 end

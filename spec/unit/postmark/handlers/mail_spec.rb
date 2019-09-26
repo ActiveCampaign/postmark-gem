@@ -25,18 +25,18 @@ describe Mail::Postmark do
   describe '#deliver!' do
     it "returns self by default" do
       expect_any_instance_of(Postmark::ApiClient).to receive(:deliver_message).with(message)
-      message.deliver.should eq message
+      expect(message.deliver).to eq message
     end
 
     it "returns the actual response if :return_response setting is present" do
       expect_any_instance_of(Postmark::ApiClient).to receive(:deliver_message).with(message)
       message.delivery_method Mail::Postmark, :return_response => true
-      message.deliver.should eq message
+      expect(message.deliver).to eq message
     end
 
     it "allows setting the api token" do
       message.delivery_method Mail::Postmark, :api_token => 'api-token'
-      message.delivery_method.settings[:api_token].should == 'api-token'
+      expect(message.delivery_method.settings[:api_token]).to eq 'api-token'
     end
 
     it 'uses provided API token' do

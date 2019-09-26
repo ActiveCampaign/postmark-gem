@@ -32,14 +32,14 @@ describe Postmark::HttpClient do
   end
 
   context "when it is created without options" do
-    its(:api_token) { should eq api_token }
-    its(:api_key) { should eq api_token }
-    its(:host) { should eq 'api.postmarkapp.com' }
-    its(:port) { should eq 443 }
-    its(:secure) { should be true }
-    its(:path_prefix) { should eq '/' }
-    its(:http_read_timeout) { should eq 15 }
-    its(:http_open_timeout) { should eq 5 }
+    its(:api_token) { is_expected.to eq api_token }
+    its(:api_key) { is_expected.to eq api_token }
+    its(:host) { is_expected.to eq 'api.postmarkapp.com' }
+    its(:port) { is_expected.to eq 443 }
+    its(:secure) { is_expected.to be true }
+    its(:path_prefix) { is_expected.to eq '/' }
+    its(:http_read_timeout) { is_expected.to eq 15 }
+    its(:http_open_timeout) { is_expected.to eq 5 }
 
     it 'uses TLS encryption', :skip_ruby_version => ['1.8.7'] do
       http_client = subject.http
@@ -71,18 +71,18 @@ describe Postmark::HttpClient do
                                        :http_open_timeout => http_open_timeout,
                                        :http_read_timeout => http_read_timeout) }
 
-    its(:api_token) { should eq api_token }
-    its(:api_key) { should eq api_token }
-    its(:secure) { should == secure }
-    its(:proxy_host) { should == proxy_host }
-    its(:proxy_port) { should == proxy_port }
-    its(:proxy_user) { should == proxy_user }
-    its(:proxy_pass) { should == proxy_pass }
-    its(:host) { should == host }
-    its(:port) { should == port }
-    its(:path_prefix) { should == path_prefix }
-    its(:http_open_timeout) { should == http_open_timeout }
-    its(:http_read_timeout) { should == http_read_timeout }
+    its(:api_token) { is_expected.to eq api_token }
+    its(:api_key) { is_expected.to eq api_token }
+    its(:secure) { is_expected.to eq secure }
+    its(:proxy_host) { is_expected.to eq proxy_host }
+    its(:proxy_port) { is_expected.to eq proxy_port }
+    its(:proxy_user) { is_expected.to eq proxy_user }
+    its(:proxy_pass) { is_expected.to eq proxy_pass }
+    its(:host) { is_expected.to eq host }
+    its(:port) { is_expected.to eq port }
+    its(:path_prefix) { is_expected.to eq path_prefix }
+    its(:http_open_timeout) { is_expected.to eq http_open_timeout }
+    its(:http_read_timeout) { is_expected.to eq http_read_timeout }
 
     it 'uses port 80 for plain HTTP connections' do
       expect(Postmark::HttpClient.new(api_token, :secure => false).port).to eq(80)
@@ -106,7 +106,8 @@ describe Postmark::HttpClient do
     it "sends a POST request to provided URI" do
       FakeWeb.register_uri(:post, target_url, :body => response_body(200))
       subject.post(target_path)
-      FakeWeb.should have_requested(:post, target_url)
+      expect(FakeWeb.last_request.method).to eq('POST')
+      expect(FakeWeb.last_request.path).to eq('/' + target_path)
     end
 
     it "raises a custom error when API token authorization fails" do
@@ -145,7 +146,8 @@ describe Postmark::HttpClient do
     it "sends a GET request to provided URI" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(200))
       subject.get(target_path)
-      expect(FakeWeb).to have_requested(:get, target_url)
+      expect(FakeWeb.last_request.method).to eq('GET')
+      expect(FakeWeb.last_request.path).to eq('/' + target_path)
     end
 
     it "raises a custom error when API token authorization fails" do
@@ -184,7 +186,8 @@ describe Postmark::HttpClient do
     it "sends a PUT request to provided URI" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(200))
       subject.put(target_path)
-      expect(FakeWeb).to have_requested(:put, target_url)
+      expect(FakeWeb.last_request.method).to eq('PUT')
+      expect(FakeWeb.last_request.path).to eq('/' + target_path)
     end
 
     it "raises a custom error when API token authorization fails" do

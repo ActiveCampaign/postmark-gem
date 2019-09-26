@@ -24,7 +24,7 @@ end
 RSpec.configure do |config|
   include Postmark::RSpecHelpers
 
-  config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
+  config.expect_with(:rspec) { |c| c.syntax = :expect }
 
 	config.filter_run_excluding :skip_for_platform => lambda { |platform|
     RUBY_PLATFORM.to_s =~ /^#{platform.to_s}/
@@ -50,8 +50,9 @@ RSpec.configure do |config|
   end
 end
 
+# define custom matchers
 RSpec::Matchers.define :be_serialized_to do |json|
   match do |mail_message|
-    Postmark.convert_message_to_options_hash(mail_message).should == JSON.parse(json)
+    Postmark.convert_message_to_options_hash(mail_message) == JSON.parse(json)
   end
 end

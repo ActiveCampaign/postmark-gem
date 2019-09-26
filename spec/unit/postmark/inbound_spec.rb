@@ -7,81 +7,81 @@ describe Postmark::Inbound do
   context "given a serialized inbound document" do
     subject { Postmark::Inbound.to_ruby_hash(example_inbound) }
 
-    it { should have_key(:from) }
-    it { should have_key(:from_full) }
-    it { should have_key(:to) }
-    it { should have_key(:to_full) } 
-    it { should have_key(:cc) }
-    it { should have_key(:cc_full) }
-    it { should have_key(:reply_to) }
-    it { should have_key(:subject) }
-    it { should have_key(:message_id) }
-    it { should have_key(:date) }
-    it { should have_key(:mailbox_hash) }
-    it { should have_key(:text_body) }
-    it { should have_key(:html_body) }
-    it { should have_key(:tag) }
-    it { should have_key(:headers) }
-    it { should have_key(:attachments) }
+    it { expect(subject).to have_key(:from) }
+    it { expect(subject).to have_key(:from_full) }
+    it { expect(subject).to have_key(:to) }
+    it { expect(subject).to have_key(:to_full) }
+    it { expect(subject).to have_key(:cc) }
+    it { expect(subject).to have_key(:cc_full) }
+    it { expect(subject).to have_key(:reply_to) }
+    it { expect(subject).to have_key(:subject) }
+    it { expect(subject).to have_key(:message_id) }
+    it { expect(subject).to have_key(:date) }
+    it { expect(subject).to have_key(:mailbox_hash) }
+    it { expect(subject).to have_key(:text_body) }
+    it { expect(subject).to have_key(:html_body) }
+    it { expect(subject).to have_key(:tag) }
+    it { expect(subject).to have_key(:headers) }
+    it { expect(subject).to have_key(:attachments) }
 
     context "cc" do
       it 'has 2 CCs' do
-        subject[:cc_full].count.should == 2
+        expect(subject[:cc_full].count).to eq 2
       end
 
       it 'stores CCs as an array of Ruby hashes' do
         cc = subject[:cc_full].last
-        cc.should have_key(:email)
-        cc.should have_key(:name)
+        expect(cc).to have_key(:email)
+        expect(cc).to have_key(:name)
       end
     end
 
     context "to" do
       it 'has 1 recipients' do
-        subject[:to_full].count.should == 1
+        expect(subject[:to_full].count).to eq 1
       end
 
       it 'stores TOs as an array of Ruby hashes' do
         cc = subject[:to_full].last
-        cc.should have_key(:email)
-        cc.should have_key(:name)
+        expect(cc).to have_key(:email)
+        expect(cc).to have_key(:name)
       end
     end
 
     context "from" do
       it 'is a hash' do
-        subject[:from_full].should be_a Hash
+        expect(subject[:from_full]).to be_a Hash
       end
 
-      it 'should have all required fields' do
-        subject[:from_full].should have_key(:email)
-        subject[:from_full].should have_key(:name)
+      it 'has all required fields' do
+        expect(subject[:from_full]).to have_key(:email)
+        expect(subject[:from_full]).to have_key(:name)
       end
     end
 
     context "headers" do
       it 'has 8 headers' do
-        subject[:headers].count.should == 8
+        expect(subject[:headers].count).to eq 8
       end
 
       it 'stores headers as an array of Ruby hashes' do
         header = subject[:headers].last
-        header.should have_key(:name)
-        header.should have_key(:value)
+        expect(header).to have_key(:name)
+        expect(header).to have_key(:value)
       end
     end
 
     context "attachments" do
       it 'has 2 attachments' do
-        subject[:attachments].count.should == 2
+        expect(subject[:attachments].count).to eq 2
       end
 
       it 'stores attachemnts as an array of Ruby hashes' do
         attachment = subject[:attachments].last
-        attachment.should have_key(:name)
-        attachment.should have_key(:content)
-        attachment.should have_key(:content_type)
-        attachment.should have_key(:content_length)
+        expect(attachment).to have_key(:name)
+        expect(attachment).to have_key(:content)
+        expect(attachment).to have_key(:content_type)
+        expect(attachment).to have_key(:content_length)
       end
     end
   end

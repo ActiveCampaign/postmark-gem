@@ -20,7 +20,6 @@ describe Postmark::Bounce do
   subject { bounce }
 
   context "attr readers" do
-
     it { expect(subject).to respond_to(:email) }
     it { expect(subject).to respond_to(:bounced_at) }
     it { expect(subject).to respond_to(:type) }
@@ -32,7 +31,6 @@ describe Postmark::Bounce do
     it { expect(subject).to respond_to(:tag) }
     it { expect(subject).to respond_to(:message_id) }
     it { expect(subject).to respond_to(:subject) }
-
   end
 
   context "given a bounce created from bounce_data" do
@@ -49,14 +47,14 @@ describe Postmark::Bounce do
       expect(subject.dump_available?).to be true
     end
 
-    its(:type) { should eq bounce_data[:type] }
-    its(:message_id) { should eq bounce_data[:message_id] }
-    its(:description) { should eq bounce_data[:description] }
-    its(:details) { should eq bounce_data[:details] }
-    its(:email) { should eq bounce_data[:email] }
-    its(:bounced_at) { should == Time.parse(bounce_data[:bounced_at]) }
-    its(:id) { should eq bounce_data[:id] }
-    its(:subject) { should eq bounce_data[:subject] }
+    its(:type) { is_expected.to eq bounce_data[:type] }
+    its(:message_id) { is_expected.to eq bounce_data[:message_id] }
+    its(:description) { is_expected.to eq bounce_data[:description] }
+    its(:details) { is_expected.to eq bounce_data[:details] }
+    its(:email) { is_expected.to eq bounce_data[:email] }
+    its(:bounced_at) { is_expected.to eq Time.parse(bounce_data[:bounced_at]) }
+    its(:id) { is_expected.to eq bounce_data[:id] }
+    its(:subject) { is_expected.to eq bounce_data[:subject] }
 
   end
 
@@ -75,14 +73,13 @@ describe Postmark::Bounce do
       expect(subject.dump_available?).to be true
     end
 
-    its(:type) { should eq bounce_data[:type] }
-    its(:message_id) { should eq bounce_data[:message_id] }
-    its(:details) { should eq bounce_data[:details] }
-    its(:email) { should eq bounce_data[:email] }
-    its(:bounced_at) { should == Time.parse(bounce_data[:bounced_at]) }
-    its(:id) { should eq bounce_data[:id] }
-    its(:subject) { should eq bounce_data[:subject] }
-
+    its(:type) { is_expected.to eq bounce_data[:type] }
+    its(:message_id) { is_expected.to eq bounce_data[:message_id] }
+    its(:details) { is_expected.to eq bounce_data[:details] }
+    its(:email) { is_expected.to eq bounce_data[:email] }
+    its(:bounced_at) { is_expected.to eq Time.parse(bounce_data[:bounced_at]) }
+    its(:id) { is_expected.to eq bounce_data[:id] }
+    its(:subject) { is_expected.to eq bounce_data[:subject] }
   end
 
   describe "#dump" do
