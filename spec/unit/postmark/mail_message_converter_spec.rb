@@ -3,22 +3,22 @@ require 'spec_helper'
 
 describe Postmark::MailMessageConverter do
 
-  subject { Postmark::MailMessageConverter }
+  subject {Postmark::MailMessageConverter}
 
   let(:mail_message) do
     Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
       subject "Hello!"
-      body    "Hello Sheldon!"
+      body "Hello Sheldon!"
     end
   end
 
   let(:mail_html_message) do
     Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
+      subject "Hello!"
       content_type 'text/html; charset=UTF-8'
       body "<b>Hello Sheldon!</b>"
     end
@@ -26,41 +26,41 @@ describe Postmark::MailMessageConverter do
 
   let(:mail_message_with_open_tracking) do
     Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
-      content_type  'text/html; charset=UTF-8'
-      body          "<b>Hello Sheldon!</b>"
-      track_opens   true
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
+      subject "Hello!"
+      content_type 'text/html; charset=UTF-8'
+      body "<b>Hello Sheldon!</b>"
+      track_opens true
     end
   end
 
   let(:mail_message_with_open_tracking_disabled) do
     Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
-      content_type  'text/html; charset=UTF-8'
-      body          "<b>Hello Sheldon!</b>"
-      track_opens   false
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
+      subject "Hello!"
+      content_type 'text/html; charset=UTF-8'
+      body "<b>Hello Sheldon!</b>"
+      track_opens false
     end
   end
 
   let(:mail_message_with_open_tracking_set_variable) do
     mail = mail_html_message
-    mail.track_opens=true
+    mail.track_opens = true
     mail
   end
 
   let(:mail_message_with_open_tracking_disabled_set_variable) do
     mail = mail_html_message
-    mail.track_opens=false
+    mail.track_opens = false
     mail
   end
 
   let(:mail_message_with_link_tracking_all) do
     mail = mail_html_message
-    mail.track_links   :html_and_text
+    mail.track_links :html_and_text
     mail
   end
 
@@ -84,73 +84,73 @@ describe Postmark::MailMessageConverter do
 
   let(:tagged_mail_message) do
     Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
       subject "Hello!"
-      body    "Hello Sheldon!"
-      tag     "sheldon"
+      body "Hello Sheldon!"
+      tag "sheldon"
     end
   end
 
   let(:mail_message_without_body) do
     Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
       subject "Hello!"
     end
   end
 
   let(:mail_multipart_message) do
     Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
+      subject "Hello!"
       text_part do
-        body        "Hello Sheldon!"
+        body "Hello Sheldon!"
       end
       html_part do
-        body        "<b>Hello Sheldon!</b>"
+        body "<b>Hello Sheldon!</b>"
       end
     end
   end
 
   let(:mail_message_with_attachment) do
     Mail.new do
-      from    "sheldon@bigbangtheory.com"
-      to      "lenard@bigbangtheory.com"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
       subject "Hello!"
-      body    "Hello Sheldon!"
+      body "Hello Sheldon!"
       add_file empty_gif_path
     end
   end
 
   let(:mail_message_with_named_addresses) do
     Mail.new do
-      from    "Sheldon <sheldon@bigbangtheory.com>"
-      to      "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
+      from "Sheldon <sheldon@bigbangtheory.com>"
+      to "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
       subject "Hello!"
-      body    "Hello Sheldon!"
+      body "Hello Sheldon!"
       reply_to '"Penny The Neighbor" <penny@bigbangtheory.com>'
     end
   end
 
   let(:mail_message_quoted_printable) do
     Mail.new do
-      from    "Sheldon <sheldon@bigbangtheory.com>"
-      to      "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
+      from "Sheldon <sheldon@bigbangtheory.com>"
+      to "\"Leonard Hofstadter\" <leonard@bigbangtheory.com>"
       subject "Hello!"
       content_type 'text/plain; charset=utf-8'
       content_transfer_encoding 'quoted-printable'
-      body    'Он здесь бывал: еще не в галифе.'
+      body 'Он здесь бывал: еще не в галифе.'
       reply_to '"Penny The Neighbor" <penny@bigbangtheory.com>'
     end
   end
 
   let(:multipart_message_quoted_printable) do
     Mail.new do
-      from          "sheldon@bigbangtheory.com"
-      to            "lenard@bigbangtheory.com"
-      subject       "Hello!"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
+      subject "Hello!"
       text_part do
         content_type 'text/plain; charset=utf-8'
         content_transfer_encoding 'quoted-printable'
@@ -166,80 +166,80 @@ describe Postmark::MailMessageConverter do
 
   let(:templated_message) do
     Mail.new do
-      from            "sheldon@bigbangtheory.com"
-      to              "lenard@bigbangtheory.com"
-      template_alias  "hello"
-      template_model  :name => "Sheldon"
+      from "sheldon@bigbangtheory.com"
+      to "lenard@bigbangtheory.com"
+      template_alias "hello"
+      template_model :name => "Sheldon"
     end
   end
 
   it 'converts plain text messages correctly' do
-    subject.new(mail_message).run.should == {
+    expect(subject.new(mail_message).run).to eq ({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
-        "To" => "lenard@bigbangtheory.com"}
+        "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts tagged text messages correctly' do
-    subject.new(tagged_mail_message).run.should == {
+    expect(subject.new(tagged_mail_message).run).to eq ({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
         "Tag" => "sheldon",
-        "To"=>"lenard@bigbangtheory.com"}
+        "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts plain text messages without body correctly' do
-    subject.new(mail_message_without_body).run.should == {
+    expect(subject.new(mail_message_without_body).run).to eq ({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
-        "To" => "lenard@bigbangtheory.com"}
+        "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts html messages correctly' do
-    subject.new(mail_html_message).run.should == {
+    expect(subject.new(mail_html_message).run).to eq ({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "HtmlBody" => "<b>Hello Sheldon!</b>",
-        "To" => "lenard@bigbangtheory.com"}
+        "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts multipart messages correctly' do
-    subject.new(mail_multipart_message).run.should == {
+    expect(subject.new(mail_multipart_message).run).to eq ({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "HtmlBody" => "<b>Hello Sheldon!</b>",
         "TextBody" => "Hello Sheldon!",
-        "To" => "lenard@bigbangtheory.com"}
+        "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts messages with attachments correctly' do
-    subject.new(mail_message_with_attachment).run.should == {
+    expect(subject.new(mail_message_with_attachment).run).to eq ({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
-        "Attachments" => [{"Name"=>"empty.gif",
-                           "Content"=>encoded_empty_gif_data,
-                           "ContentType"=>"image/gif"}],
-        "TextBody"=>"Hello Sheldon!",
-        "To"=>"lenard@bigbangtheory.com"}
+        "Attachments" => [{"Name" => "empty.gif",
+                           "Content" => encoded_empty_gif_data,
+                           "ContentType" => "image/gif"}],
+        "TextBody" => "Hello Sheldon!",
+        "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts messages with named addresses correctly' do
-    subject.new(mail_message_with_named_addresses).run.should == {
+    expect(subject.new(mail_message_with_named_addresses).run).to eq ({
         "From" => "Sheldon <sheldon@bigbangtheory.com>",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
         "To" => "Leonard Hofstadter <leonard@bigbangtheory.com>",
-        "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>'}
+        "ReplyTo" => 'Penny The Neighbor <penny@bigbangtheory.com>'})
   end
 
   it 'convertes templated messages correctly' do
-    expect(subject.new(templated_message).run).
-      to eq("From" => "sheldon@bigbangtheory.com",
-            "TemplateAlias" => "hello",
-            "TemplateModel" => { :name => "Sheldon" },
-            "To" => "lenard@bigbangtheory.com")
+    expect(subject.new(templated_message).run).to eq({
+                                                         "From" => "sheldon@bigbangtheory.com",
+                                                         "TemplateAlias" => "hello",
+                                                         "TemplateModel" => {:name => "Sheldon"},
+                                                         "To" => "lenard@bigbangtheory.com"})
   end
 
   context 'open tracking' do
@@ -345,7 +345,7 @@ describe Postmark::MailMessageConverter do
 
     it 'converts multiple metadata fields' do
       metadata = {}
-      10.times { |i| metadata["test#{i+1}"] = "t"*80 }
+      10.times {|i| metadata["test#{i + 1}"] = "t" * 80}
       msg = mail_html_message
       msg.metadata = metadata
       expect(subject.new(msg).run).to include('Metadata' => metadata)
@@ -353,27 +353,26 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'correctly decodes unicode in messages transfered as quoted-printable' do
-    subject.new(mail_message_quoted_printable).run.should \
-      include('TextBody' => 'Он здесь бывал: еще не в галифе.')
+    expect(subject.new(mail_message_quoted_printable).run).to include('TextBody' => 'Он здесь бывал: еще не в галифе.')
   end
 
   it 'correctly decodes unicode in multipart quoted-printable messages' do
-    subject.new(multipart_message_quoted_printable).run.should \
-      include('TextBody' => 'Загадочное послание.',
-              'HtmlBody' => '<b>Загадочное послание.</b>')
+    expect(subject.new(multipart_message_quoted_printable).run).to include(
+                                                                       'TextBody' => 'Загадочное послание.',
+                                                                       'HtmlBody' => '<b>Загадочное послание.</b>')
   end
 
   context 'when bcc is empty' do
     it 'excludes bcc from message' do
       mail_message.bcc = nil
-      mail_message.to_postmark_hash.keys.should_not include('Bcc')
+      expect(mail_message.to_postmark_hash.keys).not_to include('Bcc')
     end
   end
 
   context 'when cc is empty' do
     it 'excludes cc from message' do
       mail_message.cc = nil
-      mail_message.to_postmark_hash.keys.should_not include('Cc')
+      expect(mail_message.to_postmark_hash.keys).not_to include('Cc')
     end
   end
 

@@ -26,37 +26,37 @@ describe Postmark do
   end
 
   context "attr readers" do
-    it { should respond_to(:secure) }
-    it { should respond_to(:api_key) }
-    it { should respond_to(:api_token) }
-    it { should respond_to(:proxy_host) }
-    it { should respond_to(:proxy_port) }
-    it { should respond_to(:proxy_user) }
-    it { should respond_to(:proxy_pass) }
-    it { should respond_to(:host) }
-    it { should respond_to(:port) }
-    it { should respond_to(:path_prefix) }
-    it { should respond_to(:http_open_timeout) }
-    it { should respond_to(:http_read_timeout) }
-    it { should respond_to(:max_retries) }
+    it { expect(subject).to respond_to(:secure) }
+    it { expect(subject).to respond_to(:api_key) }
+    it { expect(subject).to respond_to(:api_token) }
+    it { expect(subject).to respond_to(:proxy_host) }
+    it { expect(subject).to respond_to(:proxy_port) }
+    it { expect(subject).to respond_to(:proxy_user) }
+    it { expect(subject).to respond_to(:proxy_pass) }
+    it { expect(subject).to respond_to(:host) }
+    it { expect(subject).to respond_to(:port) }
+    it { expect(subject).to respond_to(:path_prefix) }
+    it { expect(subject).to respond_to(:http_open_timeout) }
+    it { expect(subject).to respond_to(:http_read_timeout) }
+    it { expect(subject).to respond_to(:max_retries) }
   end
 
   context "attr writers" do
-    it { should respond_to(:secure=) }
-    it { should respond_to(:api_key=) }
-    it { should respond_to(:api_token=) }
-    it { should respond_to(:proxy_host=) }
-    it { should respond_to(:proxy_port=) }
-    it { should respond_to(:proxy_user=) }
-    it { should respond_to(:proxy_pass=) }
-    it { should respond_to(:host=) }
-    it { should respond_to(:port=) }
-    it { should respond_to(:path_prefix=) }
-    it { should respond_to(:http_open_timeout=) }
-    it { should respond_to(:http_read_timeout=) }
-    it { should respond_to(:max_retries=) }
-    it { should respond_to(:response_parser_class=) }
-    it { should respond_to(:api_client=) }
+    it { expect(subject).to respond_to(:secure=) }
+    it { expect(subject).to respond_to(:api_key=) }
+    it { expect(subject).to respond_to(:api_token=) }
+    it { expect(subject).to respond_to(:proxy_host=) }
+    it { expect(subject).to respond_to(:proxy_port=) }
+    it { expect(subject).to respond_to(:proxy_user=) }
+    it { expect(subject).to respond_to(:proxy_pass=) }
+    it { expect(subject).to respond_to(:host=) }
+    it { expect(subject).to respond_to(:port=) }
+    it { expect(subject).to respond_to(:path_prefix=) }
+    it { expect(subject).to respond_to(:http_open_timeout=) }
+    it { expect(subject).to respond_to(:http_read_timeout=) }
+    it { expect(subject).to respond_to(:max_retries=) }
+    it { expect(subject).to respond_to(:response_parser_class=) }
+    it { expect(subject).to respond_to(:api_client=) }
   end
 
   describe ".response_parser_class" do
@@ -66,12 +66,12 @@ describe Postmark do
     end
 
     it "returns :ActiveSupport when ActiveSupport::JSON is available" do
-      subject.response_parser_class.should == :ActiveSupport
+      expect(subject.response_parser_class).to eq :ActiveSupport
     end
 
     it "returns :Json when ActiveSupport::JSON is not available" do
       hide_const("ActiveSupport::JSON")
-      subject.response_parser_class.should == :Json
+      expect(subject.response_parser_class).to eq :Json
     end
 
   end
@@ -91,7 +91,7 @@ describe Postmark do
 
       it 'returns the existing instance' do
         subject.instance_variable_set(:@api_client, api_client)
-        subject.api_client.should == api_client
+        expect(subject.api_client).to eq api_client
       end
 
     end
@@ -111,7 +111,7 @@ describe Postmark do
                                  :path_prefix => path_prefix,
                                  :max_retries => max_retries).
                             and_return(api_client)
-        subject.api_client.should == api_client
+        expect(subject.api_client).to eq api_client
       end
 
     end

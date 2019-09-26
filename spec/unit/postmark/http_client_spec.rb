@@ -11,24 +11,24 @@ describe Postmark::HttpClient do
   subject { http_client }
 
   context "attr writers" do
-    it { should respond_to(:api_token=) }
-    it { should respond_to(:api_key=) }
+    it { expect(subject).to respond_to(:api_token=) }
+    it { expect(subject).to respond_to(:api_key=) }
   end
 
   context "attr readers" do
-    it { should respond_to(:http) }
-    it { should respond_to(:secure) }
-    it { should respond_to(:api_token) }
-    it { should respond_to(:api_key) }
-    it { should respond_to(:proxy_host) }
-    it { should respond_to(:proxy_port) }
-    it { should respond_to(:proxy_user) }
-    it { should respond_to(:proxy_pass) }
-    it { should respond_to(:host) }
-    it { should respond_to(:port) }
-    it { should respond_to(:path_prefix) }
-    it { should respond_to(:http_open_timeout) }
-    it { should respond_to(:http_read_timeout) }
+    it { expect(subject).to respond_to(:http) }
+    it { expect(subject).to respond_to(:secure) }
+    it { expect(subject).to respond_to(:api_token) }
+    it { expect(subject).to respond_to(:api_key) }
+    it { expect(subject).to respond_to(:proxy_host) }
+    it { expect(subject).to respond_to(:proxy_port) }
+    it { expect(subject).to respond_to(:proxy_user) }
+    it { expect(subject).to respond_to(:proxy_pass) }
+    it { expect(subject).to respond_to(:host) }
+    it { expect(subject).to respond_to(:port) }
+    it { expect(subject).to respond_to(:path_prefix) }
+    it { expect(subject).to respond_to(:http_open_timeout) }
+    it { expect(subject).to respond_to(:http_read_timeout) }
   end
 
   context "when it is created without options" do
@@ -43,7 +43,7 @@ describe Postmark::HttpClient do
 
     it 'uses TLS encryption', :skip_ruby_version => ['1.8.7'] do
       http_client = subject.http
-      http_client.ssl_version.should == :TLSv1
+      expect(http_client.ssl_version).to eq :TLSv1
     end
   end
 
@@ -110,14 +110,12 @@ describe Postmark::HttpClient do
     end
 
     it "raises a custom error when API token authorization fails" do
-      FakeWeb.register_uri(:post, target_url, :body => response_body(401),
-                                              :status => [ "401", "Unauthorized" ])
+      FakeWeb.register_uri(:post, target_url, :body => response_body(401), :status => [ "401", "Unauthorized" ])
       expect { subject.post(target_path) }.to raise_error Postmark::InvalidApiKeyError
     end
 
     it "raises a custom error when sent JSON was not valid" do
-      FakeWeb.register_uri(:post, target_url, :body => response_body(422),
-                                              :status => [ "422", "Invalid" ])
+      FakeWeb.register_uri(:post, target_url, :body => response_body(422), :status => [ "422", "Invalid" ])
       expect { subject.post(target_path) }.to raise_error Postmark::InvalidMessageError
     end
 
@@ -147,18 +145,16 @@ describe Postmark::HttpClient do
     it "sends a GET request to provided URI" do
       FakeWeb.register_uri(:get, target_url, :body => response_body(200))
       subject.get(target_path)
-      FakeWeb.should have_requested(:get, target_url)
+      expect(FakeWeb).to have_requested(:get, target_url)
     end
 
     it "raises a custom error when API token authorization fails" do
-      FakeWeb.register_uri(:get, target_url, :body => response_body(401),
-                                              :status => [ "401", "Unauthorized" ])
+      FakeWeb.register_uri(:get, target_url, :body => response_body(401), :status => [ "401", "Unauthorized" ])
       expect { subject.get(target_path) }.to raise_error Postmark::InvalidApiKeyError
     end
 
     it "raises a custom error when sent JSON was not valid" do
-      FakeWeb.register_uri(:get, target_url, :body => response_body(422),
-                                             :status => [ "422", "Invalid" ])
+      FakeWeb.register_uri(:get, target_url, :body => response_body(422), :status => [ "422", "Invalid" ])
       expect { subject.get(target_path) }.to raise_error Postmark::InvalidMessageError
     end
 
@@ -188,7 +184,7 @@ describe Postmark::HttpClient do
     it "sends a PUT request to provided URI" do
       FakeWeb.register_uri(:put, target_url, :body => response_body(200))
       subject.put(target_path)
-      FakeWeb.should have_requested(:put, target_url)
+      expect(FakeWeb).to have_requested(:put, target_url)
     end
 
     it "raises a custom error when API token authorization fails" do

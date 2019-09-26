@@ -6,8 +6,8 @@ describe Postmark::Json do
   shared_examples "json parser" do
     it 'encodes and decodes data correctly' do
       hash = Postmark::Json.decode(Postmark::Json.encode(data))
-      hash.should have_key("bar")
-      hash.should have_key("foo")
+      expect(hash).to have_key("bar")
+      expect(hash).to have_key("foo")
     end
   end
 

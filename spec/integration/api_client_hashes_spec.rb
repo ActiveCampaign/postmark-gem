@@ -42,7 +42,7 @@ describe "Sending messages as Ruby hashes with Postmark::ApiClient" do
 
   context "message by message" do
     it 'delivers a plain text message' do
-      api_client.deliver(message).should have_key(:message_id)
+      expect(api_client.deliver(message)).to have_key(:message_id)
     end
 
     it 'updates a message object with Message-ID' do
