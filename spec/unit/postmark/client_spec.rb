@@ -1,13 +1,10 @@
 require 'spec_helper'
 
 describe Postmark::Client do
-
   subject { Postmark::Client.new('abcd-efgh') }
 
   describe 'instance' do
-
     describe '#find_each' do
-
       let(:path) { 'resources' }
       let(:name) { 'Resources' }
       let(:response) {
@@ -44,9 +41,6 @@ describe Postmark::Client do
             to receive(:get).exactly(5).times.and_return(response)
         expect(subject.find_each(path, name, :count => 2).count).to eq(10)
       end
-
     end
-
   end
-
 end

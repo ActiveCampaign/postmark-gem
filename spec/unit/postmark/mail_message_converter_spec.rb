@@ -2,7 +2,6 @@
 require 'spec_helper'
 
 describe Postmark::MailMessageConverter do
-
   subject {Postmark::MailMessageConverter}
 
   let(:mail_message) do
@@ -375,5 +374,4 @@ describe Postmark::MailMessageConverter do
       expect(mail_message.to_postmark_hash.keys).not_to include('Cc')
     end
   end
-
 end

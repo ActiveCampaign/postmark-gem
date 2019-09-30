@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Postmark::HttpClient do
 
   def response_body(status, message = "")
-    body = {"ErrorCode" => status, "Message" => message}.to_json
+    {"ErrorCode" => status, "Message" => message}.to_json
   end
 
   let(:api_token) { "provided-postmark-api-token" }
@@ -218,6 +218,5 @@ describe Postmark::HttpClient do
                                              :status => [ "485", "Custom HTTP response status" ])
       expect { subject.put(target_path) }.to raise_error Postmark::UnknownError
     end
-    
   end
 end

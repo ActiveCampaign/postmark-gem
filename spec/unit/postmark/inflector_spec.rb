@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Postmark::Inflector do
-
   describe ".to_postmark" do
     it 'converts rubyish underscored format to camel cased symbols accepted by the Postmark API' do
       expect(subject.to_postmark(:foo_bar)).to eq 'FooBar'

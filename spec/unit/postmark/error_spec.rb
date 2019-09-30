@@ -1,47 +1,47 @@
 require 'spec_helper'
 
 describe(Postmark::Error) do
-  it { is_expected.to be_a(StandardError) }
+  it {is_expected.to be_a(StandardError)}
 end
 
 describe(Postmark::HttpClientError) do
-  it { is_expected.to be_a(Postmark::Error) }
-  it { expect(subject.retry?).to be true }
+  it {is_expected.to be_a(Postmark::Error)}
+  it {expect(subject.retry?).to be true}
 end
 
 describe(Postmark::HttpServerError) do
-  it { is_expected.to be_a(Postmark::Error) }
+  it {is_expected.to be_a(Postmark::Error)}
 
   describe '.build' do
     context 'picks an appropriate subclass for code' do
-      subject { Postmark::HttpServerError.build(code, Postmark::Json.encode({})) }
+      subject {Postmark::HttpServerError.build(code, Postmark::Json.encode({}))}
 
       context '401' do
-        let(:code) { '401' }
+        let(:code) {'401'}
 
-        it { is_expected.to be_a(Postmark::InvalidApiKeyError) }
-        its(:status_code) { is_expected.to eq 401 }
+        it {is_expected.to be_a(Postmark::InvalidApiKeyError)}
+        its(:status_code) {is_expected.to eq 401}
       end
 
       context '422' do
-        let(:code) { '422' }
+        let(:code) {'422'}
 
-        it { is_expected.to be_a(Postmark::ApiInputError) }
-        its(:status_code) { is_expected.to eq 422 }
+        it {is_expected.to be_a(Postmark::ApiInputError)}
+        its(:status_code) {is_expected.to eq 422}
       end
 
       context '500' do
-        let(:code) { '500' }
+        let(:code) {'500'}
 
-        it { is_expected.to be_a(Postmark::InternalServerError) }
-        its(:status_code) { is_expected.to eq 500 }
+        it {is_expected.to be_a(Postmark::InternalServerError)}
+        its(:status_code) {is_expected.to eq 500}
       end
 
       context 'others' do
-        let(:code) { '999' }
+        let(:code) {'999'}
 
-        it { is_expected.to be_a(Postmark::UnexpectedHttpResponseError) }
-        its(:status_code) { is_expected.to eq code.to_i }
+        it {is_expected.to be_a(Postmark::UnexpectedHttpResponseError)}
+        its(:status_code) {is_expected.to eq code.to_i}
       end
     end
   end
@@ -62,7 +62,7 @@ describe(Postmark::HttpServerError) do
 
   describe '#message ' do
     it 'uses "Message" field on postmark response if available' do
-      data = { 'Message' => 'Postmark error message' }
+      data = {'Message' => 'Postmark error message'}
       error = Postmark::HttpServerError.new(502, Postmark::Json.encode(data), data)
       expect(error.message).to eq data['Message']
     end
@@ -77,28 +77,28 @@ end
 describe(Postmark::ApiInputError) do
   describe '.build' do
     context 'picks an appropriate subclass for error code' do
-      let(:response) { { 'ErrorCode' => code } }
+      let(:response) {{'ErrorCode' => code}}
 
       subject do
         Postmark::ApiInputError.build(Postmark::Json.encode(response), response)
       end
 
       shared_examples_for 'api input error' do
-        its(:status_code) { is_expected. to eq 422 }
-        it { expect(subject.retry?).to be false }
-        it { is_expected.to be_a(Postmark::ApiInputError) }
-        it { is_expected.to be_a(Postmark::HttpServerError) }
+        its(:status_code) {is_expected.to eq 422}
+        it {expect(subject.retry?).to be false}
+        it {is_expected.to be_a(Postmark::ApiInputError)}
+        it {is_expected.to be_a(Postmark::HttpServerError)}
       end
 
       context '406' do
-        let(:code) { Postmark::ApiInputError::INACTIVE_RECIPIENT }
+        let(:code) {Postmark::ApiInputError::INACTIVE_RECIPIENT}
 
-        it { is_expected.to be_a(Postmark::InactiveRecipientError) }
+        it {is_expected.to be_a(Postmark::InactiveRecipientError)}
         it_behaves_like 'api input error'
       end
 
       context 'others' do
-        let(:code) { '9999' }
+        let(:code) {'9999'}
 
         it_behaves_like 'api input error'
       end
@@ -107,7 +107,7 @@ describe(Postmark::ApiInputError) do
 end
 
 describe Postmark::InvalidTemplateError do
-  subject(:error) { Postmark::InvalidTemplateError.new(:foo => 'bar') }
+  subject(:error) {Postmark::InvalidTemplateError.new(:foo => 'bar')}
 
   it 'is created with a response' do
     expect(error.message).to start_with('Failed to render the template.')
@@ -116,8 +116,8 @@ describe Postmark::InvalidTemplateError do
 end
 
 describe(Postmark::TimeoutError) do
-  it { is_expected.to be_a(Postmark::Error) }
-  it { expect(subject.retry?).to be true }
+  it {is_expected.to be_a(Postmark::Error)}
+  it {expect(subject.retry?).to be true}
 end
 
 describe(Postmark::UnknownMessageType) do
@@ -127,19 +127,19 @@ describe(Postmark::UnknownMessageType) do
 end
 
 describe(Postmark::InvalidApiKeyError) do
-  it { is_expected.to be_a(Postmark::Error) }
+  it {is_expected.to be_a(Postmark::Error)}
 end
 
 describe(Postmark::InternalServerError) do
-  it { is_expected.to be_a(Postmark::Error) }
+  it {is_expected.to be_a(Postmark::Error)}
 end
 
 describe(Postmark::UnexpectedHttpResponseError) do
-  it { is_expected.to be_a(Postmark::Error) }
+  it {is_expected.to be_a(Postmark::Error)}
 end
 
 describe(Postmark::MailAdapterError) do
-  it { is_expected.to be_a(Postmark::Error) }
+  it {is_expected.to be_a(Postmark::Error)}
 end
 
 describe(Postmark::InactiveRecipientError) do
@@ -148,7 +148,7 @@ describe(Postmark::InactiveRecipientError) do
       %w(nothing@wildbit.com noth.ing+2@wildbit.com noth.ing+2-1@wildbit.com)
     end
 
-    subject { Postmark::InactiveRecipientError.parse_recipients(message) }
+    subject {Postmark::InactiveRecipientError.parse_recipients(message)}
 
     context '1/1 inactive' do
       let(:message) do
@@ -158,7 +158,7 @@ describe(Postmark::InactiveRecipientError) do
         'bounce or a spam complaint.'
       end
 
-      it { is_expected.to eq(recipients.take(1)) }
+      it {is_expected.to eq(recipients.take(1))}
     end
 
     context 'i/n inactive, n > 1, i < n' do
@@ -168,7 +168,7 @@ describe(Postmark::InactiveRecipientError) do
         'have generated a hard bounce or a spam complaint.'
       end
 
-      it { is_expected.to eq(recipients.take(2)) }
+      it {is_expected.to eq(recipients.take(2))}
     end
 
     context 'n/n inactive, n > 1' do
@@ -178,25 +178,25 @@ describe(Postmark::InactiveRecipientError) do
         'Inactive recipients are ones that have generated a hard bounce or a spam complaint.'
       end
 
-      it { is_expected.to eq(recipients) }
+      it {is_expected.to eq(recipients)}
     end
 
     context 'unknown error format' do
-      let(:message) { recipients.join(', ') }
+      let(:message) {recipients.join(', ')}
 
-      it { is_expected.to eq([]) }
+      it {is_expected.to eq([])}
     end
   end
 
   describe '.new' do
-    let(:address) { 'user@example.org' }
-    let(:response) { { 'Message' => message } }
+    let(:address) {'user@example.org'}
+    let(:response) {{'Message' => message}}
 
     subject do
       Postmark::InactiveRecipientError.new(
-        Postmark::ApiInputError::INACTIVE_RECIPIENT,
-        Postmark::Json.encode(response),
-        response)
+          Postmark::ApiInputError::INACTIVE_RECIPIENT,
+          Postmark::Json.encode(response),
+          response)
     end
 
     let(:message) do

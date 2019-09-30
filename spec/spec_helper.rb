@@ -49,10 +49,3 @@ RSpec.configure do |config|
     Postmark.response_parser_class = nil
   end
 end
-
-# define custom matchers
-RSpec::Matchers.define :be_serialized_to do |json|
-  match do |mail_message|
-    Postmark.convert_message_to_options_hash(mail_message) == JSON.parse(json)
-  end
-end

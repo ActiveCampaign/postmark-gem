@@ -42,21 +42,21 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
     end
   end
 
-  context "message by message" do
-    it 'delivers a plain text message' do
+  context "single message" do
+    it 'plain text message' do
       expect(api_client.deliver_message(message)).to have_key(:message_id)
     end
 
-    it 'updates a message object with Message-ID' do
+    it 'message with attachment' do
+      expect(api_client.deliver_message(message_with_attachment)).to have_key(:message_id)
+    end
+
+    it 'response Message-ID' do
       expect(api_client.deliver_message(message)[:message_id]).to be =~ postmark_message_id_format
     end
 
-    it 'returns full Postmark response' do
+    it 'response is Hash' do
       expect(api_client.deliver_message(message)).to be_a Hash
-    end
-
-    it 'delivers a message with attachment' do
-      expect(api_client.deliver_message(message_with_attachment)).to have_key(:message_id)
     end
 
     it 'fails to deliver a message without body' do
@@ -68,37 +68,37 @@ describe "Sending Mail::Messages with Postmark::ApiClient" do
     end
   end
 
-  context "in batches" do
-    it 'delivers a batch of valid Mail::Message objects' do
+  context "batch message" do
+    it 'response - valid Mail::Message objects' do
       expect { api_client.deliver_messages(valid_messages) }.
           to change{valid_messages.all? { |m| m.delivered? }}.to true
     end
 
-    it 'updates delivered messages with X-PM-Message-Ids' do
+    it 'response - valid X-PM-Message-Ids' do
       api_client.deliver_messages(valid_messages)
       expect(valid_messages.all? { |m| m['X-PM-Message-Id'].to_s =~ postmark_message_id_format }).to be true
     end
 
-    it 'updates delivered messages with related Postmark responses' do
+    it 'response - valid response objects' do
       api_client.deliver_messages(valid_messages)
       expect(valid_messages.all? { |m| m.postmark_response["To"] == m.to[0] }).to be true
     end
 
-    it 'returns as many responses as many messages were sent' do
+    it 'response - message responses count' do
       expect(api_client.deliver_messages(valid_messages).count).to eq valid_messages.count
     end
 
-    context "given custom max_batch_size" do
+    context "custom max_batch_size" do
       before do
         api_client.max_batch_size = 1
       end
 
-      it 'updates delivered messages with related Postmark responses' do
+      it 'response - valid response objects' do
         api_client.deliver_messages(valid_messages)
         expect(valid_messages.all? { |m| m.postmark_response["To"] == m.to[0] }).to be true
       end
 
-      it 'returns as many responses as many messages were sent' do
+      it 'response - message responses count' do
         expect(api_client.deliver_messages(valid_messages).count).to eq valid_messages.count
       end
     end

@@ -32,3 +32,9 @@ end
 RSpec::Matchers.define :json_representation_of do |x|
   match { |actual| Postmark::Json.decode(actual) == x }
 end
+
+RSpec::Matchers.define :be_serialized_to do |json|
+  match do |mail_message|
+    Postmark.convert_message_to_options_hash(mail_message) == JSON.parse(json)
+  end
+end

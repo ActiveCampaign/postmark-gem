@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Postmark::AccountApiClient do
-
   let(:api_token) { 'abcd-efgh' }
   subject { Postmark::AccountApiClient}
 
@@ -14,7 +13,6 @@ describe Postmark::AccountApiClient do
   end
 
   context 'instance' do
-
     subject { Postmark::AccountApiClient.new(api_token) }
 
     it 'uses the auth header specific for Account API' do
@@ -23,7 +21,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#senders' do
-
       let(:response) {
         {
           'TotalCount' => 10, 'SenderSignatures' => [{}, {}]
@@ -44,11 +41,9 @@ describe Postmark::AccountApiClient do
             with('senders', an_instance_of(Hash)).and_return(response)
         subject.senders.take(1000)
       end
-
     end
 
     describe '#get_senders' do
-
       let(:response) {
         {
           "TotalCount" => 1,
@@ -86,11 +81,9 @@ describe Postmark::AccountApiClient do
             and_return(response)
         subject.get_senders(:offset => 10, :count => 42)
       end
-
     end
 
     describe '#get_senders_count' do
-
       let(:response) { {'TotalCount' => 42} }
 
       it 'is aliased as #get_signatures_count' do
@@ -103,11 +96,9 @@ describe Postmark::AccountApiClient do
             with('senders', an_instance_of(Hash)).and_return(response)
         expect(subject.get_senders_count).to eq(42)
       end
-
     end
 
     describe '#get_sender' do
-
       let(:response) {
         {
           "Domain" => "example.com",
@@ -137,7 +128,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#create_sender' do
-
       let(:response) {
         {
           "Domain" => "example.com",
@@ -173,7 +163,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#update_sender' do
-
       let(:response) {
         {
           "Domain" => "example.com",
@@ -207,11 +196,9 @@ describe Postmark::AccountApiClient do
         keys = subject.update_sender(42, :foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#resend_sender_confirmation' do
-
       let(:response) {
         {
           "ErrorCode" => 0,
@@ -235,11 +222,9 @@ describe Postmark::AccountApiClient do
         keys = subject.resend_sender_confirmation(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#verified_sender_spf?' do
-
       let(:response) { {"SPFVerified" => true} }
       let(:false_response) { {"SPFVerified" => false} }
 
@@ -262,11 +247,9 @@ describe Postmark::AccountApiClient do
         allow(subject.http_client).to receive(:post).and_return(response)
         expect(subject.verified_sender_spf?(42)).to be true
       end
-
     end
 
     describe '#request_new_sender_dkim' do
-
       let(:response) {
         {
           "Domain" => "example.com",
@@ -294,11 +277,9 @@ describe Postmark::AccountApiClient do
         keys = subject.request_new_sender_dkim(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#delete_sender' do
-
       let(:response) {
         {
           "ErrorCode" => 0,
@@ -321,16 +302,10 @@ describe Postmark::AccountApiClient do
         keys = subject.delete_sender(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
     
     describe '#domains' do
-
-      let(:response) {
-        {
-          'TotalCount' => 10, 'Domains' => [{}, {}]
-        }
-      }
+      let(:response) {{'TotalCount' => 10, 'Domains' => [{}, {}]}}
 
       it 'returns an enumerator' do
         expect(subject.domains).to be_kind_of(Enumerable)
@@ -379,7 +354,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#get_domains_count' do
-
       let(:response) { {'TotalCount' => 42} }
 
       it 'returns a total number of domains' do
@@ -387,11 +361,9 @@ describe Postmark::AccountApiClient do
             with('domains', an_instance_of(Hash)).and_return(response)
         expect(subject.get_domains_count).to eq(42)
       end
-
     end
 
     describe '#get_domain' do
-
       let(:response) {
         {
           "Name" => "example.com",
@@ -413,7 +385,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#create_domain' do
-
       let(:response) {
         {
           "Name" => "example.com",
@@ -441,7 +412,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#update_domain' do
-
       let(:response) {
         {
           "Name" => "example.com",
@@ -467,11 +437,9 @@ describe Postmark::AccountApiClient do
         keys = subject.update_domain(42, :foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#verified_domain_spf?' do
-
       let(:response) { {"SPFVerified" => true} }
       let(:false_response) { {"SPFVerified" => false} }
 
@@ -490,11 +458,9 @@ describe Postmark::AccountApiClient do
         allow(subject.http_client).to receive(:post).and_return(response)
         expect(subject.verified_domain_spf?(42)).to be true
       end
-
     end
 
     describe '#rotate_domain_dkim' do
-
       let(:response) {
         {
           "Name" => "example.com",
@@ -513,11 +479,9 @@ describe Postmark::AccountApiClient do
         keys = subject.rotate_domain_dkim(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#delete_domain' do
-
       let(:response) {
         {
           "ErrorCode" => 0,
@@ -536,11 +500,9 @@ describe Postmark::AccountApiClient do
         keys = subject.delete_sender(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#servers' do
-
       let(:response) { {'TotalCount' => 10, 'Servers' => [{}, {}]} }
 
       it 'returns an enumerator' do
@@ -552,11 +514,9 @@ describe Postmark::AccountApiClient do
             with('servers', an_instance_of(Hash)).and_return(response)
         subject.servers.take(100)
       end
-
     end
 
     describe '#get_servers' do
-
       let(:response) {
         {
           'TotalCount' => 1,
@@ -602,7 +562,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#get_server' do
-
       let(:response) {
         {
           "ID" => 7438,
@@ -633,11 +592,9 @@ describe Postmark::AccountApiClient do
         keys = subject.get_server(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#get_servers_count' do
-
       let(:response) { {'TotalCount' => 42} }
 
       it 'returns a total number of servers' do
@@ -649,7 +606,6 @@ describe Postmark::AccountApiClient do
     end
 
     describe '#create_server' do
-
       let(:response) {
         {
           "Name" => "Staging Testing",
@@ -680,7 +636,6 @@ describe Postmark::AccountApiClient do
         keys = subject.create_server(:foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#update_server' do
@@ -722,11 +677,9 @@ describe Postmark::AccountApiClient do
         keys = subject.update_server(42, :foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#delete_server' do
-
       let(:response) {
         {
           "ErrorCode" => "0",
@@ -745,7 +698,6 @@ describe Postmark::AccountApiClient do
         keys = subject.delete_server(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
-
     end
 
     describe '#push_templates' do
@@ -777,5 +729,4 @@ describe Postmark::AccountApiClient do
     end
 
   end
-
 end
