@@ -311,6 +311,32 @@ module Postmark
       response
     end
 
+    def get_webhooks(options = {})
+      options = HashHelper.to_postmark(options)
+      _, batch = load_batch('webhooks', 'Webhooks', options)
+      batch
+    end
+
+    def get_webhook(id)
+      format_response http_client.get("webhooks/#{id}")
+    end
+
+    def create_webhook(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+
+      format_response http_client.post('webhooks', data)
+    end
+
+    def update_webhook(id, attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+
+      format_response http_client.put("webhooks/#{id}", data)
+    end
+
+    def delete_webhook(id)
+      format_response http_client.delete("webhooks/#{id}")
+    end
+
     protected
 
     def in_batches(messages)
@@ -339,6 +365,5 @@ module Postmark
       path = options.delete(:inbound) ? 'messages/inbound' : 'messages/outbound'
       [path, messages_key, options]
     end
-
   end
 end
