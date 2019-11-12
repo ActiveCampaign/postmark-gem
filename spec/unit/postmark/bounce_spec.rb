@@ -120,14 +120,4 @@ describe Postmark::Bounce do
       expect(Postmark::Bounce.all.count).to eq(3)
     end
   end
-
-  describe ".tags" do
-    let(:api_client) { Postmark.api_client }
-    let(:tags) { ["tag1", "tag2"] }
-
-    it "calls #get_bounced_tags on shared api_client instance" do
-      expect(api_client).to receive(:get_bounced_tags) { tags }
-      expect(Postmark::Bounce.tags).to eq tags
-    end
-  end
 end

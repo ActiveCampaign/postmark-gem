@@ -54,10 +54,6 @@ module Postmark
           Bounce.new(bounce_json)
         end
       end
-
-      def tags
-        Postmark.api_client.get_bounced_tags
-      end
     end
 
   end

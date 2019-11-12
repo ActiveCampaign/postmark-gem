@@ -398,15 +398,6 @@ describe Postmark::ApiClient do
     end
   end
 
-  describe "#get_bounced_tags" do
-    let(:http_client) {subject.http_client}
-
-    it 'requests data at /bounces/tags' do
-      expect(http_client).to receive(:get).with("bounces/tags")
-      subject.get_bounced_tags
-    end
-  end
-
   describe "#get_bounce" do
     let(:http_client) {subject.http_client}
     let(:id) {42}

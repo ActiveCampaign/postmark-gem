@@ -135,10 +135,6 @@ module Postmark
       batch
     end
 
-    def get_bounced_tags
-      http_client.get("bounces/tags")
-    end
-
     def get_bounce(id)
       format_response http_client.get("bounces/#{id}")
     end
