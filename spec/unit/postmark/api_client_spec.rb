@@ -538,22 +538,6 @@ describe Postmark::ApiClient do
   describe '#create_trigger' do
     let(:http_client) {subject.http_client}
 
-    context 'tags' do
-      let(:options) {{:foo => 'bar'}}
-      let(:response) {{'Foo' => 'Bar'}}
-
-      it 'performs a POST request to /triggers/tags with given options' do
-        allow(http_client).to receive(:post).with('triggers/tags',
-                                                  {'Foo' => 'bar'}.to_json)
-        subject.create_trigger(:tags, options)
-      end
-
-      it 'symbolizes response keys' do
-        allow(http_client).to receive(:post).and_return(response)
-        expect(subject.create_trigger(:tags, options)).to eq(:foo => 'Bar')
-      end
-    end
-
     context 'inbound rules' do
       let(:options) {{:rule => 'example.com'}}
       let(:response) {{'Rule' => 'example.com'}}
@@ -586,23 +570,6 @@ describe Postmark::ApiClient do
     end
   end
 
-  describe '#update_trigger' do
-    let(:http_client) {subject.http_client}
-    let(:options) {{:foo => 'bar'}}
-    let(:id) {42}
-
-    it 'performs a PUT request to /triggers/tags/:id' do
-      allow(http_client).to receive(:put).with("triggers/tags/#{id}",
-                                               {'Foo' => 'bar'}.to_json)
-      subject.update_trigger(:tags, id, options)
-    end
-
-    it 'symbolizes response keys' do
-      allow(http_client).to receive(:put).and_return('Foo' => 'Bar')
-      expect(subject.update_trigger(:tags, id, options)).to eq(:foo => 'Bar')
-    end
-  end
-
   describe '#delete_trigger' do
     let(:http_client) {subject.http_client}
 
@@ -619,7 +586,7 @@ describe Postmark::ApiClient do
         expect(subject.delete_trigger(:tags, id)).to eq(:foo => 'Bar')
       end
     end
-    
+
     context 'inbound rules' do
       let(:id) {42}
 
@@ -638,16 +605,6 @@ describe Postmark::ApiClient do
   describe '#get_triggers' do
     let(:http_client) {subject.http_client}
     let(:options) {{:offset => 5}}
-
-    context 'tags' do
-      let(:response) {{'Tags' => [], 'TotalCount' => 0}}
-
-      it 'performs a GET request to /triggers/tags' do
-        allow(http_client).to receive(:get).with('triggers/tags', options) {response}
-        expect(subject.get_triggers(:tags, options)).to be_an(Array)
-        expect(subject.get_triggers(:tags, options).count).to be_zero
-      end
-    end
 
     context 'inbound rules' do
       let(:response) {{'InboundRules' => [], 'TotalCount' => 0}}

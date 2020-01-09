@@ -14,23 +14,6 @@ describe 'Accessing server resources using the API' do
     }
   }
 
-  context 'Triggers API' do
-    let(:unique_token) {rand(36 ** 32).to_s(36)}
-
-    it 'can be used to manage tag triggers via the API' do
-      skip("Endpoint removed")
-      trigger = api_client.create_trigger(:tags, :match_name => "gemtest_#{unique_token}", :track_opens => true)
-      api_client.update_trigger(:tags, trigger[:id], :match_name => "pre_#{trigger[:match_name]}")
-      updated = api_client.get_trigger(:tags, trigger[:id])
-
-      expect(updated[:id]).to eq(trigger[:id])
-      expect(updated[:match_name]).not_to eq(trigger[:id])
-      expect(api_client.triggers(:tags).map {|t| t[:id]}).to include(trigger[:id])
-
-      api_client.delete_trigger(:tags, trigger[:id])
-    end
-  end
-
   context 'Messages API' do
     def with_retries(max_retries = 20, wait_seconds = 3)
       yield

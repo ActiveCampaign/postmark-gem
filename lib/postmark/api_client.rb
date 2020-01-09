@@ -197,11 +197,6 @@ module Postmark
       format_response http_client.get("triggers/#{type}/#{id}")
     end
 
-    def update_trigger(type, id, options)
-      data = serialize(HashHelper.to_postmark(options))
-      format_response http_client.put("triggers/#{type}/#{id}", data)
-    end
-
     def delete_trigger(type, id)
       type = Postmark::Inflector.to_postmark(type).downcase
       format_response http_client.delete("triggers/#{type}/#{id}")
