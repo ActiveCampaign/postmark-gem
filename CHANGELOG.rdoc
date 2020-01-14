@@ -1,5 +1,9 @@
 = Changelog
 
+== Unreleased
+
+* Change SSL version from `TLSv1` to `TLSv1_2`
+
 == 1.17.0
 
 * Update sent email message properly and not altering it's Message-ID with Postmark unique message id.
