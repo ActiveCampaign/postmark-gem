@@ -43,7 +43,7 @@ describe Postmark::HttpClient do
 
     it 'uses TLS encryption', :skip_ruby_version => ['1.8.7'] do
       http_client = subject.http
-      expect(http_client.ssl_version).to eq :TLSv1
+      expect(http_client.ssl_version).to eq :TLSv1_2
     end
   end
 
