@@ -18,6 +18,7 @@ describe 'Accessing server resources using the API' do
     let(:unique_token) {rand(36 ** 32).to_s(36)}
 
     it 'can be used to manage tag triggers via the API' do
+      skip("Endpoint removed")
       trigger = api_client.create_trigger(:tags, :match_name => "gemtest_#{unique_token}", :track_opens => true)
       api_client.update_trigger(:tags, trigger[:id], :match_name => "pre_#{trigger[:match_name]}")
       updated = api_client.get_trigger(:tags, trigger[:id])

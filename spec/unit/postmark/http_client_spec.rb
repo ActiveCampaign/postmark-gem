@@ -29,6 +29,7 @@ describe Postmark::HttpClient do
     it { expect(subject).to respond_to(:path_prefix) }
     it { expect(subject).to respond_to(:http_open_timeout) }
     it { expect(subject).to respond_to(:http_read_timeout) }
+    it { expect(subject).to respond_to(:http_ssl_version) }
   end
 
   context "when it is created without options" do
@@ -41,7 +42,7 @@ describe Postmark::HttpClient do
     its(:http_read_timeout) { is_expected.to eq 15 }
     its(:http_open_timeout) { is_expected.to eq 5 }
 
-    it 'uses TLS encryption', :skip_ruby_version => ['1.8.7'] do
+    it 'use default TLS encryption', :skip_ruby_version => ['1.8.7'] do
       http_client = subject.http
       expect(http_client.ssl_version).to eq :TLSv1
     end
@@ -58,6 +59,7 @@ describe Postmark::HttpClient do
     let(:path_prefix) { "/provided/path/prefix" }
     let(:http_open_timeout) { 42 }
     let(:http_read_timeout) { 42 }
+    let(:http_ssl_version) { :TLSv1_2}
 
     subject { Postmark::HttpClient.new(api_token,
                                        :secure => secure,
@@ -69,7 +71,8 @@ describe Postmark::HttpClient do
                                        :port => port,
                                        :path_prefix => path_prefix,
                                        :http_open_timeout => http_open_timeout,
-                                       :http_read_timeout => http_read_timeout) }
+                                       :http_read_timeout => http_read_timeout,
+                                       :http_ssl_version => http_ssl_version) }
 
     its(:api_token) { is_expected.to eq api_token }
     its(:api_key) { is_expected.to eq api_token }
@@ -83,6 +86,7 @@ describe Postmark::HttpClient do
     its(:path_prefix) { is_expected.to eq path_prefix }
     its(:http_open_timeout) { is_expected.to eq http_open_timeout }
     its(:http_read_timeout) { is_expected.to eq http_read_timeout }
+    its(:http_ssl_version) { is_expected.to eq http_ssl_version }
 
     it 'uses port 80 for plain HTTP connections' do
       expect(Postmark::HttpClient.new(api_token, :secure => false).port).to eq(80)

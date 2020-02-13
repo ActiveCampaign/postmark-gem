@@ -6,7 +6,9 @@ module Postmark
     attr_accessor :api_token
     attr_reader :http, :secure, :proxy_host, :proxy_port, :proxy_user,
                 :proxy_pass, :host, :port, :path_prefix,
-                :http_open_timeout, :http_read_timeout, :auth_header_name
+                :http_open_timeout, :http_read_timeout, :http_ssl_version,
+                :auth_header_name
+
     alias_method :api_key, :api_token
     alias_method :api_key=, :api_token=
 
@@ -16,7 +18,8 @@ module Postmark
       :secure => true,
       :path_prefix => '/',
       :http_read_timeout => 15,
-      :http_open_timeout => 5
+      :http_open_timeout => 5,
+      :http_ssl_version => :TLSv1
     }
 
     def initialize(api_token, options = {})
@@ -100,7 +103,7 @@ module Postmark
       http.read_timeout = self.http_read_timeout
       http.open_timeout = self.http_open_timeout
       http.use_ssl = !!self.secure
-      http.ssl_version = :TLSv1 if http.respond_to?(:ssl_version=)
+      http.ssl_version = self.http_ssl_version if http.respond_to?(:ssl_version=)
       http
     end
   end
