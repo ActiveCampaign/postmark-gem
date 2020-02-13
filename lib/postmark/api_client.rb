@@ -333,6 +333,33 @@ module Postmark
       format_response http_client.delete("webhooks/#{id}")
     end
 
+    def get_suppressions_dump(message_stream)
+      _, batch = load_batch("message-streams/#{message_stream}/suppressions/dump", 'Suppressions', {})
+      batch
+    end
+
+    def suppressions_dump(message_stream)
+      get_suppressions_dump(message_stream).each
+    end
+
+    def create_suppressions(message_stream, attributes = {})
+      suppressions = 'Suppressions'
+      data = serialize(suppressions => attributes.map { |e| {'EmailAddress' => e }})
+
+      _, batch = format_batch_response(http_client.post(
+          "message-streams/#{message_stream}/suppressions", data), suppressions)
+      batch
+    end
+
+    def delete_suppressions(message_stream, attributes = {})
+      suppressions = 'Suppressions'
+      data = serialize(suppressions => attributes.map { |e| {'EmailAddress' => e }})
+
+      _, batch = format_batch_response(http_client.post(
+          "message-streams/#{message_stream}/suppressions/delete", data), suppressions)
+      batch
+    end
+
     protected
 
     def in_batches(messages)
