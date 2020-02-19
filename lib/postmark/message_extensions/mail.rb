@@ -33,6 +33,15 @@ module Mail
       header['TRACK-OPENS'] = (!!val).to_s
     end
 
+    def message_stream=(val)
+      @message_stream=val
+    end
+
+    def message_stream(val = nil)
+      self.message_stream=(val) unless val.nil?
+      @message_stream
+    end
+
     def metadata(val = nil)
       if val
         @metadata = val

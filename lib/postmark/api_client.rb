@@ -346,8 +346,8 @@ module Postmark
       suppressions = 'Suppressions'
       data = serialize(suppressions => attributes.map { |e| {'EmailAddress' => e }})
 
-      _, batch = format_batch_response(http_client.post(
-          "message-streams/#{message_stream}/suppressions", data), suppressions)
+      request = http_client.post("message-streams/#{message_stream}/suppressions", data)
+      _, batch = format_batch_response(request, suppressions)
       batch
     end
 
@@ -355,8 +355,8 @@ module Postmark
       suppressions = 'Suppressions'
       data = serialize(suppressions => attributes.map { |e| {'EmailAddress' => e }})
 
-      _, batch = format_batch_response(http_client.post(
-          "message-streams/#{message_stream}/suppressions/delete", data), suppressions)
+      request = http_client.post("message-streams/#{message_stream}/suppressions/delete", data)
+      _, batch = format_batch_response(request, suppressions)
       batch
     end
 

@@ -34,7 +34,8 @@ module Postmark
         'TrackLinks' => (::Postmark::Inflector.to_postmark(@message.track_links) unless @message.track_links.empty?),
         'Metadata' => @message.metadata,
         'TemplateAlias' => @message.template_alias,
-        'TemplateModel' => @message.template_model
+        'TemplateModel' => @message.template_model,
+        'MessageStream' => (@message.message_stream unless @message.message_stream.nil?)
       }
     end
 
