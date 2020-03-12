@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.20.0
+
+* Removed deprecated trigger endpoints
+
 == 1.19.2
 
 Allow possibility to change TLS version for HTTP client.
