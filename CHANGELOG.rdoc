@@ -1,5 +1,21 @@
 = Changelog
 
+== 1.19.2
+
+Allow possibility to change TLS version for HTTP client.
+
+== 1.19.1
+
+Bounce tags endoint removed, since it's no longer supported by API.
+
+== 1.19.0
+
+Webhooks management support is added.
+
+== 1.18.0
+
+Custom headers with any type of character casing is supported now.
+
 == 1.17.0
 
 * Update sent email message properly and not altering it's Message-ID with Postmark unique message id.
