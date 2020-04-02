@@ -346,6 +346,21 @@ module Postmark
       format_response(http_client.patch("message-streams/#{id}", data))
     end
 
+    def dump_suppressions(stream_id, options = {})
+      _, batch = load_batch("message-streams/#{stream_id}/suppressions/dump", 'Suppressions', options)
+      batch
+    end
+
+    def create_suppressions(stream_id, email_addresses)
+      data = serialize(:Suppressions => Array(email_addresses).map { |e| HashHelper.to_postmark(:email_address => e) })
+      format_response(http_client.post("message-streams/#{stream_id}/suppressions", data))
+    end
+
+    def delete_suppressions(stream_id, email_addresses)
+      data = serialize(:Suppressions => Array(email_addresses).map { |e| HashHelper.to_postmark(:email_address => e) })
+      format_response(http_client.post("message-streams/#{stream_id}/suppressions/delete", data))
+    end
+
     protected
 
     def in_batches(messages)
