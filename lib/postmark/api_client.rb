@@ -332,6 +332,20 @@ module Postmark
       load_batch('message-streams', 'MessageStreams', options)
     end
 
+    def get_message_stream(id)
+      format_response(http_client.get("message-streams/#{id}"))
+    end
+
+    def create_message_stream(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+      format_response(http_client.post('message-streams', data))
+    end
+
+    def update_message_stream(id, attributes)
+      data = serialize(HashHelper.to_postmark(attributes))
+      format_response(http_client.patch("message-streams/#{id}", data))
+    end
+
     protected
 
     def in_batches(messages)
