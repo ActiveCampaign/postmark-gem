@@ -374,4 +374,16 @@ describe Postmark::MailMessageConverter do
       expect(mail_message.to_postmark_hash.keys).not_to include('Cc')
     end
   end
+
+  describe 'passing message stream' do
+    context 'when not set' do
+      specify { expect(mail_message.to_postmark_hash.keys).not_to include('MessageStream') }
+    end
+
+    context 'when set' do
+      before { mail_message.message_stream = 'weekly-newsletter' }
+
+      specify { expect(mail_message.to_postmark_hash).to include('MessageStream' => 'weekly-newsletter') }
+    end
+  end
 end

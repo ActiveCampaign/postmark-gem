@@ -328,6 +328,39 @@ module Postmark
       format_response http_client.delete("webhooks/#{id}")
     end
 
+    def get_message_streams(options = {})
+      load_batch('message-streams', 'MessageStreams', options)
+    end
+
+    def get_message_stream(id)
+      format_response(http_client.get("message-streams/#{id}"))
+    end
+
+    def create_message_stream(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+      format_response(http_client.post('message-streams', data))
+    end
+
+    def update_message_stream(id, attributes)
+      data = serialize(HashHelper.to_postmark(attributes))
+      format_response(http_client.patch("message-streams/#{id}", data))
+    end
+
+    def dump_suppressions(stream_id, options = {})
+      _, batch = load_batch("message-streams/#{stream_id}/suppressions/dump", 'Suppressions', options)
+      batch
+    end
+
+    def create_suppressions(stream_id, email_addresses)
+      data = serialize(:Suppressions => Array(email_addresses).map { |e| HashHelper.to_postmark(:email_address => e) })
+      format_response(http_client.post("message-streams/#{stream_id}/suppressions", data))
+    end
+
+    def delete_suppressions(stream_id, email_addresses)
+      data = serialize(:Suppressions => Array(email_addresses).map { |e| HashHelper.to_postmark(:email_address => e) })
+      format_response(http_client.post("message-streams/#{stream_id}/suppressions/delete", data))
+    end
+
     protected
 
     def in_batches(messages)

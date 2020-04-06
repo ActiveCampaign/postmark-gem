@@ -18,9 +18,9 @@ describe Postmark::ApiClient do
       template_model  :name => "Sheldon"
     end
   end
+  let(:http_client) {api_client.http_client}
 
-  let(:api_client) {Postmark::ApiClient.new(api_token)}
-  subject {api_client}
+  subject(:api_client) {Postmark::ApiClient.new(api_token)}
 
   context "attr readers" do
     it { expect(subject).to respond_to(:http_client) }
@@ -62,7 +62,6 @@ describe Postmark::ApiClient do
   describe "#deliver" do
     let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
     let(:email_json) {Postmark::Json.encode(email)}
-    let(:http_client) {subject.http_client}
     let(:response) {{"MessageID" => 42}}
 
     it 'converts message hash to Postmark format and posts it to /email' do
@@ -86,7 +85,6 @@ describe Postmark::ApiClient do
     let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
     let(:emails) {[email, email, email]}
     let(:emails_json) {Postmark::Json.encode(emails)}
-    let(:http_client) {subject.http_client}
     let(:response) {[{'ErrorCode' => 0}, {'ErrorCode' => 0}, {'ErrorCode' => 0}]}
 
     it 'turns array of messages into a JSON document and posts it to /email/batch' do
@@ -104,7 +102,6 @@ describe Postmark::ApiClient do
   describe "#deliver_message" do
     let(:email) {message.to_postmark_hash}
     let(:email_json) {Postmark::Json.encode(email)}
-    let(:http_client) {subject.http_client}
 
     it 'raises an error when given a templated message' do
       expect { subject.deliver_message(templated_message) }.
@@ -139,7 +136,6 @@ describe Postmark::ApiClient do
   describe "#deliver_message_with_template" do
     let(:email) {templated_message.to_postmark_hash}
     let(:email_json) {Postmark::Json.encode(email)}
-    let(:http_client) {subject.http_client}
 
     it 'raises an error when given a non-templated message' do
       expect { subject.deliver_message_with_template(message) }.
@@ -175,7 +171,6 @@ describe Postmark::ApiClient do
     let(:email) {message.to_postmark_hash}
     let(:emails) {[email, email, email]}
     let(:emails_json) {Postmark::Json.encode(emails)}
-    let(:http_client) {subject.http_client}
     let(:response) {[{}, {}, {}]}
 
     it 'raises an error when given a templated message' do
@@ -207,7 +202,6 @@ describe Postmark::ApiClient do
     let(:email) {templated_message.to_postmark_hash}
     let(:emails) {[email, email, email]}
     let(:emails_json) {Postmark::Json.encode(emails)}
-    let(:http_client) {subject.http_client}
     let(:response) {[{}, {}, {}]}
     let(:messages) { Array.new(3) { templated_message } }
 
@@ -237,7 +231,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#delivery_stats" do
-    let(:http_client) {subject.http_client}
     let(:response) {{"Bounces" => [{"Foo" => "Bar"}]}}
 
     it 'requests data at /deliverystats' do
@@ -276,8 +269,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_messages' do
-    let(:http_client) {subject.http_client}
-
     context 'given outbound' do
       let(:response) {{"TotalCount" => 1, "Messages" => [{}]}}
 
@@ -325,7 +316,6 @@ describe Postmark::ApiClient do
 
   describe '#get_message' do
     let(:id) {'8ad0e8b0-xxxx-xxxx-951d-223c581bb467'}
-    let(:http_client) {subject.http_client}
     let(:response) {{"To" => "leonard@bigbangtheory.com"}}
 
     context 'given outbound' do
@@ -349,7 +339,6 @@ describe Postmark::ApiClient do
 
   describe '#dump_message' do
     let(:id) {'8ad0e8b0-xxxx-xxxx-951d-223c581bb467'}
-    let(:http_client) {subject.http_client}
     let(:response) {{"Body" => "From: <leonard@bigbangtheory.com> \r\n ..."}}
 
     context 'given outbound' do
@@ -387,7 +376,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#get_bounces" do
-    let(:http_client) {subject.http_client}
     let(:options) {{:foo => :bar}}
     let(:response) {{"Bounces" => []}}
 
@@ -399,7 +387,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#get_bounce" do
-    let(:http_client) {subject.http_client}
     let(:id) {42}
 
     it 'requests a single bounce by ID at /bounces/:id' do
@@ -409,7 +396,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#dump_bounce" do
-    let(:http_client) {subject.http_client}
     let(:id) {42}
 
     it 'requests a specific bounce data at /bounces/:id/dump' do
@@ -419,7 +405,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#activate_bounce" do
-    let(:http_client) {subject.http_client}
     let(:id) {42}
     let(:response) {{"Bounce" => {}}}
 
@@ -456,7 +441,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_opens' do
-    let(:http_client) {subject.http_client}
     let(:options) {{:offset => 5}}
     let(:response) {{'Opens' => [], 'TotalCount' => 0}}
 
@@ -468,7 +452,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_clicks' do
-    let(:http_client) {subject.http_client}
     let(:options) {{:offset => 5}}
     let(:response) {{'Clicks' => [], 'TotalCount' => 0}}
 
@@ -480,7 +463,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_opens_by_message_id' do
-    let(:http_client) {subject.http_client}
     let(:message_id) {42}
     let(:options) {{:offset => 5}}
     let(:response) {{'Opens' => [], 'TotalCount' => 0}}
@@ -493,7 +475,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_clicks_by_message_id' do
-    let(:http_client) {subject.http_client}
     let(:message_id) {42}
     let(:options) {{:offset => 5}}
     let(:response) {{'Clicks' => [], 'TotalCount' => 0}}
@@ -536,8 +517,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#create_trigger' do
-    let(:http_client) {subject.http_client}
-
     context 'inbound rules' do
       let(:options) {{:rule => 'example.com'}}
       let(:response) {{'Rule' => 'example.com'}}
@@ -556,7 +535,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_trigger' do
-    let(:http_client) {subject.http_client}
     let(:id) {42}
 
     it 'performs a GET request to /triggers/tags/:id' do
@@ -571,8 +549,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#delete_trigger' do
-    let(:http_client) {subject.http_client}
-
     context 'tags' do
       let(:id) {42}
 
@@ -603,7 +579,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_triggers' do
-    let(:http_client) {subject.http_client}
     let(:options) {{:offset => 5}}
 
     context 'inbound rules' do
@@ -631,7 +606,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#server_info" do
-    let(:http_client) {subject.http_client}
     let(:response) {{"Name" => "Testing",
                      "Color" => "blue",
                      "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
@@ -644,7 +618,6 @@ describe Postmark::ApiClient do
   end
 
   describe "#update_server_info" do
-    let(:http_client) {subject.http_client}
     let(:response) {{"Name" => "Testing",
                      "Color" => "blue",
                      "InboundHash" => "c2425d77f74f8643e5f6237438086c81",
@@ -658,7 +631,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_templates' do
-    let(:http_client) {subject.http_client}
     let(:response) do
       {
           'TotalCount' => 31,
@@ -702,7 +674,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#get_template' do
-    let(:http_client) {subject.http_client}
     let(:response) do
       {
           'Name' => 'Template Name',
@@ -727,7 +698,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#create_template' do
-    let(:http_client) {subject.http_client}
     let(:response) do
       {
           'TemplateId' => 123,
@@ -749,7 +719,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#update_template' do
-    let(:http_client) {subject.http_client}
     let(:response) do
       {
           'TemplateId' => 123,
@@ -771,7 +740,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#delete_template' do
-    let(:http_client) {subject.http_client}
     let(:response) do
       {
           'ErrorCode' => 0,
@@ -789,8 +757,6 @@ describe Postmark::ApiClient do
   end
 
   describe '#validate_template' do
-    let(:http_client) {subject.http_client}
-
     context 'when template is valid' do
       let(:response) do
         {
@@ -886,7 +852,6 @@ describe Postmark::ApiClient do
 
   describe "#deliver_with_template" do
     let(:email) {Postmark::MessageHelper.to_postmark(message_hash)}
-    let(:http_client) {subject.http_client}
     let(:response) {{"MessageID" => 42}}
 
     it 'converts message hash to Postmark format and posts it to /email/withTemplate' do
@@ -911,7 +876,6 @@ describe Postmark::ApiClient do
   describe '#deliver_in_batches_with_templates' do
     let(:max_batch_size) {50}
     let(:factor) {3.5}
-    let(:http_client) {subject.http_client}
     let(:postmark_response) do
       {
           'ErrorCode' => 0,
@@ -971,7 +935,6 @@ describe Postmark::ApiClient do
           "BounceRate" => 10.406,
       }
     end
-    let(:http_client) {subject.http_client}
 
     it 'converts response to ruby format' do
       expect(http_client).to receive(:get).with('stats/outbound', {:tag => 'foo'}) {response}
@@ -1005,7 +968,6 @@ describe Postmark::ApiClient do
           "Sent" => 615
       }
     end
-    let(:http_client) {subject.http_client}
 
     it 'converts response to ruby format' do
       expect(http_client).to receive(:get).with('stats/outbound/sends', {:tag => 'foo'}) {response}
@@ -1038,6 +1000,152 @@ describe Postmark::ApiClient do
       first_day = response[:days].first
       expect(first_day).to have_key(:date)
       expect(first_day).to have_key(:sent)
+    end
+  end
+
+  describe '#create_suppressions' do
+    let(:email_addresses) { nil }
+    let(:message_stream_id) { 'outbound' }
+
+    subject { api_client.create_suppressions(message_stream_id, email_addresses) }
+
+    context '1 email address as string' do
+      let(:email_addresses) { 'A@example.com' }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/outbound/suppressions',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' }
+                 ]}))
+        subject
+      end
+    end
+
+    context '1 email address as string & non-default stream' do
+      let(:email_addresses) { 'A@example.com' }
+      let(:message_stream_id) { 'xxxx' }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/xxxx/suppressions',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' }
+                 ]}))
+        subject
+      end
+    end
+
+    context '1 email address as array of strings' do
+      let(:email_addresses) { ['A@example.com'] }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/outbound/suppressions',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' }
+                 ]}))
+        subject
+      end
+    end
+
+    context 'many email addresses as array of strings' do
+      let(:email_addresses) { ['A@example.com', 'B@example.com'] }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/outbound/suppressions',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' },
+                   { :EmailAddress => 'B@example.com' }
+                 ]}))
+        subject
+      end
+    end
+  end
+
+  describe '#delete_suppressions' do
+    let(:email_addresses) { nil }
+    let(:message_stream_id) { 'outbound' }
+
+    subject { api_client.delete_suppressions(message_stream_id, email_addresses) }
+
+    context '1 email address as string' do
+      let(:email_addresses) { 'A@example.com' }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/outbound/suppressions/delete',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' },
+                 ]}))
+        subject
+      end
+    end
+
+    context '1 email address as string & non-default stream' do
+      let(:email_addresses) { 'A@example.com' }
+      let(:message_stream_id) { 'xxxx' }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/xxxx/suppressions/delete',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' }
+                 ]}))
+        subject
+      end
+    end
+
+    context '1 email address as array of strings' do
+      let(:email_addresses) { ['A@example.com'] }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/outbound/suppressions/delete',
+               match_json({
+                 :Suppressions => [
+                   { :EmailAddress => 'A@example.com' }
+                 ]}))
+        subject
+      end
+    end
+
+    context 'many email addresses as array of strings' do
+      let(:email_addresses) { ['A@example.com', 'B@example.com'] }
+
+      specify do
+        expect(http_client).to receive(:post).
+          with('message-streams/outbound/suppressions/delete',
+               match_json({
+                :Suppressions => [
+                  { :EmailAddress => 'A@example.com' },
+                  { :EmailAddress => 'B@example.com' }
+                ]}))
+        subject
+      end
+    end
+  end
+
+  describe '#dump_suppressions' do
+    let(:message_stream_id) { 'xxxx' }
+
+    subject { api_client.dump_suppressions(message_stream_id, :count => 123) }
+
+    before do
+      allow(http_client).to receive(:get).and_return({'TotalCount' => 0, 'Suppressions' => []})
+    end
+
+    specify do
+      expect(http_client).to receive(:get).
+        with('message-streams/xxxx/suppressions/dump', { :count => 123, :offset => 0 })
+      subject
     end
   end
 end
