@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.0
+
+* Added support for message streams and suppressions
+
 == 1.20.0
 
 * Removed deprecated trigger endpoints
