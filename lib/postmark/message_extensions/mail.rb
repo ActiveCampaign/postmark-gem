@@ -72,6 +72,12 @@ module Mail
       @template_model = model
     end
 
+    attr_writer :message_stream
+    def message_stream(val = nil)
+      self.message_stream = val unless val.nil?
+      @message_stream
+    end
+
     def templated?
       !!template_alias
     end
