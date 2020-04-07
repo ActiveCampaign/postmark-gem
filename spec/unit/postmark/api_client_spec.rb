@@ -1003,6 +1003,151 @@ describe Postmark::ApiClient do
     end
   end
 
+  describe '#get_message_streams' do
+    subject(:result) { api_client.get_message_streams(:offset => 22, :count => 33) }
+
+    before do
+      allow(http_client).to receive(:get).
+        with('message-streams', :offset => 22, :count => 33).
+        and_return({ 'TotalCount' => 1, 'MessageStreams' => [{'Name' => 'abc'}]})
+    end
+
+    it { is_expected.to be_an(Array) }
+
+    describe 'returned item' do
+      subject { result.first }
+
+      it { is_expected.to match(:name => 'abc') }
+    end
+  end
+
+  describe '#message_streams' do
+    subject { api_client.message_streams }
+
+    it { is_expected.to be_kind_of(Enumerable) }
+
+    it 'requests data at /message-streams' do
+      allow(http_client).to receive(:get).
+        with('message-streams', anything).
+        and_return('TotalCount' => 1, 'MessageStreams' => [{}])
+      expect(subject.first(5).count).to eq(1)
+    end
+  end
+
+  describe '#get_message_stream' do
+    subject(:result) { api_client.get_message_stream(123) }
+
+    before do
+      allow(http_client).to receive(:get).
+        with('message-streams/123').
+        and_return({
+          'Id' => 'xxx',
+          'Name' => 'My Stream',
+          'ServerID' => 321,
+          'MessageStreamType' => 'Transactional'
+        })
+    end
+
+    it {
+      is_expected.to match(
+        :id => 'xxx',
+        :name => 'My Stream',
+        :server_id => 321,
+        :message_stream_type => 'Transactional'
+      )
+    }
+  end
+
+  describe '#create_message_stream' do
+    subject { api_client.create_message_stream(attrs) }
+
+    let(:attrs) do
+      {
+        :name => 'My Stream',
+        :id => 'my-stream',
+        :message_stream_type => 'Broadcasts'
+      }
+    end
+
+    let(:response) do
+      {
+        'Name' => 'My Stream',
+        'Id' => 'my-stream',
+        'MessageStreamType' => 'Broadcasts',
+        'ServerId' => 222,
+        'CreatedAt' => '2020-04-01T03:33:33.333-03:00'
+      }
+    end
+
+    before do
+      allow(http_client).to receive(:post) { response }
+    end
+
+    specify do
+      expect(http_client).to receive(:post).
+        with('message-streams',
+             match_json({
+               :Name => 'My Stream',
+               :Id => 'my-stream',
+               :MessageStreamType => 'Broadcasts'
+             }))
+      subject
+    end
+
+    it {
+      is_expected.to match(
+        :id => 'my-stream',
+        :name => 'My Stream',
+        :server_id => 222,
+        :message_stream_type => 'Broadcasts',
+        :created_at => '2020-04-01T03:33:33.333-03:00'
+      )
+    }
+  end
+
+  describe '#update_message_stream' do
+    subject { api_client.update_message_stream('xxx', attrs) }
+
+    let(:attrs) do
+      {
+        :name => 'My Stream XXX'
+      }
+    end
+
+    let(:response) do
+      {
+        'Name' => 'My Stream XXX',
+        'Id' => 'xxx',
+        'MessageStreamType' => 'Broadcasts',
+        'ServerId' => 222,
+        'CreatedAt' => '2020-04-01T03:33:33.333-03:00'
+      }
+    end
+
+    before do
+      allow(http_client).to receive(:patch) { response }
+    end
+
+    specify do
+      expect(http_client).to receive(:patch).
+        with('message-streams/xxx',
+             match_json({
+               :Name => 'My Stream XXX',
+             }))
+      subject
+    end
+
+    it {
+      is_expected.to match(
+        :id => 'xxx',
+        :name => 'My Stream XXX',
+        :server_id => 222,
+        :message_stream_type => 'Broadcasts',
+        :created_at => '2020-04-01T03:33:33.333-03:00'
+      )
+    }
+  end
+
   describe '#create_suppressions' do
     let(:email_addresses) { nil }
     let(:message_stream_id) { 'outbound' }
