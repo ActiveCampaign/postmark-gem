@@ -329,7 +329,12 @@ module Postmark
     end
 
     def get_message_streams(options = {})
-      load_batch('message-streams', 'MessageStreams', options)
+      _, batch = load_batch('message-streams', 'MessageStreams', options)
+      batch
+    end
+
+    def message_streams(options = {})
+      find_each('message-streams', 'MessageStreams', options)
     end
 
     def get_message_stream(id)

@@ -37,6 +37,10 @@ module Postmark
       do_request { |client| client.put(url_path(path), data, headers) }
     end
 
+    def patch(path, data = '')
+      do_request { |client| client.patch(url_path(path), data, headers) }
+    end
+
     def get(path, query = {})
       do_request { |client| client.get(url_path(path + to_query_string(query)), headers) }
     end
