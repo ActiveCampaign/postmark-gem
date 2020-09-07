@@ -173,7 +173,7 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'converts plain text messages correctly' do
-    expect(subject.new(mail_message).run).to eq ({
+    expect(subject.new(mail_message).run).to eq({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
@@ -181,7 +181,7 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'converts tagged text messages correctly' do
-    expect(subject.new(tagged_mail_message).run).to eq ({
+    expect(subject.new(tagged_mail_message).run).to eq({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
@@ -190,14 +190,14 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'converts plain text messages without body correctly' do
-    expect(subject.new(mail_message_without_body).run).to eq ({
+    expect(subject.new(mail_message_without_body).run).to eq({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "To" => "lenard@bigbangtheory.com"})
   end
 
   it 'converts html messages correctly' do
-    expect(subject.new(mail_html_message).run).to eq ({
+    expect(subject.new(mail_html_message).run).to eq({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -205,7 +205,7 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'converts multipart messages correctly' do
-    expect(subject.new(mail_multipart_message).run).to eq ({
+    expect(subject.new(mail_multipart_message).run).to eq({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -214,7 +214,7 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'converts messages with attachments correctly' do
-    expect(subject.new(mail_message_with_attachment).run).to eq ({
+    expect(subject.new(mail_message_with_attachment).run).to eq({
         "From" => "sheldon@bigbangtheory.com",
         "Subject" => "Hello!",
         "Attachments" => [{"Name" => "empty.gif",
@@ -225,7 +225,7 @@ describe Postmark::MailMessageConverter do
   end
 
   it 'converts messages with named addresses correctly' do
-    expect(subject.new(mail_message_with_named_addresses).run).to eq ({
+    expect(subject.new(mail_message_with_named_addresses).run).to eq({
         "From" => "Sheldon <sheldon@bigbangtheory.com>",
         "Subject" => "Hello!",
         "TextBody" => "Hello Sheldon!",
@@ -244,7 +244,7 @@ describe Postmark::MailMessageConverter do
   context 'open tracking' do
     context 'setup inside of mail' do
       it 'converts open tracking enabled messages correctly' do
-        expect(subject.new(mail_message_with_open_tracking).run).to eq ({
+        expect(subject.new(mail_message_with_open_tracking).run).to eq({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -253,7 +253,7 @@ describe Postmark::MailMessageConverter do
       end
 
       it 'converts open tracking disabled messages correctly' do
-        expect(subject.new(mail_message_with_open_tracking_disabled).run).to eq ({
+        expect(subject.new(mail_message_with_open_tracking_disabled).run).to eq({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -264,7 +264,7 @@ describe Postmark::MailMessageConverter do
 
     context 'setup with tracking variable' do
       it 'converts open tracking enabled messages correctly' do
-        expect(subject.new(mail_message_with_open_tracking_set_variable).run).to eq ({
+        expect(subject.new(mail_message_with_open_tracking_set_variable).run).to eq({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -273,7 +273,7 @@ describe Postmark::MailMessageConverter do
       end
 
       it 'converts open tracking disabled messages correctly' do
-        expect(subject.new(mail_message_with_open_tracking_disabled_set_variable).run).to eq ({
+        expect(subject.new(mail_message_with_open_tracking_disabled_set_variable).run).to eq({
             "From" => "sheldon@bigbangtheory.com",
             "Subject" => "Hello!",
             "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -285,7 +285,7 @@ describe Postmark::MailMessageConverter do
 
   context 'link tracking' do
     it 'converts html and text link tracking enabled messages correctly' do
-      expect(subject.new(mail_message_with_link_tracking_all).run).to eq ({
+      expect(subject.new(mail_message_with_link_tracking_all).run).to eq({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
           "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -294,7 +294,7 @@ describe Postmark::MailMessageConverter do
     end
 
     it 'converts html only link tracking enabled messages correctly' do
-      expect(subject.new(mail_message_with_link_tracking_html).run).to eq ({
+      expect(subject.new(mail_message_with_link_tracking_html).run).to eq({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
           "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -303,7 +303,7 @@ describe Postmark::MailMessageConverter do
     end
 
     it 'converts text only link tracking enabled messages correctly' do
-      expect(subject.new(mail_message_with_link_tracking_text).run).to eq ({
+      expect(subject.new(mail_message_with_link_tracking_text).run).to eq({
           "From" => "sheldon@bigbangtheory.com",
           "Subject" => "Hello!",
           "HtmlBody" => "<b>Hello Sheldon!</b>",
@@ -377,13 +377,17 @@ describe Postmark::MailMessageConverter do
 
   describe 'passing message stream' do
     context 'when not set' do
-      specify { expect(mail_message.to_postmark_hash.keys).not_to include('MessageStream') }
+      specify { expect(subject.new(mail_message).run).not_to include('MessageStream') }
     end
 
     context 'when set' do
-      before { mail_message.message_stream = 'weekly-newsletter' }
+      before do
+        mail_message.message_stream = 'weekly-newsletter'
+      end
 
-      specify { expect(mail_message.to_postmark_hash).to include('MessageStream' => 'weekly-newsletter') }
+      it 'passes message stream to the API call' do
+        expect(subject.new(mail_message).run).to include('MessageStream' => 'weekly-newsletter')
+      end
     end
   end
 end

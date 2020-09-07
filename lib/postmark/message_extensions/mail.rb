@@ -72,10 +72,13 @@ module Mail
       @template_model = model
     end
 
-    attr_writer :message_stream
     def message_stream(val = nil)
       self.message_stream = val unless val.nil?
-      @message_stream
+      header['MESSAGE-STREAM'].to_s
+    end
+
+    def message_stream=(val)
+      header['MESSAGE-STREAM'] = val
     end
 
     def templated?
@@ -188,6 +191,7 @@ module Mail
         attachment   to
         track-opens  track-links
         postmark-template-alias
+        message-stream
       ]
     end
 
