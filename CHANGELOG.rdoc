@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.2
+
+* Ensure sending via message stream uses the correct message stream
+
 == 1.21.1
 
 * Fixed Postmark::ApiClient#get_message_streams
