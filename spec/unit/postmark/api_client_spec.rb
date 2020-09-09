@@ -1086,10 +1086,10 @@ describe Postmark::ApiClient do
     specify do
       expect(http_client).to receive(:post).
         with('message-streams',
-             match_json({
-               :Name => 'My Stream',
-               :Id => 'my-stream',
-               :MessageStreamType => 'Broadcasts'
+             json_representation_of({
+               'Name' => 'My Stream',
+               'Id' => 'my-stream',
+               'MessageStreamType' => 'Broadcasts'
              }))
       subject
     end
