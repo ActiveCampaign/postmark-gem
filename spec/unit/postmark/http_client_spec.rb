@@ -42,9 +42,14 @@ describe Postmark::HttpClient do
     its(:http_read_timeout) { is_expected.to eq 15 }
     its(:http_open_timeout) { is_expected.to eq 5 }
 
-    it 'use default TLS encryption', :skip_ruby_version => ['1.8.7'] do
+    it 'uses TLSv1 for 1.9.3', :exclusive_for_ruby_version => ['1.9.3'] do
       http_client = subject.http
       expect(http_client.ssl_version).to eq :TLSv1
+    end
+
+    it 'uses TLSv1_2 for rubies >= 2.0.0', :skip_ruby_version => ['1.8.7', '1.9.3'] do
+      http_client = subject.http
+      expect(http_client.ssl_version).to eq :TLSv1_2
     end
   end
 
@@ -59,7 +64,7 @@ describe Postmark::HttpClient do
     let(:path_prefix) { "/provided/path/prefix" }
     let(:http_open_timeout) { 42 }
     let(:http_read_timeout) { 42 }
-    let(:http_ssl_version) { :TLSv1_2}
+    let(:http_ssl_version) { :TLSv1 }
 
     subject { Postmark::HttpClient.new(api_token,
                                        :secure => secure,
@@ -140,7 +145,7 @@ describe Postmark::HttpClient do
                                               :status => [ "485", "Custom HTTP response status" ])
       expect { subject.post(target_path) }.to raise_error Postmark::UnknownError
     end
-    
+
   end
 
   describe "#get" do
@@ -180,7 +185,7 @@ describe Postmark::HttpClient do
                                              :status => [ "485", "Custom HTTP response status" ])
       expect { subject.get(target_path) }.to raise_error Postmark::UnknownError
     end
-    
+
   end
 
   describe "#put" do
