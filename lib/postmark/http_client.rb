@@ -21,6 +21,8 @@ module Postmark
       :http_open_timeout => 5,
       :http_ssl_version => :TLSv1
     }
+    
+    DEFAULT_SSL_VERSION = :DEFAULT_SSL_VERSION
 
     def initialize(api_token, options = {})
       @api_token = api_token
@@ -56,10 +58,18 @@ module Postmark
     protected
 
     def apply_options(options = {})
+      use_default_ssl_version = false
+      if options.key?(:http_ssl_version) && options[:http_ssl_version].nil?
+        use_default_ssl_version = true
+      end
+
       options = Hash[*options.select { |_, v| !v.nil? }.flatten]
       DEFAULTS.merge(options).each_pair do |name, value|
         instance_variable_set(:"@#{name}", value)
       end
+
+      @http_ssl_version = nil if use_default_ssl_version
+
       @port = options[:port] || (@secure ? 443 : 80)
     end
 
