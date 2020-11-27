@@ -21,8 +21,6 @@ module Postmark
       :http_open_timeout => 5,
       :http_ssl_version => :TLSv1
     }
-    
-    DEFAULT_SSL_VERSION = :DEFAULT_SSL_VERSION
 
     def initialize(api_token, options = {})
       @api_token = api_token
