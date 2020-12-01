@@ -42,9 +42,9 @@ describe Postmark::HttpClient do
     its(:http_read_timeout) { is_expected.to eq 15 }
     its(:http_open_timeout) { is_expected.to eq 5 }
 
-    it 'use default TLS encryption', :skip_ruby_version => ['1.8.7'] do
+    it 'does not provide a default which utilizes the Net::HTTP default', :skip_ruby_version => ['1.8.7'] do
       http_client = subject.http
-      expect(http_client.ssl_version).to eq :TLSv1
+      expect(http_client.ssl_version).to eq nil
     end
   end
 
@@ -140,7 +140,7 @@ describe Postmark::HttpClient do
                                               :status => [ "485", "Custom HTTP response status" ])
       expect { subject.post(target_path) }.to raise_error Postmark::UnknownError
     end
-    
+
   end
 
   describe "#get" do
@@ -180,7 +180,7 @@ describe Postmark::HttpClient do
                                              :status => [ "485", "Custom HTTP response status" ])
       expect { subject.get(target_path) }.to raise_error Postmark::UnknownError
     end
-    
+
   end
 
   describe "#put" do
