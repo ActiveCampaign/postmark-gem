@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.3
+
+* Remove default SSL version setting and rely on Net::HTTP/OpenSSL default.
+
 == 1.21.2
 
 * Ensure sending via message stream uses the correct message stream
