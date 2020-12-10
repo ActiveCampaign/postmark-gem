@@ -1,7 +1,7 @@
 version: 2.1
 
 workflows:
-  java-tests:
+  ruby-tests:
     jobs:
       - unit-tests:
           matrix:
@@ -18,7 +18,7 @@ jobs:
       version:
         type: string
     docker:
-      - image: circleci/ruby@:<< parameters.version >>
+      - image: circleci/ruby:<< parameters.version >>
     steps:
       - checkout
       - run:
