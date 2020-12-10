@@ -7,12 +7,16 @@ workflows:
           matrix:
             parameters:
               version: ["2", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6.5", "2.7"]
+      - unit-tests-legacy:
+          matrix:
+            parameters:
+              version: ["1.9.3"]
 
 orbs:
   ruby: circleci/ruby@0.1.2
 
 jobs:
-  unit-tests:
+  unit-tests: &tests
     parallelism: 1
     parameters:
       version:
@@ -31,3 +35,10 @@ jobs:
       - run:
           name: Run tests
           command: bundle exec rake spec
+
+  unit-tests-legacy:
+    environment:
+      BUNDLE_GEMFILE: ./gemfiles/Gemfile.legacy
+    docker:
+      - image: ruby:<< parameters.version >>
+    <<: *tests
