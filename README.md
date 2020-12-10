@@ -3,7 +3,8 @@
 </a>
 
 # Postmark Ruby Gem
-[![Build Status](https://travis-ci.org/wildbit/postmark-gem.svg?branch=master)](https://travis-ci.org/wildbit/postmark-gem) [![Code Climate](https://codeclimate.com/github/wildbit/postmark-gem/badges/gpa.svg)](https://codeclimate.com/github/wildbit/postmark-gem)
+[![Build Status](https://circleci.com/gh/wildbit/postmark-gem.svg?style=shield)](https://circleci.com/gh/wildbit/postmark-gem)
+[![Code Climate](https://codeclimate.com/github/wildbit/postmark-gem/badges/gpa.svg)](https://codeclimate.com/github/wildbit/postmark-gem)
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
 [![Gem Version](https://badge.fury.io/rb/postmark.svg)](https://badge.fury.io/rb/postmark)
 
