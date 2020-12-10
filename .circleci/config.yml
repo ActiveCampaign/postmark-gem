@@ -16,7 +16,7 @@ orbs:
   ruby: circleci/ruby@0.1.2
 
 jobs:
-  unit-tests: &tests
+  unit-tests:
     parallelism: 1
     parameters:
       version:
@@ -37,9 +37,26 @@ jobs:
           command: bundle exec rake spec
 
   unit-tests-legacy:
+    parallelism: 1
     environment:
       BUNDLE_GEMFILE: ./gemfiles/Gemfile.legacy
-    # circleCi doesn't have older than 2.x library versions other than 1.8
+    parameters:
+      version:
+        type: string
     docker:
       - image: << parameters.version >>
-    <<: *tests
+    steps:
+      - checkout
+      - run:
+          name: Versions
+          command: |
+            echo "ruby: $(ruby --version)"
+      - run:
+          name: Install dependencies
+          command: |
+            gem install bundler --version 1.8.7
+            bundle install
+            
+      - run:
+          name: Run tests
+          command: bundle exec rake spec
