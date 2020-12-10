@@ -10,7 +10,7 @@ workflows:
       - unit-tests-legacy:
           matrix:
             parameters:
-              version: ["1.9.3"]
+              version: ["ruby:1.9.3","kneip/ree-1.8.7-2012.02"]
 
 orbs:
   ruby: circleci/ruby@0.1.2
@@ -39,6 +39,7 @@ jobs:
   unit-tests-legacy:
     environment:
       BUNDLE_GEMFILE: ./gemfiles/Gemfile.legacy
+    # circleCi doesn't have older than 2.x library versions other than 1.8
     docker:
-      - image: ruby:<< parameters.version >>
+      - image: << parameters.version >>
     <<: *tests
