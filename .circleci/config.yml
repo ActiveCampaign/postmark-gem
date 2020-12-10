@@ -1,0 +1,30 @@
+version: 2.1
+
+workflows:
+  java-tests:
+    jobs:
+      - unit-tests:
+          matrix:
+            parameters:
+              version: ["2", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6.5", "2.7"]
+
+jobs:
+  unit-tests:
+    parallelism: 1
+    parameters:
+      version:
+        type: string
+    docker:
+      - image: circleci/ruby@:<< parameters.version >>
+    steps:
+      - checkout
+      - run:
+          name: Versions
+          command: |
+            echo "ruby: $(ruby --version)"
+      - run:
+          name: Install dependencies
+          command: bundle install
+      - run:
+          name: Run tests
+          command: bundle exec rake spec
