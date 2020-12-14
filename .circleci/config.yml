@@ -6,7 +6,7 @@ workflows:
       - unit-tests:
           matrix:
             parameters:
-              version: ["2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7"]
+              version: ["2", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7"]
       - unit-tests-legacy:
           matrix:
             parameters:
