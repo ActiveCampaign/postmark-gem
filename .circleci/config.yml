@@ -1,4 +1,4 @@
-# in order for builds to pass, in CircleCI you must have following environment variables setup based on test account:
+# In order for builds to pass, in CircleCI you must have following environment variables setub:
 # POSTMARK_API_KEY,POSTMARK_ACCOUNT_API_KEY,POSTMARK_CI_RECIPIENT,POSTMARK_CI_SENDER
 
 version: 2.1
@@ -28,7 +28,7 @@ jobs:
       - image: circleci/ruby:<< parameters.version >>
     steps:
       - checkout
-      - run: &versions
+      - run:
           name: Versions
           command: |
             echo "ruby: $(ruby --version)"
@@ -37,7 +37,7 @@ jobs:
           name: Install dependencies
           command: bundle install
 
-      - run: &rake
+      - run:
           name: Run tests
           command: bundle exec rake spec
 
@@ -53,7 +53,9 @@ jobs:
     steps:
       - checkout
       - run:
-        <<: *versions
+          name: Versions
+          command: |
+            echo "ruby: $(ruby --version)"
 
       - run:
           name: Install dependencies
@@ -62,4 +64,5 @@ jobs:
             bundle install
 
       - run:
-          <<: *rake
+          name: Run tests
+          command: bundle exec rake spec
