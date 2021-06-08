@@ -201,7 +201,7 @@ describe Postmark::ApiClient do
   describe "#deliver_messages_with_templates" do
     let(:email) {templated_message.to_postmark_hash}
     let(:emails) {[email, email, email]}
-    let(:emails_json) {Postmark::Json.encode(emails)}
+    let(:emails_json) {Postmark::Json.encode({ Messages: emails })}
     let(:response) {[{}, {}, {}]}
     let(:messages) { Array.new(3) { templated_message } }
 
