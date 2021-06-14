@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.4
+
+* Fixed Postmark::ApiClient#deliver_messages_with_templates (#104)
+
 == 1.21.3
 
 * Remove default SSL version setting and rely on Net::HTTP/OpenSSL default.
