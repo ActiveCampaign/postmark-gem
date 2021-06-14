@@ -63,4 +63,4 @@ Refer to the [LICENSE](https://github.com/wildbit/postmark-gem/blob/master/LICEN
 
 ## Copyright
 
-Copyright © 2020 Wildbit LLC.
+Copyright © 2021 Wildbit LLC.

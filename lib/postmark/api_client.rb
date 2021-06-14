@@ -81,7 +81,8 @@ module Postmark
       end
 
       in_batches(messages) do |batch, offset|
-        data = serialize(batch.map { |m| m.to_postmark_hash })
+        mapped = batch.map { |m| m.to_postmark_hash }
+        data = serialize(:Messages => mapped)
 
         with_retries do
           http_client.post("email/batchWithTemplates", data).tap do |response|
