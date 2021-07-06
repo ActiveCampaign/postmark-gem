@@ -4,11 +4,11 @@ module Postmark
     extend self
 
     def to_postmark(hash)
-      hash.inject({}) { |m, (k,v)| m[Inflector.to_postmark(k)] = v; m }
+      hash.inject({}) { |m, (k,v)| m[Inflector.to_postmark(k)] = object_value_to_postmark(v); m }
     end
 
     def to_ruby(hash, compatible = false)
-      formatted = hash.inject({}) { |m, (k,v)| m[Inflector.to_ruby(k)] = v; m }
+      formatted = hash.inject({}) { |m, (k,v)| m[Inflector.to_ruby(k)] = object_value_to_ruby(v); m }
 
       if compatible
         formatted.merge!(hash)
@@ -31,5 +31,20 @@ module Postmark
       end
     end
 
+    private
+
+    def object_value_to_postmark(value)
+      return to_postmark(value) if value.is_a?(Hash)
+      return value.map { |entry| to_postmark(entry) } if value.is_a?(Array)
+
+      value
+    end
+
+    def object_value_to_ruby(value)
+      return to_ruby(value) if value.is_a?(Hash)
+      return value.map { |entry| to_ruby(entry) } if value.is_a?(Array)
+
+      value
+    end
   end
 end
