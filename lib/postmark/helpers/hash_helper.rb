@@ -9,16 +9,16 @@ module Postmark
 
     def to_ruby(hash, compatible = false)
       formatted = hash.inject({}) { |m, (k,v)| m[Inflector.to_ruby(k)] = object_value_to_ruby(v); m }
-
-      if compatible
-        formatted.merge!(hash)
-        enhance_with_compatibility_warning(formatted)
-      end
-
-      formatted
+      compatible ? to_ruby_with_compatibility(hash, formatted) : formatted
     end
 
     protected
+
+    def to_ruby_with_compatibility(hash, formatted)
+      formatted.merge!(hash)
+      enhance_with_compatibility_warning(formatted)
+      formatted
+    end
 
     def enhance_with_compatibility_warning(hash)
       def hash.[](key)
