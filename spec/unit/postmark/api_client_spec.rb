@@ -1148,6 +1148,36 @@ describe Postmark::ApiClient do
     }
   end
 
+  describe '#archive_message_stream' do
+    let(:stream_id) { '123'}
+    subject { api_client.archive_message_stream(stream_id) }
+
+    before do
+      allow(http_client).to receive(:post).
+        with("message-streams/#{stream_id}/archive").
+        and_return({ 'ID': 'transactional-archive', 'ServerID': stream_id, 'ExpectedPurgeDate': 'date' })
+    end
+
+    it 'requests archiving at /archive_message_streams' do
+      expect(subject).to eq({ id: 'transactional-archive', server_id: stream_id, expected_purge_date: 'date' })
+    end
+  end
+
+  describe '#unarchive_message_stream' do
+    let(:stream_id) { '123'}
+    subject { api_client.unarchive_message_stream(stream_id) }
+
+    before do
+      allow(http_client).to receive(:post).
+        with("message-streams/#{stream_id}/unarchive").
+        and_return({ 'ID': 'transactional-unarchive', 'ServerID': stream_id, 'ExpectedPurgeDate': 'date' })
+    end
+
+    it 'requests archiving at /archive_message_streams' do
+      expect(subject).to eq({ id: 'transactional-unarchive', server_id: stream_id, expected_purge_date: 'date' })
+    end
+  end
+
   describe '#create_suppressions' do
     let(:email_addresses) { nil }
     let(:message_stream_id) { 'outbound' }
