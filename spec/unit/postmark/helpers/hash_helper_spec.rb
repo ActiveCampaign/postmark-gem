@@ -18,10 +18,10 @@ describe Postmark::HashHelper do
 
     context 'complex multi level hash objects to convert' do
       it 'convert Hash keys to Postmark format - one sub level hash' do
-        source = { id: 'someid3',
-                   name: 'Some Stream Name 3',
-                   message_stream_type: 'Broadcasts',
-                   subscription_management_configuration: { unsubscribe_handling_type: 'Custom' } }
+        source = { :id => 'someid3',
+                   :name => 'Some Stream Name 3',
+                   :message_stream_type => 'Broadcasts',
+                   :subscription_management_configuration => { :unsubscribe_handling_type => 'Custom' } }
 
         target = { 'Id' => 'someid3',
                    'Name' => 'Some Stream Name 3',
@@ -32,11 +32,11 @@ describe Postmark::HashHelper do
       end
 
       it 'convert Hash keys to Postmark format - multiple sub level hash' do
-        source = { id: 'someid3',
-                   top: {
-                     level_one: {
-                       level_two: {
-                         level_three: 'Value'
+        source = { :id => 'someid3',
+                   :top => {
+                     :level_one => {
+                       :level_two => {
+                         :level_three => 'Value'
                        }
                      }
                    }
@@ -56,13 +56,13 @@ describe Postmark::HashHelper do
       end
 
       it 'convert Hash keys to Postmark format - multiple sub level hash' do
-        source = { id: 'someid3',
-                   top: {
-                     level_one: {
-                       level_two: {
-                         level_three: [
-                           { one_level_three_type: 'Value1' },
-                           { second_level_three_type: 'Value2'}
+        source = { :id => 'someid3',
+                   :top => {
+                     :level_one => {
+                       :level_two => {
+                         :level_three => [
+                           { :one_level_three_type => 'Value1' },
+                           { :second_level_three_type => 'Value2'}
                          ]
                        }
                      }
@@ -108,10 +108,10 @@ describe Postmark::HashHelper do
 
     context 'complex multi level hash objects to convert' do
       it 'convert Hash keys to Ruby format - one sub level hash' do
-        target = { id: 'someid3',
-                   name: 'Some Stream Name 3',
-                   message_stream_type: 'Broadcasts',
-                   subscription_management_configuration: { unsubscribe_handling_type: 'Custom' } }
+        target = { :id => 'someid3',
+                   :name => 'Some Stream Name 3',
+                   :message_stream_type => 'Broadcasts',
+                   :subscription_management_configuration => { :unsubscribe_handling_type => 'Custom' } }
 
         source = { 'Id' => 'someid3',
                    'Name' => 'Some Stream Name 3',
@@ -122,13 +122,13 @@ describe Postmark::HashHelper do
       end
 
       it 'convert Hash keys to Ruby format - multiple sub level hash' do
-        target = { id: 'someid3',
-                   top: {
-                     level_one: {
-                       level_two: {
-                         level_three: [
-                           { one_level_three_type: 'Value1' },
-                           { second_level_three_type: 'Value2'}
+        target = { :id => 'someid3',
+                   :top => {
+                     :level_one => {
+                       :level_two => {
+                         :level_three => [
+                           { :one_level_three_type => 'Value1' },
+                           { :second_level_three_type => 'Value2'}
                          ]
                        }
                      }
