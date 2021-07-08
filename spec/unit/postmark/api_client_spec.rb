@@ -797,7 +797,7 @@ describe Postmark::ApiClient do
         expect(resp[:all_content_is_valid]).to be true
         expect(resp[:html_body][:content_is_valid]).to be true
         expect(resp[:html_body][:validation_errors]).to be_empty
-        expect(resp[:suggested_template_model]['MyName']).to eq('MyName_Value')
+        expect(resp[:suggested_template_model][:my_name]).to eq('MyName_Value')
       end
     end
 
