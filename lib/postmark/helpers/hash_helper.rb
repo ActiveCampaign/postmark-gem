@@ -3,13 +3,14 @@ module Postmark
     extend self
 
     def to_postmark(hash, options = {:keys_to_skip => []})
-      hash.each_with_object({}) do |(k, v), m|
+      hash.inject({}) do |m,(k, v)|
         m[Inflector.to_postmark(k)] = skip_key?(k, options[:keys_to_skip]) ? v : hash_value_to_postmark(v)
+        m
       end
     end
 
     def to_ruby(hash, compatibility_mode = false)
-      formatted = hash.each_with_object({}) { |(k, v), m| m[Inflector.to_ruby(k)] = hash_value_to_ruby(v); }
+      formatted = hash.inject({}) { |m,(k, v)| m[Inflector.to_ruby(k)] = hash_value_to_ruby(v); m }
       compatibility_mode ? to_ruby_with_compatibility(hash, formatted) : formatted
     end
 
