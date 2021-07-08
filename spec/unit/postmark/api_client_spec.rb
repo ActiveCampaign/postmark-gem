@@ -1155,11 +1155,11 @@ describe Postmark::ApiClient do
     before do
       allow(http_client).to receive(:post).
         with("message-streams/#{stream_id}/archive").
-        and_return({ 'ID': 'transactional-archive', 'ServerID': stream_id, 'ExpectedPurgeDate': 'date' })
+        and_return({ 'ID' => 'transactional-archive', 'ServerID' => stream_id, 'ExpectedPurgeDate' => 'date' })
     end
 
     it 'requests archiving at /archive_message_streams' do
-      expect(subject).to eq({ id: 'transactional-archive', server_id: stream_id, expected_purge_date: 'date' })
+      expect(subject).to eq({ :id => 'transactional-archive', :server_id => stream_id, :expected_purge_date => 'date' })
     end
   end
 
