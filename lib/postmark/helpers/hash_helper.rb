@@ -2,7 +2,7 @@ module Postmark
   module HashHelper
     extend self
 
-    def to_postmark(hash, options = {keys_to_skip: []})
+    def to_postmark(hash, options = {:keys_to_skip => []})
       hash.each_with_object({}) do |(k, v), m|
         m[Inflector.to_postmark(k)] = skip_key?(k, options[:keys_to_skip]) ? v : hash_value_to_postmark(v)
       end
