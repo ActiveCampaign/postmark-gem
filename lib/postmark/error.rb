@@ -31,9 +31,7 @@ module Postmark
       self.parsed_body = parsed_body
       self.status_code = status_code.to_i
       self.body = body
-      message = parsed_body.fetch(
-        'Message',
-        "The Postmark API responded with HTTP status #{status_code}.")
+      message = parsed_body.fetch('Message', "The Postmark API responded with HTTP status #{status_code}.")
 
       super(message)
     end

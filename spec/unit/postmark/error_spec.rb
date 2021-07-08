@@ -155,14 +155,11 @@ describe(Postmark::InvalidEmailAddressError) do
 
     subject do
       Postmark::InvalidEmailAddressError.new(
-        Postmark::ApiInputError::INVALID_EMAIL_ADDRESS,
-        Postmark::Json.encode(response),
-        response)
+        Postmark::ApiInputError::INVALID_EMAIL_ADDRESS, Postmark::Json.encode(response), response)
     end
 
     let(:message) do
-      "{\"ErrorCode\":300,\"Message\":\"Error parsing 'To': Illegal email address " + \
-      "'ibalosh.testinggmail.com'. It must contain the '@' symbol.\"}"
+      "Error parsing 'To': Illegal email address 'johne.xample.com'. It must contain the '@' symbol."
     end
 
     it 'body is set' do
