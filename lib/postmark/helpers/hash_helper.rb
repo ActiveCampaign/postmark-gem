@@ -2,23 +2,21 @@ module Postmark
   module HashHelper
     extend self
 
-    def to_postmark(hash, options = {:keys_to_skip => []})
-      hash.inject({}) do |m,(k, v)|
-        m[Inflector.to_postmark(k)] = skip_key?(k, options[:keys_to_skip]) ? v : hash_value_to_postmark(v)
-        m
-      end
+    DEFAULTS = {
+      :keys_to_skip => [],
+      :deep_conversion => true
+    }
+
+    def to_postmark(hash, options = {})
+      convert_hash_keys(hash, :to_postmark, options)
     end
 
-    def to_ruby(hash, compatibility_mode = false)
-      formatted = hash.inject({}) { |m,(k, v)| m[Inflector.to_ruby(k)] = hash_value_to_ruby(v); m }
+    def to_ruby(hash, compatibility_mode = false, options = {})
+      formatted = convert_hash_keys(hash, :to_ruby, options)
       compatibility_mode ? to_ruby_with_compatibility(hash, formatted) : formatted
     end
 
     private
-
-    def skip_key?(key, keys_to_skip)
-      keys_to_skip.map { |k| k.to_s.downcase.strip }.include?(key.to_s.downcase.strip)
-    end
 
     def to_ruby_with_compatibility(hash, formatted)
       formatted.merge!(hash)
@@ -37,18 +35,29 @@ module Postmark
       end
     end
 
-    def hash_value_to_postmark(value)
-      return to_postmark(value) if value.is_a?(Hash)
-      return value.map { |entry| hash_value_to_postmark(entry) } if value.is_a?(Array)
+    # Hash keys will be converted ruby or postmark format. Conversion is deep by default, meaning conversion
+    # is applied to all hash values if they are hashes or arrays. Specific keys to convert can be skipped.
+    # This can be used when formatting of certain hash or aray needs to be preserved - like metadata value.
+    def convert_hash_keys(object, conversion_type, options)
+      if object.is_a? Hash
+        return object.inject({}) do |m,(k,v)|
+          m[Inflector.send(conversion_type, k)] =
+            convert_hash_key_value?(k, options) ? convert_hash_keys(v, conversion_type, options) : v
+          m
+        end
+      end
 
-      value
+      return object.inject([]) { |m,v| m << convert_hash_keys(v, conversion_type, options); } if object.is_a? Array
+
+      object
     end
 
-    def hash_value_to_ruby(value)
-      return to_ruby(value) if value.is_a?(Hash)
-      return value.map { |entry| hash_value_to_ruby(entry) } if value.is_a?(Array)
+    def convert_hash_key_value?(key, options)
+      options = DEFAULTS.merge(options)
+      return false unless options.delete(:deep_conversion)
 
-      value
+      keys_to_skip = options.delete(:keys_to_skip).to_a
+      !keys_to_skip.map { |k| k.to_s.downcase.strip }.include?(key.to_s.downcase.strip)
     end
   end
 end
