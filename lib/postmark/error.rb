@@ -70,11 +70,7 @@ module Postmark
     end
   end
 
-  class InvalidEmailAddressError < ApiInputError
-    def initialize(*args)
-      super
-    end
-  end
+  class InvalidEmailAddressError < ApiInputError; end
 
   class InactiveRecipientError < ApiInputError
     attr_reader :recipients
