@@ -1202,7 +1202,7 @@ describe Postmark::ApiClient do
                               :created_at => '2030-08-30T12:30:00.00-04:00',
                               :updated_at => '2030-09-30T12:30:00.00-04:00',
                               :archived_at => nil , :expected_purge_date => nil ,
-                              :subscription_management_configuration => { :UnsubscribeHandlingType => 'None' }})
+                              :subscription_management_configuration => { 'UnsubscribeHandlingType' => 'None' }})
     end
   end
 
