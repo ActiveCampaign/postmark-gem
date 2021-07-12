@@ -1149,17 +1149,25 @@ describe Postmark::ApiClient do
   end
 
   describe '#archive_message_stream' do
-    let(:stream_id) { '123'}
     subject { api_client.archive_message_stream(stream_id) }
 
+    let(:stream_id) { 'my-stream'}
+    let(:server_id) { 123 }
+    let(:purge_date) { '2030-08-30T12:30:00.00-04:00' }
+    let(:api_endpoint) { "message-streams/#{stream_id}/archive" }
+    let(:api_response) {{ 'ID' => stream_id, 'ServerID' => server_id, 'ExpectedPurgeDate' => purge_date  }}
+
     before do
-      allow(http_client).to receive(:post).
-        with("message-streams/#{stream_id}/archive").
-        and_return({ 'ID' => 'transactional-archive', 'ServerID' => stream_id, 'ExpectedPurgeDate' => 'date' })
+      allow(http_client).to receive(:post).with(api_endpoint) { api_response }
     end
 
-    it 'requests archiving at /archive_message_streams' do
-      expect(subject).to eq({ :id => 'transactional-archive', :server_id => stream_id, :expected_purge_date => 'date' })
+    it 'calls the API endpoint' do
+      expect(http_client).to receive(:post).with(api_endpoint)
+      subject
+    end
+
+    it 'transforms the API response' do
+      expect(subject).to eq({ :id => stream_id, :server_id => server_id, :expected_purge_date => purge_date })
     end
   end
 
