@@ -1180,11 +1180,11 @@ describe Postmark::ApiClient do
     let(:server_id) { 123 }
     let(:api_endpoint) { "message-streams/#{stream_id}/unarchive" }
     let(:api_response) { 
-      { 'ID': stream_id, 'ServerID': server_id, 'Name': 'My Stream',
-        'Description': 'My test stream.', 'MessageStreamType': 'Transactional',
-        'CreatedAt': '2030-08-30T12:30:00.00-04:00', 'UpdatedAt': '2030-09-30T12:30:00.00-04:00',
-        'ArchivedAt': nil, 'ExpectedPurgeDate': nil,
-        'SubscriptionManagementConfiguration': { 'UnsubscribeHandlingType': 'None' } }
+      { 'ID' => stream_id, 'ServerID' => server_id, 'Name' => 'My Stream',
+        'Description' => 'My test stream.', 'MessageStreamType' => 'Transactional',
+        'CreatedAt' => '2030-08-30T12:30:00.00-04:00', 'UpdatedAt' => '2030-09-30T12:30:00.00-04:00',
+        'ArchivedAt'=> nil, 'ExpectedPurgeDate' => nil,
+        'SubscriptionManagementConfiguration' => { 'UnsubscribeHandlingType' => 'None' } }
     }
 
     before do
