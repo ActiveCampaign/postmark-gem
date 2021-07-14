@@ -31,64 +31,73 @@ describe Postmark::HashHelper do
         expect(subject.to_postmark(source)).to eq target
       end
 
-      it 'convert Hash keys to Postmark format - multiple sub level hash' do
-        source = { :id => 'custom-id',
-                   :top => {
-                     :level_one => {
-                       :level_two => {
-                         :level_three => [
-                           { :one_level_three_type => 'Value1' },
-                           { :second_level_three_type => 'Value2'}
-                         ]
-                       }
-                     }
-                   }
+      context 'convert multiple sub level hash' do
+        let(:ruby_formatted_hash) {
+          { :id => 'custom-id',
+            :top => {
+              :level_one => {
+                :level_two => {
+                  :level_three => [
+                    { :one_level_three_type => 'Value1' },
+                    { :second_level_three_type => 'Value2'}
+                  ]
+                }
+              }
+            }
+          }
         }
 
-        target = { 'Id' => 'custom-id',
-                   'Top' => {
-                     'LevelOne' => {
-                       'LevelTwo' => {
-                         'LevelThree' => [
-                           {'OneLevelThreeType' => 'Value1'},
-                           {'SecondLevelThreeType' => 'Value2'}
-                         ]
-                       }
-                     }
-                   }
+        let(:postmark_formatted_hash) {
+          { 'Id' => 'custom-id',
+            'Top' => {
+              'LevelOne' => {
+                'LevelTwo' => {
+                  'LevelThree' => [
+                    {'OneLevelThreeType' => 'Value1'},
+                    {'SecondLevelThreeType' => 'Value2'}
+                  ]
+                }
+              }
+            }
+          }
         }
 
-        expect(subject.to_postmark(source)).to eq target
-      end
+        it 'default conversion' do
+          expect(subject.to_postmark(ruby_formatted_hash)).to eq postmark_formatted_hash
+        end
 
-      it 'convert Hash keys to Postmark format - multiple sub level hash - deep conversion off' do
-        source = { :id => 'custom-id',
-                   :top => {
-                     :level_one => {
-                       :level_two => {
-                         :level_three => [
-                           { :one_level_three_type => 'Value1' },
-                           { :second_level_three_type => 'Value2'}
-                         ]
-                       }
-                     }
-                   }
-        }
-
-        target = { 'Id' => 'custom-id',
-                   'Top' => {
-                     :level_one => {
-                       :level_two => {
+        it 'deep conversion off' do
+          target = { 'Id' => 'custom-id',
+                      'Top' => {
+                      :level_one => {
+                        :level_two => {
                           :level_three => [
-                           { :one_level_three_type => 'Value1' },
-                           { :second_level_three_type => 'Value2'}
-                         ]
+                              { :one_level_three_type => 'Value1' },
+                              { :second_level_three_type => 'Value2'}
+                          ] }
+                        }
+                      }
+                    }
+
+          expect(subject.to_postmark(ruby_formatted_hash, :deep_conversion => false)).to eq target
+        end
+
+        it 'skip key' do
+          target = { 'Id' => 'custom-id',
+                     'Top' => {
+                       'LevelOne' => {
+                         :level_two => {
+                           :level_three => [
+                             { :one_level_three_type => 'Value1' },
+                             { :second_level_three_type => 'Value2'}
+                           ]
+                         }
                        }
                      }
-                   }
-        }
+          }
 
-        expect(subject.to_postmark(source, :deep_conversion => false)).to eq target
+          expect(subject.to_postmark(ruby_formatted_hash, keys_to_skip: [:level_one])).to eq target
+        end
       end
     end
   end
