@@ -3,8 +3,8 @@ module Postmark
     extend self
 
     DEFAULTS = {
-      :keys_to_skip => [],
-      :deep_conversion => true
+      :keys_to_skip => [], # skip conversion of values for keys in the array
+      :deep_conversion => true # convert all hash keys or just top level keys
     }
 
     def to_postmark(hash, options = {})
