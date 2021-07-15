@@ -254,7 +254,7 @@ module Postmark
     def validate_template(attributes = {})
       data = serialize(HashHelper.to_postmark(attributes))
       format_response(http_client.post('templates/validate', data), false,
-                      keys_to_skip: ['SuggestedTemplateModel'])
+                      :keys_to_skip => ['SuggestedTemplateModel'])
     end
 
     def deliver_with_template(attributes = {})
