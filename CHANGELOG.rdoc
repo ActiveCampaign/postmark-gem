@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.6
+
+* Improved error handling for email sending related to invalid email addresses
+
 == 1.21.5
 
 * Added support for archiving/unarchiving message streams
