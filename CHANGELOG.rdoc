@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.7
+
+* Improved parsing recipients with Postmark::InactiveRecipientError.parse_recipients method
+
 == 1.21.6
 
 * Improved error handling for email sending related to invalid email addresses
