@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.platform         = Gem::Platform::RUBY
   s.license          = 'MIT'
 
-  s.authors          = ["Petyo Ivanov", "Ilya Sabanin", "Artem Chistyakov"]
-  s.email            = "ilya@wildbit.com"
+  s.authors          = ["Tomek Maszkowski", "Igor Balos", "Artem Chistyakov", "Nick Hammond", "Petyo Ivanov", "Ilya Sabanin"]
+  s.email            = "tomek@wildbit.com"
   s.extra_rdoc_files = ["LICENSE", "README.md"]
   s.rdoc_options     = ["--charset=UTF-8"]
 
