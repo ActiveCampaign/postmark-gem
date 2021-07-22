@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.5
+
+* Added support for archiving/unarchiving message streams
+
 == 1.21.4
 
 * Fixed Postmark::ApiClient#deliver_messages_with_templates (#104)
