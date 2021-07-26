@@ -1073,7 +1073,10 @@ describe Postmark::ApiClient do
       {
         :name => 'My Stream',
         :id => 'my-stream',
-        :message_stream_type => 'Broadcasts'
+        :message_stream_type => 'Broadcasts',
+        :subscription_management_configuration => {
+          :unsubscribe_handling_type => 'Custom'
+        }
       }
     end
 
@@ -1083,7 +1086,10 @@ describe Postmark::ApiClient do
         'Id' => 'my-stream',
         'MessageStreamType' => 'Broadcasts',
         'ServerId' => 222,
-        'CreatedAt' => '2020-04-01T03:33:33.333-03:00'
+        'CreatedAt' => '2020-04-01T03:33:33.333-03:00',
+        'SubscriptionManagementConfiguration' => {
+          'UnsubscribeHandlingType' => 'Custom'
+        }
       }
     end
 
@@ -1097,7 +1103,10 @@ describe Postmark::ApiClient do
              json_representation_of({
                'Name' => 'My Stream',
                'Id' => 'my-stream',
-               'MessageStreamType' => 'Broadcasts'
+               'MessageStreamType' => 'Broadcasts',
+               'SubscriptionManagementConfiguration' => {
+                 'UnsubscribeHandlingType' => 'Custom'
+               }
              }))
       subject
     end
@@ -1108,7 +1117,10 @@ describe Postmark::ApiClient do
         :name => 'My Stream',
         :server_id => 222,
         :message_stream_type => 'Broadcasts',
-        :created_at => '2020-04-01T03:33:33.333-03:00'
+        :created_at => '2020-04-01T03:33:33.333-03:00',
+        :subscription_management_configuration => {
+          :unsubscribe_handling_type => 'Custom'
+        }
       )
     }
   end
@@ -1118,7 +1130,10 @@ describe Postmark::ApiClient do
 
     let(:attrs) do
       {
-        :name => 'My Stream XXX'
+        :name => 'My Stream XXX',
+        :subscription_management_configuration => {
+          :unsubscribe_handling_type => 'Custom'
+        }
       }
     end
 
@@ -1128,7 +1143,10 @@ describe Postmark::ApiClient do
         'Id' => 'xxx',
         'MessageStreamType' => 'Broadcasts',
         'ServerId' => 222,
-        'CreatedAt' => '2020-04-01T03:33:33.333-03:00'
+        'CreatedAt' => '2020-04-01T03:33:33.333-03:00',
+        'SubscriptionManagementConfiguration' => {
+          'UnsubscribeHandlingType' => 'Custom'
+        }
       }
     end
 
@@ -1140,7 +1158,10 @@ describe Postmark::ApiClient do
       expect(http_client).to receive(:patch).
         with('message-streams/xxx',
              match_json({
-               :Name => 'My Stream XXX',
+               'Name' => 'My Stream XXX',
+               'SubscriptionManagementConfiguration' => {
+                 'UnsubscribeHandlingType' => 'Custom'
+               }
              }))
       subject
     end
@@ -1151,7 +1172,10 @@ describe Postmark::ApiClient do
         :name => 'My Stream XXX',
         :server_id => 222,
         :message_stream_type => 'Broadcasts',
-        :created_at => '2020-04-01T03:33:33.333-03:00'
+        :created_at => '2020-04-01T03:33:33.333-03:00',
+        :subscription_management_configuration => {
+          :unsubscribe_handling_type => 'Custom'
+        }
       )
     }
   end

@@ -60,13 +60,16 @@ module Postmark
       [e.full_response || {}, e]
     end
 
-    def format_response(response, compatible = false)
+    def format_response(response, options = {})
       return {} unless response
 
+      compatible = options.fetch(:compatible, false)
+      deep = options.fetch(:deep, false)
+
       if response.kind_of? Array
-        response.map { |entry| Postmark::HashHelper.to_ruby(entry, compatible) }
+        response.map { |entry| Postmark::HashHelper.to_ruby(entry, :compatible => compatible, :deep => deep) }
       else
-        Postmark::HashHelper.to_ruby(response, compatible)
+        Postmark::HashHelper.to_ruby(response, :compatible => compatible, :deep => deep)
       end
     end
 
