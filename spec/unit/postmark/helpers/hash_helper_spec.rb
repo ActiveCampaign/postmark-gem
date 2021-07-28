@@ -152,7 +152,7 @@ describe Postmark::HashHelper do
       source =  { 'From' => 'support@postmarkapp.com', 'ReplyTo' => 'contact@wildbit.com' }
       target = { :from => 'support@postmarkapp.com', :reply_to => 'contact@wildbit.com' }
 
-      expect(subject.to_ruby(source, compatible: true)).to eq source.merge(target)
+      expect(subject.to_ruby(source, :compatible => true)).to eq source.merge(target)
     end
 
     context 'single level hash objects to convert' do
@@ -164,7 +164,7 @@ describe Postmark::HashHelper do
       end
 
       it 'has compatible mode' do
-        expect(subject.to_ruby(source, compatible: true)).to eq target.merge(source)
+        expect(subject.to_ruby(source, :compatible => true)).to eq target.merge(source)
       end
 
       it 'acts idempotentely' do
@@ -185,7 +185,7 @@ describe Postmark::HashHelper do
                    'MessageStreamType' => 'Broadcasts',
                    'SubscriptionManagementConfiguration' => { 'UnsubscribeHandlingType' => 'Custom' } }
 
-        expect(subject.to_ruby(source, deep: true)).to eq target
+        expect(subject.to_ruby(source, :deep => true)).to eq target
       end
 
       context 'multiple sub levels hash to convert' do
@@ -254,7 +254,7 @@ describe Postmark::HashHelper do
                                   }
           }
 
-          expect(subject.to_ruby(postmark_formatted_hash, compatible: false,deep: true,
+          expect(subject.to_ruby(postmark_formatted_hash, compatible: false,:deep => true,
                                  :keys_to_skip => ['LevelOne'])).to eq ruby_formatted_hash
         end
 
@@ -295,7 +295,7 @@ describe Postmark::HashHelper do
             }
           }
 
-          expect(subject.to_ruby(postmark_formatted_hash, compatible: false, deep: true,
+          expect(subject.to_ruby(postmark_formatted_hash, compatible: false, :deep => true,
                                  :keys_to_skip => ['OneSubLevel', 'SubLevels'])).to eq ruby_formatted_hash
         end
       end
