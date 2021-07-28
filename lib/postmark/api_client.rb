@@ -38,7 +38,7 @@ module Postmark
         response, error = take_response_of { http_client.post("email", data) }
         update_message(message, response)
         raise error if error
-        format_response(response, true)
+        format_response(response, compatible: true)
       end
     end
 
@@ -51,7 +51,7 @@ module Postmark
         response, error = take_response_of { http_client.post("email/withTemplate", data) }
         update_message(message, response)
         raise error if error
-        format_response(response, true)
+        format_response(response, compatible: true)
       end
     end
 
@@ -95,7 +95,7 @@ module Postmark
     end
 
     def delivery_stats
-      response = format_response(http_client.get("deliverystats"), true)
+      response = format_response(http_client.get("deliverystats"), compatible: true)
 
       if response[:bounces]
         response[:bounces] = format_response(response[:bounces])
@@ -252,9 +252,9 @@ module Postmark
     end
 
     def validate_template(attributes = {})
-      data = serialize(HashHelper.to_postmark(attributes))
-      format_response(http_client.post('templates/validate', data), false,
-                      :keys_to_skip => ['SuggestedTemplateModel'])
+      data = serialize(HashHelper.to_postmark(attributes, :keys_to_skip => :suggested_template_model))
+      format_response(http_client.post('templates/validate', data),
+                      :deep => true, :keys_to_skip => ['SuggestedTemplateModel'])
     end
 
     def deliver_with_template(attributes = {})
@@ -329,13 +329,13 @@ module Postmark
     end
 
     def create_message_stream(attributes = {})
-      data = serialize(HashHelper.to_postmark(attributes))
-      format_response(http_client.post('message-streams', data))
+      data = serialize(HashHelper.to_postmark(attributes, :deep => true))
+      format_response(http_client.post('message-streams', data), :deep => true)
     end
 
     def update_message_stream(id, attributes)
-      data = serialize(HashHelper.to_postmark(attributes))
-      format_response(http_client.patch("message-streams/#{id}", data))
+      data = serialize(HashHelper.to_postmark(attributes, :deep => true))
+      format_response(http_client.patch("message-streams/#{id}", data), :deep => true)
     end
 
     def dump_suppressions(stream_id, options = {})

@@ -4,21 +4,23 @@ module Postmark
 
     DEFAULTS = {
       :keys_to_skip => [], # skip conversion of values for keys in the array
-      :deep_conversion => true # convert all hash keys or just top level keys
+      :deep => false, # convert all hash keys or just top level keys
     }
 
     def to_postmark(hash, options = {})
       convert_hash_keys(hash, :to_postmark, options)
     end
 
-    def to_ruby(hash, compatibility_mode = false, options = {})
+    def to_ruby(hash, options = {})
       formatted = convert_hash_keys(hash, :to_ruby, options)
-      compatibility_mode ? to_ruby_with_compatibility(hash, formatted) : formatted
+      compatibility_mode = options.fetch(:compatible, false)
+      compatibility_mode ? append_compatibility_object(hash, formatted) : formatted
     end
 
     private
 
-    def to_ruby_with_compatibility(hash, formatted)
+    def append_compatibility_object(hash, formatted)
+      # since we use merge only on old sending endpoints, we don't need to use deep_merge! method
       formatted.merge!(hash)
       enhance_with_compatibility_warning(formatted)
       formatted
@@ -54,7 +56,7 @@ module Postmark
 
     def convert_hash_key_value?(key, options)
       options = DEFAULTS.merge(options)
-      return false unless options.delete(:deep_conversion)
+      return false unless options.delete(:deep)
 
       keys_to_skip = options.delete(:keys_to_skip).to_a
       !keys_to_skip.map { |k| k.to_s.downcase.strip }.include?(key.to_s.downcase.strip)
