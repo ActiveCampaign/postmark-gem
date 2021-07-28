@@ -237,7 +237,7 @@ describe Postmark::HashHelper do
                                  }
                                 }
 
-          expect(subject.to_ruby(postmark_formatted_hash, compatible: false , :deep => false)).to eq ruby_formatted_hash
+          expect(subject.to_ruby(postmark_formatted_hash, :compatible => false, :deep => false)).to eq ruby_formatted_hash
         end
 
         it 'options - keys_to_skip' do
@@ -254,7 +254,7 @@ describe Postmark::HashHelper do
                                   }
           }
 
-          expect(subject.to_ruby(postmark_formatted_hash, compatible: false,:deep => true,
+          expect(subject.to_ruby(postmark_formatted_hash, :compatible => false, :deep => true,
                                  :keys_to_skip => ['LevelOne'])).to eq ruby_formatted_hash
         end
 
@@ -295,7 +295,7 @@ describe Postmark::HashHelper do
             }
           }
 
-          expect(subject.to_ruby(postmark_formatted_hash, compatible: false, :deep => true,
+          expect(subject.to_ruby(postmark_formatted_hash, :compatible => false, :deep => true,
                                  :keys_to_skip => ['OneSubLevel', 'SubLevels'])).to eq ruby_formatted_hash
         end
       end
