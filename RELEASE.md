@@ -1,5 +1,6 @@
 New versions of the gem are cut by the Postmark team, this is a quick guide to ensuring a smooth release.
 
+1. Determine the next version of the gem by following the [SemVer](https://semver.org/) guidelines.
 1. Verify all builds are passing on CircleCI for your branch.
 1. Merge in your branch to master.
 1. Update VERSION and lib/postmark/version.rb with the new version.
