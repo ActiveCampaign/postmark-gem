@@ -1,3 +1,3 @@
 module Postmark
-  VERSION = '1.21.7'
+  VERSION = '1.21.8'
 end

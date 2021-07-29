@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.21.8
+
+* Fixed passing and receiving SubscriptionManagementConfiguration when creating/updating message streams (#94).
+
 == 1.21.7
 
 * Improved parsing recipients with Postmark::InactiveRecipientError.parse_recipients method
