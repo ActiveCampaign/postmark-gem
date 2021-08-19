@@ -71,7 +71,7 @@ describe Postmark::ApiClient do
 
     context 'with retries' do
       let(:http_client) {api_client.http_client}
-      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, :max_retries => 3)}
 
       it 'retries 3 times' do
         expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
@@ -125,7 +125,7 @@ describe Postmark::ApiClient do
 
     context 'with retries' do
       let(:http_client) {api_client.http_client}
-      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, :max_retries => 3)}
 
       it 'retries 3 times' do
         expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
@@ -210,7 +210,7 @@ describe Postmark::ApiClient do
 
     context 'with retries' do
       let(:http_client) {api_client.http_client}
-      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, :max_retries => 3)}
 
       it 'retries 3 times' do
         expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
@@ -249,7 +249,7 @@ describe Postmark::ApiClient do
 
     context 'with retries' do
       let(:http_client) {api_client.http_client}
-      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, :max_retries => 3)}
 
       it 'retries 3 times' do
         expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
@@ -909,7 +909,7 @@ describe Postmark::ApiClient do
 
     context 'with retries' do
       let(:http_client) {api_client.http_client}
-      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, :max_retries => 3)}
 
       it 'retries 3 times' do
         2.times { expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500) }
