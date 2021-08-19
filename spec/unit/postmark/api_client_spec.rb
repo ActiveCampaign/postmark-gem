@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Postmark::ApiClient do
   let(:api_token) {"provided-api-token"}
-  let(:max_retries) {42}
   let(:message_hash) {{:from => "support@postmarkapp.com"}}
   let(:message) {
     Mail.new do
@@ -19,7 +18,6 @@ describe Postmark::ApiClient do
     end
   end
   let(:http_client) {api_client.http_client}
-
   subject(:api_client) {Postmark::ApiClient.new(api_token)}
 
   context "attr readers" do
@@ -29,12 +27,14 @@ describe Postmark::ApiClient do
 
   context "when it's created without options" do
     it "max retries" do
-      expect(subject.max_retries).to eq 3
+      expect(subject.max_retries).to eq 0
     end
   end
 
   context "when it's created with user options" do
+    let(:max_retries) {42}
     subject {Postmark::ApiClient.new(api_token, :max_retries => max_retries, :foo => :bar)}
+
     it "max_retries" do
       expect(subject.max_retries).to eq max_retries
     end
@@ -69,10 +69,20 @@ describe Postmark::ApiClient do
       subject.deliver(message_hash)
     end
 
-    it 'retries 3 times' do
-      expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
-      expect(http_client).to receive(:post) {response}
-      expect {subject.deliver(message_hash)}.not_to raise_error
+    context 'with retries' do
+      let(:http_client) {api_client.http_client}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+
+      it 'retries 3 times' do
+        expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post) {response}
+        expect {subject.deliver(message_hash)}.not_to raise_error
+      end
+    end
+
+    it 'default retries - 0 times' do
+      expect(http_client).to receive(:post).once.and_raise(Postmark::InternalServerError)
+      expect {subject.deliver(message_hash)}.to raise_error(Postmark::InternalServerError)
     end
 
     it 'converts response to ruby format' do
@@ -113,18 +123,26 @@ describe Postmark::ApiClient do
       subject.deliver_message(message)
     end
 
-    it "retries 3 times" do
-      2.times do
-        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+    context 'with retries' do
+      let(:http_client) {api_client.http_client}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+
+      it 'retries 3 times' do
+        expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post)
+        expect {subject.deliver_message(message)}.not_to raise_error
       end
-      expect(http_client).to receive(:post)
-      expect {subject.deliver_message(message)}.not_to raise_error
+
+      it "retries on timeout" do
+        expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+        expect(http_client).to receive(:post)
+        expect {subject.deliver_message(message)}.not_to raise_error
+      end
     end
 
-    it "retries on timeout" do
-      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
-      expect(http_client).to receive(:post)
-      expect {subject.deliver_message(message)}.not_to raise_error
+    it "default retries - 0 times" do
+      expect(http_client).to receive(:post).once.and_raise(Postmark::InternalServerError)
+      expect {subject.deliver_message(message)}.to raise_error(Postmark::InternalServerError)
     end
 
     it "proxies errors" do
@@ -147,18 +165,26 @@ describe Postmark::ApiClient do
       subject.deliver_message_with_template(templated_message)
     end
 
-    it "retries 3 times" do
-      2.times do
-        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+    context 'with retries' do
+      let(:http_client) {api_client.http_client}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+
+      it 'retries 3 times' do
+        expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post)
+        expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
       end
-      expect(http_client).to receive(:post)
-      expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
+
+      it "retries on timeout" do
+        expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+        expect(http_client).to receive(:post)
+        expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
+      end
     end
 
-    it "retries on timeout" do
-      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
-      expect(http_client).to receive(:post)
-      expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
+    it "default retries - 0 times" do
+      expect(http_client).to receive(:post).once.and_raise(Postmark::InternalServerError)
+      expect {subject.deliver_message_with_template(templated_message)}.to raise_error(Postmark::InternalServerError)
     end
 
     it "proxies errors" do
@@ -169,8 +195,7 @@ describe Postmark::ApiClient do
 
   describe "#deliver_messages" do
     let(:email) {message.to_postmark_hash}
-    let(:emails) {[email, email, email]}
-    let(:emails_json) {Postmark::Json.encode(emails)}
+    let(:emails_json) {Postmark::Json.encode(Array.new(3) { email })}
     let(:response) {[{}, {}, {}]}
 
     it 'raises an error when given a templated message' do
@@ -183,25 +208,32 @@ describe Postmark::ApiClient do
       subject.deliver_messages([message, message, message])
     end
 
-    it "retry 3 times" do
-      2.times do
-        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+    context 'with retries' do
+      let(:http_client) {api_client.http_client}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+
+      it 'retries 3 times' do
+        expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post) {response}
+        expect {subject.deliver_messages([message, message, message])}.not_to raise_error
       end
-      expect(http_client).to receive(:post) {response}
-      expect {subject.deliver_messages([message, message, message])}.not_to raise_error
+
+      it "retries on timeout" do
+        expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+        expect(http_client).to receive(:post) {response}
+        expect {subject.deliver_messages([message, message, message])}.not_to raise_error
+      end
     end
 
-    it "retry on timeout" do
-      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
-      expect(http_client).to receive(:post) {response}
-      expect {subject.deliver_messages([message, message, message])}.not_to raise_error
+    it "default retries - 0 times" do
+      expect(http_client).to receive(:post).once.and_raise(Postmark::InternalServerError)
+      expect {subject.deliver_messages([message, message, message])}.to raise_error(Postmark::InternalServerError)
     end
   end
 
   describe "#deliver_messages_with_templates" do
     let(:email) {templated_message.to_postmark_hash}
-    let(:emails) {[email, email, email]}
-    let(:emails_json) {Postmark::Json.encode(:Messages => emails)}
+    let(:emails_json) {Postmark::Json.encode(:Messages => Array.new(3) { email })}
     let(:response) {[{}, {}, {}]}
     let(:messages) { Array.new(3) { templated_message } }
 
@@ -215,18 +247,26 @@ describe Postmark::ApiClient do
       subject.deliver_messages_with_templates(messages)
     end
 
-    it "retry 3 times" do
-      2.times do
-        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError)
+    context 'with retries' do
+      let(:http_client) {api_client.http_client}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+
+      it 'retries 3 times' do
+        expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
+        expect(http_client).to receive(:post) {response}
+        expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
       end
-      expect(http_client).to receive(:post) {response}
-      expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
+
+      it "retries on timeout" do
+        expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+        expect(http_client).to receive(:post) {response}
+        expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
+      end
     end
 
-    it "retry on timeout" do
-      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
-      expect(http_client).to receive(:post) {response}
-      expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
+    it "default retries - 0 times" do
+      expect(http_client).to receive(:post).once.and_raise(Postmark::InternalServerError)
+      expect {subject.deliver_messages_with_templates(messages)}.to raise_error(Postmark::InternalServerError)
     end
   end
 
@@ -867,12 +907,21 @@ describe Postmark::ApiClient do
       subject.deliver_with_template(message_hash)
     end
 
-    it 'retries 3 times' do
-      2.times do
-        expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500)
+    context 'with retries' do
+      let(:http_client) {api_client.http_client}
+      subject(:api_client) {Postmark::ApiClient.new(api_token, max_retries: 3)}
+
+      it 'retries 3 times' do
+        2.times { expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500) }
+
+        expect(http_client).to receive(:post) {response}
+        expect {subject.deliver_with_template(message_hash)}.not_to raise_error
       end
-      expect(http_client).to receive(:post) {response}
-      expect {subject.deliver_with_template(message_hash)}.not_to raise_error
+    end
+
+    it 'default retries - 0 times' do
+      expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500)
+      expect {subject.deliver_with_template(message_hash)}.to raise_error(Postmark::InternalServerError)
     end
 
     it 'converts response to ruby format' do
