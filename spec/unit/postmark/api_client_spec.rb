@@ -78,6 +78,11 @@ describe Postmark::ApiClient do
         expect(http_client).to receive(:post) {response}
         expect {subject.deliver(message_hash)}.not_to raise_error
       end
+
+      it 'retry over the max_retries limit' do
+        expect(http_client).to receive(:post).thrice.and_raise(Postmark::InternalServerError)
+        expect {subject.deliver(message_hash)}.to raise_error(Postmark::InternalServerError)
+      end
     end
 
     it 'default retries - 0 times' do
@@ -133,6 +138,11 @@ describe Postmark::ApiClient do
         expect {subject.deliver_message(message)}.not_to raise_error
       end
 
+      it 'retry over the max_retries limit' do
+        expect(http_client).to receive(:post).thrice.and_raise(Postmark::InternalServerError)
+        expect {subject.deliver_message(message)}.to raise_error(Postmark::InternalServerError)
+      end
+
       it "retries on timeout" do
         expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
         expect(http_client).to receive(:post)
@@ -173,6 +183,11 @@ describe Postmark::ApiClient do
         expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
         expect(http_client).to receive(:post)
         expect {subject.deliver_message_with_template(templated_message)}.not_to raise_error
+      end
+
+      it 'retry over the max_retries limit' do
+        expect(http_client).to receive(:post).thrice.and_raise(Postmark::InternalServerError)
+        expect {subject.deliver_message_with_template(templated_message)}.to raise_error(Postmark::InternalServerError)
       end
 
       it "retries on timeout" do
@@ -218,6 +233,11 @@ describe Postmark::ApiClient do
         expect {subject.deliver_messages([message, message, message])}.not_to raise_error
       end
 
+      it 'retry over the max_retries limit' do
+        expect(http_client).to receive(:post).thrice.and_raise(Postmark::InternalServerError)
+        expect {subject.deliver_messages([message, message, message])}.to raise_error(Postmark::InternalServerError)
+      end
+
       it "retries on timeout" do
         expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
         expect(http_client).to receive(:post) {response}
@@ -255,6 +275,11 @@ describe Postmark::ApiClient do
         expect(http_client).to receive(:post).twice.and_raise(Postmark::InternalServerError)
         expect(http_client).to receive(:post) {response}
         expect {subject.deliver_messages_with_templates(messages)}.not_to raise_error
+      end
+
+      it 'retry over the max_retries limit' do
+        expect(http_client).to receive(:post).thrice.and_raise(Postmark::InternalServerError)
+        expect {subject.deliver_messages_with_templates(messages)}.to raise_error(Postmark::InternalServerError)
       end
 
       it "retries on timeout" do
@@ -913,7 +938,6 @@ describe Postmark::ApiClient do
 
       it 'retries 3 times' do
         2.times { expect(http_client).to receive(:post).and_raise(Postmark::InternalServerError, 500) }
-
         expect(http_client).to receive(:post) {response}
         expect {subject.deliver_with_template(message_hash)}.not_to raise_error
       end
