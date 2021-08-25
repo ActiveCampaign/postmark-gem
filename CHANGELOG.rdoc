@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.22.0
+
+* Disabled automatic retries of failed requests by default. You can enabled it by passing `max_retries` option to the client constructor.
+
 == 1.21.8
 
 * Fixed passing and receiving SubscriptionManagementConfiguration when creating/updating message streams (#94).
