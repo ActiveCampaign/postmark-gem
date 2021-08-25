@@ -6,7 +6,7 @@ module Postmark
 
     def initialize(api_token, options = {})
       options = options.dup
-      @max_retries = options.delete(:max_retries) || 3
+      @max_retries = options.delete(:max_retries) || 0
       @http_client = HttpClient.new(api_token, options)
     end
 
