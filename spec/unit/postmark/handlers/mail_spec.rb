@@ -58,6 +58,23 @@ describe Mail::Postmark do
       end
     end
 
+    context 'when providing mail headers' do
+      let(:message) do
+        Mail.new do
+          from            "sheldon@bigbangtheory.com"
+          to              "lenard@bigbangtheory.com"
+          template_alias  "hello"
+          template_model  :name => "Sheldon"
+          headers         { "X-Postmark-Server-Token'" => "not-secret-token" }
+        end
+      end
+
+      it 'uses the provided server token to send the message' do
+        expect(Postmark::ApiClient).to receive(:new).with('not-secret-token', {}).and_return(double(:deliver_message => true))
+        message.deliver
+      end
+    end
+
     context 'when sending a Postmark template' do
       let(:message) do
         Mail.new do
