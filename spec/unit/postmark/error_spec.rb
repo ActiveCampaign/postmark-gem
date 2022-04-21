@@ -150,6 +150,28 @@ describe(Postmark::MailAdapterError) do
 end
 
 describe(Postmark::InvalidEmailAddressError) do
+  describe '.parse_recipients' do
+    let(:recipient) do
+      "nothing@wildbit.com"
+    end
+
+    subject {Postmark::InvalidEmailAddressError.parse_recipients(message)}
+
+    context '1/1 invalid' do
+      let(:message) do
+        "Error parsing 'To': Illegal email domain '#{recipient.split('@').last}' in address '#{recipient}'."
+      end
+
+      it {is_expected.to eq([recipient])}
+    end
+
+    context 'unknown error format' do
+      let(:message) {recipient}
+
+      it {is_expected.to eq([])}
+    end
+  end
+
   describe '.new' do
     let(:response) {{'Message' => message}}
 

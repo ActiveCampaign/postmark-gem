@@ -70,17 +70,13 @@ module Postmark
     end
   end
 
-  class InvalidEmailAddressError < ApiInputError; end
-
-  class InactiveRecipientError < ApiInputError
+  class InvalidRecipientError < ApiInputError
     attr_reader :recipients
 
-    PATTERNS = [/^Found inactive addresses: (.+?)\.$/.freeze,
-                /these inactive addresses: (.+?)\. Inactive/.freeze,
-                /these inactive addresses: (.+?)\.?$/].freeze
+    PATTERNS = []
 
     def self.parse_recipients(message)
-      PATTERNS.each do |p|
+      self::PATTERNS.each do |p|
         _, recipients = p.match(message).to_a
         next unless recipients
         return recipients.split(', ')
@@ -101,6 +97,16 @@ module Postmark
 
       self.class.parse_recipients(parsed_body['Message'])
     end
+  end
+
+  class InactiveRecipientError < InvalidRecipientError
+    PATTERNS = [/^Found inactive addresses: (.+?)\.$/.freeze,
+                /these inactive addresses: (.+?)\. Inactive/.freeze,
+                /these inactive addresses: (.+?)\.?$/].freeze
+  end
+
+  class InvalidEmailAddressError < InvalidRecipientError
+    PATTERNS = [/in address '(.+?)'\.$/.freeze]
   end
 
   class InvalidTemplateError < Error
