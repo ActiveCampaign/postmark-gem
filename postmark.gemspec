@@ -10,7 +10,6 @@ Gem::Specification.new do |s|
   s.license          = 'MIT'
 
   s.authors          = ["Tomek Maszkowski", "Igor Balos", "Artem Chistyakov", "Nick Hammond", "Petyo Ivanov", "Ilya Sabanin"]
-  s.email            = "tomek@wildbit.com"
   s.extra_rdoc_files = ["LICENSE", "README.md"]
   s.rdoc_options     = ["--charset=UTF-8"]
 
