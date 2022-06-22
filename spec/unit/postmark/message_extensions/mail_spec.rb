@@ -219,9 +219,9 @@ describe Mail::Message do
 
   describe "#export_headers" do
     let(:mail_message_with_reserved_headers) do
-      mail_message.header['Return-Path'] = 'bounce@wildbit.com'
-      mail_message.header['From'] = 'info@wildbit.com'
-      mail_message.header['Sender'] = 'info@wildbit.com'
+      mail_message.header['Return-Path'] = 'bounce@postmarkapp.com'
+      mail_message.header['From'] = 'info@postmarkapp.com'
+      mail_message.header['Sender'] = 'info@postmarkapp.com'
       mail_message.header['Received'] = 'from mta.pstmrk.it ([72.14.252.155]:54907)'
       mail_message.header['Date'] = 'January 25, 2013 3:30:58 PM PDT'
       mail_message.header['Content-Type'] = 'application/json'

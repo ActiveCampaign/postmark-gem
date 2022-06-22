@@ -1,5 +1,8 @@
 = Changelog
 
+== 1.22.1
+* Migrated to ActiveCampaign
+
 == 1.22.0
 
 * Disabled automatic retries of failed requests by default. You can enabled it by passing `max_retries` option to the client constructor.

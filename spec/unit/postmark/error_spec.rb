@@ -179,7 +179,7 @@ end
 describe(Postmark::InactiveRecipientError) do
   describe '.parse_recipients' do
     let(:recipients) do
-      %w(nothing@wildbit.com noth.ing+2@wildbit.com noth.ing+2-1@wildbit.com)
+      %w(nothing@postmarkapp.com noth.ing+2@postmarkapp.com noth.ing+2-1@postmarkapp.com)
     end
 
     subject {Postmark::InactiveRecipientError.parse_recipients(message)}
