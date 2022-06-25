@@ -1,5 +1,8 @@
 = Changelog
 
+== Unreleased
+* Update post install message to use https URL
+
 == 1.22.1
 * Migrated to ActiveCampaign
 

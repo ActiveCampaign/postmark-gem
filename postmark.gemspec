@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.post_install_message = %q{
     ==================
     Thanks for installing the postmark gem. If you don't have an account, please
-    sign up at http://postmarkapp.com/.
+    sign up at https://postmarkapp.com/.
 
     Review the README.md for implementation details and examples.
     ==================
