@@ -186,10 +186,10 @@ describe(Postmark::InactiveRecipientError) do
 
     context '1/1 inactive' do
       let(:message) do
-        'You tried to send to a recipient that has been marked as ' \
-        "inactive.\nFound inactive addresses: #{recipients[0]}.\n" \
+        'You tried to send to recipient(s) that has been marked as ' \
+        "inactive. Found inactive addresses: #{recipients[0]}. " \
         'Inactive recipients are ones that have generated a hard ' \
-        'bounce or a spam complaint.'
+        'bounce, a spam complaint, or a manual suppression.'
       end
 
       it {is_expected.to eq(recipients.take(1))}
