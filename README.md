@@ -11,7 +11,7 @@
 
 Postmark allows you to send your emails with high delivery rates. It also includes detailed statistics. In addition, Postmark can parse incoming emails which are forwarded back to your application.
 
-This gem is the official wrapper for the [Postmark HTTP API](http://postmarkapp.com).
+This gem is the official wrapper for the [Postmark HTTP API](https://postmarkapp.com).
 
 ## Usage
 
