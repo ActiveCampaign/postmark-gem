@@ -62,6 +62,10 @@ Please leave all comments, bugs, requests and issues on the Issues page.
 The Postmark Ruby library is licensed under the [MIT](http://www.opensource.org/licenses/mit-license.php) license.
 Refer to the [LICENSE](https://github.com/ActiveCampaign/postmark-gem/blob/main/LICENSE) file for more information.
 
+## Tests
+
+The [integration tests](https://github.com/ActiveCampaign/postmark-gem/tree/main/spec/integration) currently use a real  test email address, configured via `POSTMARK_CI_RECIPIENT`. The credentials for it can be found in the internal 1password vault under `Postmark - Ruby - Client Library - Account`.
+
 ## Copyright
 
 Copyright © 2022 ActiveCampaign LLC.
