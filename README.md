@@ -64,7 +64,7 @@ Refer to the [LICENSE](https://github.com/ActiveCampaign/postmark-gem/blob/main/
 
 ## Tests
 
-The [integration tests](https://github.com/ActiveCampaign/postmark-gem/tree/main/spec/integration) currently use a real  test email address, configured via `POSTMARK_CI_RECIPIENT`. The credentials for it can be found in the internal 1password vault under `Postmark - [Programming Language] - Client Library - Account`.
+The [integration tests](https://github.com/ActiveCampaign/postmark-gem/tree/main/spec/integration) currently use a real  test email address, configured via `POSTMARK_CI_RECIPIENT`. The credentials for it can be found in the internal 1password vault under `Postmark - Ruby - Client Library - Account`.
 
 ## Copyright
 
