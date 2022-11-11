@@ -75,7 +75,7 @@ module Postmark
   class InactiveRecipientError < ApiInputError
     attr_reader :recipients
 
-    PATTERNS = [/^Found inactive addresses: (.+?)\.$/.freeze,
+    PATTERNS = [/Found inactive addresses: (.+?)\.$/.freeze,
                 /these inactive addresses: (.+?)\. Inactive/.freeze,
                 /these inactive addresses: (.+?)\.?$/].freeze
 

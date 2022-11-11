@@ -214,7 +214,7 @@ describe(Postmark::InactiveRecipientError) do
     context 'n/n inactive, n > 1' do
       let(:message) do
         'You tried to send to recipients that have all been marked as ' \
-        "inactive.\nFound inactive addresses: #{recipients.join(', ')}.\n" \
+        "inactive. Found inactive addresses: #{recipients.join(', ')}.\n" \
         'Inactive recipients are ones that have generated a hard bounce or a spam complaint.'
       end
 
