@@ -77,8 +77,6 @@ module Postmark
 
     PATTERNS = [
       /Found inactive addresses: (.+?)\. Inactive/,
-      /^Found inactive addresses: (.+?)\.$/,
-      /these inactive addresses: (.+?)\. Inactive/,
       /these inactive addresses: (.+?)\.?$/
     ].freeze
 
