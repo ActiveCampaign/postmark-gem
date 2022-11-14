@@ -14,5 +14,5 @@ If you’d like to submit a pull request:
 * Do not mess with rakefile, version, or history.
 * Update the CHANGELOG, list your changes under Unreleased.
 * Update the README if necessary.
-* Write short, descriptive commit messages, following the format used in therepo.
+* Write short, descriptive commit messages, following the format used in the repo.
 * Send a pull request. Bonus points for topic branches.
