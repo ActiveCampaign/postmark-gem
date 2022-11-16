@@ -11,5 +11,8 @@ group :test do
   gem 'mime-types'
   gem 'activesupport'
   gem 'i18n', '~> 0.6.0'
-  gem 'yajl-ruby', '~> 1.0', :platforms => [:mingw, :mswin, :ruby]
+
+  # To support Ruby version <= 2.6
+  gem 'minitest', '<= 5.15.0'
+  gem 'yajl-ruby', '<= 1.4.1', :platforms => [:mingw, :mswin, :ruby]
 end
