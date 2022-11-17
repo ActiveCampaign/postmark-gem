@@ -1,6 +1,6 @@
 = Changelog
 
-== Unreleased
+== 1.22.2
 * Updated Postmark::InactiveRecipientError.parse_recipients method to handle current error message
 
 == 1.22.1
