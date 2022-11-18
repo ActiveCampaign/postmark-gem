@@ -5,7 +5,7 @@ require "postmark/version"
 Gem::Specification.new do |s|
   s.name             = "postmark"
   s.version          = Postmark::VERSION
-  s.homepage         = "http://postmarkapp.com"
+  s.homepage         = "https://postmarkapp.com"
   s.platform         = Gem::Platform::RUBY
   s.license          = 'MIT'
 
