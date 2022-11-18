@@ -186,26 +186,15 @@ describe(Postmark::InactiveRecipientError) do
 
     context '1/1 inactive' do
       let(:message) do
-        'You tried to send to a recipient that has been marked as ' \
-        "inactive.\nFound inactive addresses: #{recipients[0]}.\n" \
-        'Inactive recipients are ones that have generated a hard ' \
-        'bounce or a spam complaint.'
+        all_recipients_inactive_message(recipients[0])
       end
 
       it {is_expected.to eq(recipients.take(1))}
     end
 
-    context 'i/n inactive, n > 1, i < n - new message format' do
-      let(:message) { "Message OK, but will not deliver to these inactive addresses: #{recipients[0...2].join(', ')}" }
-
-      it {is_expected.to eq(recipients.take(2))}
-    end
-
     context 'i/n inactive, n > 1, i < n' do
       let(:message) do
-        'Message OK, but will not deliver to these inactive addresses: ' \
-        "#{recipients[0...2].join(', ')}. Inactive recipients are ones that " \
-        'have generated a hard bounce or a spam complaint.'
+        some_recipients_inactive_message(recipients[0...2].join(', '))
       end
 
       it {is_expected.to eq(recipients.take(2))}
@@ -213,9 +202,7 @@ describe(Postmark::InactiveRecipientError) do
 
     context 'n/n inactive, n > 1' do
       let(:message) do
-        'You tried to send to recipients that have all been marked as ' \
-        "inactive.\nFound inactive addresses: #{recipients.join(', ')}.\n" \
-        'Inactive recipients are ones that have generated a hard bounce or a spam complaint.'
+        all_recipients_inactive_message(recipients.join(', '))
       end
 
       it {is_expected.to eq(recipients)}
@@ -240,10 +227,7 @@ describe(Postmark::InactiveRecipientError) do
     end
 
     let(:message) do
-      'You tried to send to a recipient that has been marked as ' \
-      "inactive.\nFound inactive addresses: #{address}.\n" \
-      'Inactive recipients are ones that have generated a hard ' \
-      'bounce or a spam complaint.'
+      all_recipients_inactive_message(address)
     end
 
     it 'parses recipients from json payload' do
@@ -261,6 +245,15 @@ describe(Postmark::InactiveRecipientError) do
     it 'error code is set' do
       expect(subject.error_code).to eq(Postmark::ApiInputError::INACTIVE_RECIPIENT)
     end
+  end
+
+  def some_recipients_inactive_message(addresses)
+   "Message OK, but will not deliver to these inactive addresses: #{addresses}."
+  end
+
+  def all_recipients_inactive_message(addresses)
+    "You tried to send to recipient(s) that have been marked as inactive. Found inactive addresses: #{addresses}. " \
+    "Inactive recipients are ones that have generated a hard bounce, a spam complaint, or a manual suppression."
   end
 end
 
