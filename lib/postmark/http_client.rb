@@ -17,8 +17,8 @@ module Postmark
       :host => 'api.postmarkapp.com',
       :secure => true,
       :path_prefix => '/',
-      :http_read_timeout => 15,
-      :http_open_timeout => 5
+      :http_read_timeout => 60,
+      :http_open_timeout => 60
     }
 
     def initialize(api_token, options = {})
