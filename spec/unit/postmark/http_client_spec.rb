@@ -39,8 +39,8 @@ describe Postmark::HttpClient do
     its(:port) { is_expected.to eq 443 }
     its(:secure) { is_expected.to be true }
     its(:path_prefix) { is_expected.to eq '/' }
-    its(:http_read_timeout) { is_expected.to eq 15 }
-    its(:http_open_timeout) { is_expected.to eq 5 }
+    its(:http_read_timeout) { is_expected.to eq 60 }
+    its(:http_open_timeout) { is_expected.to eq 60 }
 
     it 'does not provide a default which utilizes the Net::HTTP default', :skip_ruby_version => ['1.8.7'] do
       http_client = subject.http
