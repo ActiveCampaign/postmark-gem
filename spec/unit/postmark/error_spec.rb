@@ -98,9 +98,9 @@ describe(Postmark::ApiInputError) do
       end
 
       context '300' do
-        let(:code) {Postmark::ApiInputError::INVALID_EMAIL_ADDRESS}
+        let(:code) {Postmark::ApiInputError::INVALID_EMAIL_REQUEST}
 
-        it {is_expected.to be_a(Postmark::InvalidEmailAddressError)}
+        it {is_expected.to be_a(Postmark::InvalidEmailRequestError)}
         it_behaves_like 'api input error'
       end
 
@@ -149,13 +149,13 @@ describe(Postmark::MailAdapterError) do
   it {is_expected.to be_a(Postmark::Error)}
 end
 
-describe(Postmark::InvalidEmailAddressError) do
+describe(Postmark::InvalidEmailRequestError) do
   describe '.new' do
     let(:response) {{'Message' => message}}
 
     subject do
-      Postmark::InvalidEmailAddressError.new(
-        Postmark::ApiInputError::INVALID_EMAIL_ADDRESS, Postmark::Json.encode(response), response)
+      Postmark::InvalidEmailRequestError.new(
+        Postmark::ApiInputError::INVALID_EMAIL_REQUEST, Postmark::Json.encode(response), response)
     end
 
     let(:message) do
@@ -171,7 +171,7 @@ describe(Postmark::InvalidEmailAddressError) do
     end
 
     it 'error code is set' do
-      expect(subject.error_code).to eq(Postmark::ApiInputError::INVALID_EMAIL_ADDRESS)
+      expect(subject.error_code).to eq(Postmark::ApiInputError::INVALID_EMAIL_REQUEST)
     end
   end
 end

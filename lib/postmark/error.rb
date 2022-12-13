@@ -43,7 +43,7 @@ module Postmark
 
   class ApiInputError < HttpServerError
     INACTIVE_RECIPIENT = 406
-    INVALID_EMAIL_ADDRESS = 300
+    INVALID_EMAIL_REQUEST = 300
 
     attr_accessor :error_code
 
@@ -53,8 +53,8 @@ module Postmark
       case error_code
       when INACTIVE_RECIPIENT
         InactiveRecipientError.new(error_code, body, parsed_body)
-      when INVALID_EMAIL_ADDRESS
-        InvalidEmailAddressError.new(error_code, body, parsed_body)
+      when INVALID_EMAIL_REQUEST
+        InvalidEmailRequestError.new(error_code, body, parsed_body)
       else
         new(error_code, body, parsed_body)
       end
@@ -70,7 +70,7 @@ module Postmark
     end
   end
 
-  class InvalidEmailAddressError < ApiInputError; end
+  class InvalidEmailRequestError < ApiInputError; end
 
   class InactiveRecipientError < ApiInputError
     attr_reader :recipients
