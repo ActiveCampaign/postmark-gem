@@ -1,5 +1,9 @@
 = Changelog
 
+== 1.23.0
+* Renamed `InvalidEmailAddressError` to `InvalidEmailRequestError`.
+* Keeping `InvalidEmailAddressError` as an alias for backwards compatibility for now.
+
 == 1.22.2
 * Updated Postmark::InactiveRecipientError.parse_recipients method to handle current error message
 * Update post install message to use https URL
