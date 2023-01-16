@@ -1,5 +1,8 @@
 = Changelog
 
+== 1.22.3
+* Increased default timeout values
+
 == 1.22.2
 * Updated Postmark::InactiveRecipientError.parse_recipients method to handle current error message
 * Update post install message to use https URL
