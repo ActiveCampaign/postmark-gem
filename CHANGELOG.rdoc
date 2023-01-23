@@ -1,8 +1,7 @@
 = Changelog
 
 == 1.23.0
-* Renamed `InvalidEmailAddressError` to `InvalidEmailRequestError`.
-* Keeping `InvalidEmailAddressError` as an alias for backwards compatibility for now.
+* Deprecated `InvalidEmailAddressError`. New name is `InvalidEmailRequestError`.
 
 == 1.22.3
 * Increased default timeout values
