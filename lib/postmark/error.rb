@@ -71,7 +71,6 @@ module Postmark
   end
 
   class InvalidEmailRequestError < ApiInputError; end
-  InvalidEmailAddressError = InvalidEmailRequestError # alias for backwards compatibility
 
   class InactiveRecipientError < ApiInputError
     attr_reader :recipients
@@ -130,4 +129,5 @@ module Postmark
   DeliveryError = Error
   InvalidMessageError = ApiInputError
   UnknownError = UnexpectedHttpResponseError
+  InvalidEmailAddressError = InvalidEmailRequestError
 end

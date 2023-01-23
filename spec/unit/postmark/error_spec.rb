@@ -274,3 +274,9 @@ describe(Postmark::UnknownError) do
     expect(subject.class).to eq(Postmark::UnexpectedHttpResponseError)
   end
 end
+
+describe(Postmark::InvalidEmailAddressError) do
+  it 'is an alias for backwards compatibility' do
+    expect(subject.class).to eq(Postmark::InvalidEmailRequestError)
+  end
+end
