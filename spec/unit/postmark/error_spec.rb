@@ -259,24 +259,24 @@ end
 
 describe(Postmark::DeliveryError) do
   it 'is an alias to Error for backwards compatibility' do
-    expect(subject).to eq(Postmark::Error)
+    expect(subject.class).to eq(Postmark::Error)
   end
 end
 
 describe(Postmark::InvalidMessageError) do
   it 'is an alias to Error for backwards compatibility' do
-    expect(subject).to eq(Postmark::ApiInputError)
+    expect(subject.class).to eq(Postmark::ApiInputError)
   end
 end
 
 describe(Postmark::UnknownError) do
   it 'is an alias for backwards compatibility' do
-    expect(subject).to eq(Postmark::UnexpectedHttpResponseError)
+    expect(subject.class).to eq(Postmark::UnexpectedHttpResponseError)
   end
 end
 
 describe(Postmark::InvalidEmailAddressError) do
   it 'is an alias for backwards compatibility' do
-    expect(subject).to eq(Postmark::InvalidEmailRequestError)
+    expect(subject.class).to eq(Postmark::InvalidEmailRequestError)
   end
 end
