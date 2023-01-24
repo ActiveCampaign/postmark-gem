@@ -15,7 +15,7 @@ require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'shared_e
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'custom_matchers.rb')
 require File.join(File.expand_path(File.dirname(__FILE__)), 'support', 'helpers.rb')
 
-Postmark::Deprecations.behavior = :silence
+ActiveSupport::Deprecation.behavior = ->(*args) {}
 
 if ENV['JSONGEM']
   # `JSONGEM=Yajl rake spec`

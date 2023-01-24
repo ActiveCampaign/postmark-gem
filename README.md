@@ -48,15 +48,6 @@ Without Bundler:
 gem install postmark
 ```
 
-## Deprecations
-
-Deprecations can be either silenced or set to raise using:
-
-```rb
-Postmark::Deprecations.behavior = :silence
-Postmark::Deprecations.behavior = :raise
-```
-
 ## Note on Patches/Pull Requests
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) file for details.

@@ -9,7 +9,6 @@ group :test do
   gem 'fakeweb', :git => 'https://github.com/chrisk/fakeweb.git'
   gem 'fakeweb-matcher'
   gem 'mime-types'
-  gem 'activesupport'
   gem 'i18n', '~> 0.6.0'
 
   # To support Ruby version <= 2.6

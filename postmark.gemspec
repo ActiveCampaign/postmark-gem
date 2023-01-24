@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.7"
 
   s.add_dependency "json"
+  s.add_dependency "activesupport", ">= 3.0.0"
 
   s.add_development_dependency "mail", "~> 2.7.0" # https://github.com/mikel/mail/pull/1539
   s.add_development_dependency "rake"
