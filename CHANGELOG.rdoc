@@ -1,5 +1,8 @@
 = Changelog
 
+== 1.24.0
+* Added configurable warnings when referencing deprecated classes.
+
 == 1.23.0
 * Deprecated `InvalidEmailAddressError`. New name is `InvalidEmailRequestError`.
 

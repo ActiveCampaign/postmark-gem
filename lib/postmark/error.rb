@@ -1,3 +1,5 @@
+require 'postmark/deprecations'
+
 module Postmark
   class Error < ::StandardError; end
 
@@ -126,8 +128,10 @@ module Postmark
   class UnexpectedHttpResponseError < HttpServerError; end
 
   # Backwards compatible aliases
-  DeliveryError = Error
-  InvalidMessageError = ApiInputError
-  UnknownError = UnexpectedHttpResponseError
-  InvalidEmailAddressError = InvalidEmailRequestError
+  Deprecations.add_constants(
+    :DeliveryError => Error,
+    :InvalidMessageError => ApiInputError,
+    :UnknownError => UnexpectedHttpResponseError,
+    :InvalidEmailAddressError => InvalidEmailRequestError
+  )
 end
