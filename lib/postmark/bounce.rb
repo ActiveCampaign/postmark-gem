@@ -3,7 +3,8 @@ require 'time'
 module Postmark
   class Bounce
 
-    attr_reader :email, :bounced_at, :type, :description, :details, :name, :id, :server_id, :tag, :message_id, :subject
+    attr_reader :email, :bounced_at, :type, :description, :details, :name, :id, :server_id, :tag, :message_id, :subject,
+      :message_stream, :content
 
     def initialize(values = {})
       values = Postmark::HashHelper.to_ruby(values)
@@ -20,6 +21,9 @@ module Postmark
       @can_activate = values[:can_activate]
       @message_id = values[:message_id]
       @subject = values[:subject]
+      @server_id = values[:server_id]
+      @message_stream = values[:message_stream]
+      @content = values[:content]
     end
 
     def inactive?

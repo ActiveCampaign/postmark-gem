@@ -12,6 +12,10 @@ describe Postmark::Bounce do
                        :inactive => false,
                        :can_activate => true,
                        :id => 42,
+                       :server_id => 12345,
+                       :tag => "TEST_TAG",
+                       :message_stream => "my-message-stream",
+                       :content => "THE CONTENT",
                        :subject => "Hello from our app!"} }
   let(:bounce_data_postmark) { Postmark::HashHelper.to_postmark(bounce_data) }
   let(:bounces_data) { [bounce_data, bounce_data, bounce_data] }
@@ -31,6 +35,8 @@ describe Postmark::Bounce do
     it { expect(subject).to respond_to(:tag) }
     it { expect(subject).to respond_to(:message_id) }
     it { expect(subject).to respond_to(:subject) }
+    it { expect(subject).to respond_to(:message_stream) }
+    it { expect(subject).to respond_to(:content) }
   end
 
   context "given a bounce created from bounce_data" do
@@ -55,6 +61,10 @@ describe Postmark::Bounce do
     its(:bounced_at) { is_expected.to eq Time.parse(bounce_data[:bounced_at]) }
     its(:id) { is_expected.to eq bounce_data[:id] }
     its(:subject) { is_expected.to eq bounce_data[:subject] }
+    its(:message_stream) { is_expected.to eq bounce_data[:message_stream] }
+    its(:server_id) { is_expected.to eq bounce_data[:server_id] }
+    its(:tag) { is_expected.to eq bounce_data[:tag] }
+    its(:content) { is_expected.to eq bounce_data[:content] }
 
   end
 
