@@ -219,7 +219,7 @@ describe Postmark::MailMessageConverter do
         "Subject" => "Hello!",
         "Attachments" => [{"Name" => "empty.gif",
                            "Content" => encoded_empty_gif_data,
-                           "ContentType" => "image/gif"}],
+                           "ContentType" => "image/gif; filename=empty.gif"}],
         "TextBody" => "Hello Sheldon!",
         "To" => "lenard@bigbangtheory.com"})
   end

@@ -183,7 +183,7 @@ describe Mail::Message do
     let(:exported_data) {
       {'Name' => 'face.jpeg',
        'Content' => "YmluYXJ5ZGF0YWhlcmU=\n",
-       'ContentType' => 'image/jpeg'}
+       'ContentType' => 'image/jpeg; filename=face.jpeg'}
     }
 
     context 'given a regular attachment' do
