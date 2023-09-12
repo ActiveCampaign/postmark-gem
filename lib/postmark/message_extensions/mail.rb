@@ -176,7 +176,7 @@ module Mail
           "Content" => pack_attachment_data(attachment.body.decoded),
           "ContentType" => attachment.content_type,
           "ContentID" => attachment.inline? ? attachment.url : nil
-        }.compact
+        }.delete_if { |_k, v| v.nil? }
       end
     end
 
