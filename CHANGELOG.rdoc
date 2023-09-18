@@ -1,5 +1,8 @@
 = Changelog
 
+== 1.24.1
+* Fixed support for text/calendar attachments by using content_type instead of mime_type.
+
 == 1.24.0
 * Added configurable warnings when referencing deprecated classes.
 

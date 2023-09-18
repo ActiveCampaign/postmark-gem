@@ -171,12 +171,12 @@ module Mail
 
     def export_native_attachments
       attachments.map do |attachment|
-        basics = {"Name" => attachment.filename,
-                  "Content" => pack_attachment_data(attachment.body.decoded),
-                  "ContentType" => attachment.mime_type}
-        specials = attachment.inline? ? {'ContentID' => attachment.url} : {}
-
-        basics.update(specials)
+        {
+          "Name" => attachment.filename,
+          "Content" => pack_attachment_data(attachment.body.decoded),
+          "ContentType" => attachment.content_type,
+          "ContentID" => attachment.inline? ? attachment.url : nil
+        }.delete_if { |_k, v| v.nil? }
       end
     end
 
