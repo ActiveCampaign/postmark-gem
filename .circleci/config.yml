@@ -17,7 +17,8 @@ workflows:
                 "circleci/ruby:2.4",
                 "circleci/ruby:2.5",
                 "circleci/ruby:2.6",
-                "circleci/ruby:2.7"
+                "circleci/ruby:2.7",
+                "cimg/ruby:3.2"
               ]
       - unit-tests-legacy:
           matrix:

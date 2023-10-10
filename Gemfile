@@ -4,7 +4,7 @@ source "http://rubygems.org"
 gemspec
 
 group :test do
-  gem 'rspec', '~> 3.7'
+  gem 'rspec', '~> 3.7', "< 3.10" # until https://github.com/rspec/rspec-support/pull/537 gets merged
   gem 'rspec-its', '~> 1.2'
   gem 'fakeweb', :git => 'https://github.com/chrisk/fakeweb.git'
   gem 'fakeweb-matcher'
