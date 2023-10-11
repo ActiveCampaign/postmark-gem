@@ -145,6 +145,13 @@ module Postmark
       batch
     end
 
-  end
+    def get_data_removal_status(id)
+      format_response(http_client.get("data-removals/#{id}"))
+    end
 
+    def request_data_removal(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes))
+      format_response(http_client.post('data-removals', data))
+    end
+  end
 end

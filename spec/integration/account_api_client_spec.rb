@@ -105,4 +105,20 @@ describe 'Account API client usage' do
     # delete
     expect { subject.delete_server(new_server[:id]) }.not_to raise_error
   end
+
+  it 'manages data removals' do
+    # create
+    data_removal_status = subject.request_data_removal(
+      'requested_by' => 'sender@postmarkapp.com',
+      'requested_for' => 'test@example.com',
+      'notify_when_completed' => false
+    )
+
+    expect(data_removal_status[:status]).to eq('Pending')
+
+    # get
+    fetched_data_removal_status = subject.get_data_removal_status(data_removal_status[:id])
+
+    expect(fetched_data_removal_status[:id]).to eq(data_removal_status[:id])
+  end
 end
