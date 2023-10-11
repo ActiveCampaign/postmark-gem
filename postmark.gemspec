@@ -34,7 +34,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "json"
 
-  s.add_development_dependency "mail", "~> 2.7.0" # https://github.com/mikel/mail/pull/1539
-  s.add_development_dependency "mini_mime", "< 1.1.4"
+  s.add_development_dependency "mail"
   s.add_development_dependency "rake"
 end
