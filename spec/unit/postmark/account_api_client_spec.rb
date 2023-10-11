@@ -728,5 +728,46 @@ describe Postmark::AccountApiClient do
       end
     end
 
+    describe '#get_data_removal_status' do
+      let(:response) {
+        {
+          "ID" => 42,
+          "Status" => "Done"
+        }
+      }
+
+      it 'performs a GET request to /data-removals/:id endpoint' do
+        allow(subject.http_client).to receive(:get).
+          with('data-removals/42').and_return(response)
+        subject.get_data_removal_status(42)
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:get).and_return(response)
+        keys = subject.get_data_removal_status(42).keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
+      end
+    end
+
+    describe '#request_data_removal' do
+      let(:response) {
+        {
+          "ID" => 42,
+          "Status" => "Done"
+        }
+      }
+
+      it 'performs a POST request to /data-removals endpoint' do
+        allow(subject.http_client).to receive(:post).
+          with('data-removals', an_instance_of(String)).and_return(response)
+        subject.request_data_removal(:foo => 'bar')
+      end
+
+      it 'formats the keys of returned response' do
+        allow(subject.http_client).to receive(:post).and_return(response)
+        keys = subject.request_data_removal(:foo => 'bar').keys
+        expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
+      end
+    end
   end
 end
