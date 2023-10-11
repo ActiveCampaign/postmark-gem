@@ -118,8 +118,8 @@ describe Postmark::MailMessageConverter do
       from "sheldon@bigbangtheory.com"
       to "lenard@bigbangtheory.com"
       subject "Hello!"
-      body "Hello Sheldon!"
       add_file empty_gif_path
+      body "Hello Sheldon!"
     end
   end
 
