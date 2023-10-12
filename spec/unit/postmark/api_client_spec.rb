@@ -161,7 +161,7 @@ describe Postmark::ApiClient do
     end
 
     it "proxies errors" do
-      allow(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
       expect {subject}.to raise_error(Postmark::TimeoutError)
     end
 
@@ -188,7 +188,7 @@ describe Postmark::ApiClient do
     end
 
     it "proxies errors" do
-      allow(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
+      expect(http_client).to receive(:post).and_raise(Postmark::TimeoutError)
       expect {subject}.to raise_error(Postmark::TimeoutError)
     end
 
@@ -262,7 +262,7 @@ describe Postmark::ApiClient do
       end
 
       it 'loads outbound messages' do
-        allow(api_client.http_client).to receive(:get).
+        expect(api_client.http_client).to receive(:get).
             with('messages/outbound', an_instance_of(Hash)).and_return(response)
         expect(api_client.messages.count).to eq(5)
       end
@@ -276,7 +276,7 @@ describe Postmark::ApiClient do
       end
 
       it 'loads inbound messages' do
-        allow(api_client.http_client).to receive(:get).with('messages/inbound', an_instance_of(Hash)).and_return(response)
+        expect(api_client.http_client).to receive(:get).with('messages/inbound', an_instance_of(Hash)).and_return(response)
         expect(api_client.messages(:inbound => true).count).to eq(5)
       end
     end
@@ -308,19 +308,22 @@ describe Postmark::ApiClient do
     let(:response) {{'TotalCount' => 42}}
 
     context 'given outbound' do
-
-      it 'requests and returns outbound messages count' do
-        allow(api_client.http_client).to receive(:get).
+      it 'requests and returns outbound messages count by default' do
+        expect(api_client.http_client).to receive(:get).
             with('messages/outbound', an_instance_of(Hash)).and_return(response)
         expect(api_client.get_messages_count).to eq(42)
-        expect(api_client.get_messages_count(:inbound => false)).to eq(42)
       end
 
+      it 'requests and returns outbound messages count when inbound => false' do
+        expect(api_client.http_client).to receive(:get).
+          with('messages/outbound', an_instance_of(Hash)).and_return(response)
+        expect(api_client.get_messages_count(:inbound => false)).to eq(42)
+      end
     end
 
     context 'given inbound' do
       it 'requests and returns inbound messages count' do
-        allow(api_client.http_client).to receive(:get).
+        expect(api_client.http_client).to receive(:get).
             with('messages/inbound', an_instance_of(Hash)).and_return(response)
         expect(api_client.get_messages_count(:inbound => true)).to eq(42)
       end
@@ -382,7 +385,7 @@ describe Postmark::ApiClient do
     end
 
     it 'requests data at /bounces' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with('bounces', an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Bounces' => [{}])
       expect(api_client.bounces.first(5).count).to eq(1)
@@ -394,9 +397,10 @@ describe Postmark::ApiClient do
     let(:response) {{"Bounces" => []}}
 
     it 'requests data at /bounces' do
-      allow(http_client).to receive(:get).with("bounces", options) {response}
-      expect(api_client.get_bounces(options)).to be_an(Array)
-      expect(api_client.get_bounces(options).count).to be_zero
+      expect(http_client).to receive(:get).with("bounces", options) {response}
+      result = api_client.get_bounces(options)
+      expect(result).to be_an(Array)
+      expect(result.count).to be_zero
     end
   end
 
@@ -434,7 +438,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a GET request to /opens/tags' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with('messages/outbound/opens', an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Opens' => [{}])
       expect(api_client.opens.first(5).count).to eq(1)
@@ -447,7 +451,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a GET request to /clicks/tags' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with('messages/outbound/clicks', an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Clicks' => [{}])
       expect(api_client.clicks.first(5).count).to eq(1)
@@ -459,9 +463,10 @@ describe Postmark::ApiClient do
     let(:response) {{'Opens' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/opens' do
-      allow(http_client).to receive(:get).with('messages/outbound/opens', options) {response}
-      expect(api_client.get_opens(options)).to be_an(Array)
-      expect(api_client.get_opens(options).count).to be_zero
+      expect(http_client).to receive(:get).with('messages/outbound/opens', options) {response}
+      result = api_client.get_opens(options)
+      expect(result).to be_an(Array)
+      expect(result.count).to be_zero
     end
   end
 
@@ -470,9 +475,10 @@ describe Postmark::ApiClient do
     let(:response) {{'Clicks' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/clicks' do
-      allow(http_client).to receive(:get).with('messages/outbound/clicks', options) {response}
-      expect(api_client.get_clicks(options)).to be_an(Array)
-      expect(api_client.get_clicks(options).count).to be_zero
+      expect(http_client).to receive(:get).with('messages/outbound/clicks', options) {response}
+      result = api_client.get_clicks(options)
+      expect(result).to be_an(Array)
+      expect(result.count).to be_zero
     end
   end
 
@@ -482,9 +488,10 @@ describe Postmark::ApiClient do
     let(:response) {{'Opens' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/opens' do
-      allow(http_client).to receive(:get).with("messages/outbound/opens/#{message_id}", options).and_return(response)
-      expect(api_client.get_opens_by_message_id(message_id, options)).to be_an(Array)
-      expect(api_client.get_opens_by_message_id(message_id, options).count).to be_zero
+      expect(http_client).to receive(:get).with("messages/outbound/opens/#{message_id}", options).and_return(response)
+      result = api_client.get_opens_by_message_id(message_id, options)
+      expect(result).to be_an(Array)
+      expect(result.count).to be_zero
     end
   end
 
@@ -494,9 +501,10 @@ describe Postmark::ApiClient do
     let(:response) {{'Clicks' => [], 'TotalCount' => 0}}
 
     it 'performs a GET request to /messages/outbound/clicks' do
-      allow(http_client).to receive(:get).with("messages/outbound/clicks/#{message_id}", options).and_return(response)
-      expect(api_client.get_clicks_by_message_id(message_id, options)).to be_an(Array)
-      expect(api_client.get_clicks_by_message_id(message_id, options).count).to be_zero
+      expect(http_client).to receive(:get).with("messages/outbound/clicks/#{message_id}", options).and_return(response)
+      result = api_client.get_clicks_by_message_id(message_id, options)
+      expect(result).to be_an(Array)
+      expect(result.count).to be_zero
     end
   end
 
@@ -508,7 +516,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a GET request to /opens/tags' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with("messages/outbound/opens/#{message_id}", an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Opens' => [{}])
       expect(api_client.opens_by_message_id(message_id).first(5).count).to eq(1)
@@ -523,7 +531,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a GET request to /clicks/tags' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with("messages/outbound/clicks/#{message_id}", an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Clicks' => [{}])
       expect(api_client.clicks_by_message_id(message_id).first(5).count).to eq(1)
@@ -536,13 +544,13 @@ describe Postmark::ApiClient do
       let(:response) {{'Rule' => 'example.com'}}
 
       it 'performs a POST request to /triggers/inboundrules with given options' do
-        allow(http_client).to receive(:post).with('triggers/inboundrules',
+        expect(http_client).to receive(:post).with('triggers/inboundrules',
                                                   {'Rule' => 'example.com'}.to_json)
         api_client.create_trigger(:inbound_rules, options)
       end
 
       it 'symbolizes response keys' do
-        allow(http_client).to receive(:post).and_return(response)
+        expect(http_client).to receive(:post).and_return(response)
         expect(api_client.create_trigger(:inbound_rules, options)).to eq(:rule => 'example.com')
       end
     end
@@ -552,12 +560,12 @@ describe Postmark::ApiClient do
     let(:id) {42}
 
     it 'performs a GET request to /triggers/tags/:id' do
-      allow(http_client).to receive(:get).with("triggers/tags/#{id}")
+      expect(http_client).to receive(:get).with("triggers/tags/#{id}")
       api_client.get_trigger(:tags, id)
     end
 
     it 'symbolizes response keys' do
-      allow(http_client).to receive(:get).and_return('Foo' => 'Bar')
+      expect(http_client).to receive(:get).and_return('Foo' => 'Bar')
       expect(api_client.get_trigger(:tags, id)).to eq(:foo => 'Bar')
     end
   end
@@ -567,12 +575,12 @@ describe Postmark::ApiClient do
       let(:id) {42}
 
       it 'performs a DELETE request to /triggers/tags/:id' do
-        allow(http_client).to receive(:delete).with("triggers/tags/#{id}")
+        expect(http_client).to receive(:delete).with("triggers/tags/#{id}")
         api_client.delete_trigger(:tags, id)
       end
 
       it 'symbolizes response keys' do
-        allow(http_client).to receive(:delete).and_return('Foo' => 'Bar')
+        expect(http_client).to receive(:delete).and_return('Foo' => 'Bar')
         expect(api_client.delete_trigger(:tags, id)).to eq(:foo => 'Bar')
       end
     end
@@ -581,12 +589,12 @@ describe Postmark::ApiClient do
       let(:id) {42}
 
       it 'performs a DELETE request to /triggers/inboundrules/:id' do
-        allow(http_client).to receive(:delete).with("triggers/inboundrules/#{id}")
+        expect(http_client).to receive(:delete).with("triggers/inboundrules/#{id}")
         api_client.delete_trigger(:inbound_rules, id)
       end
 
       it 'symbolizes response keys' do
-        allow(http_client).to receive(:delete).and_return('Rule' => 'example.com')
+        expect(http_client).to receive(:delete).and_return('Rule' => 'example.com')
         expect(api_client.delete_trigger(:tags, id)).to eq(:rule => 'example.com')
       end
     end
@@ -599,9 +607,10 @@ describe Postmark::ApiClient do
       let(:response) {{'InboundRules' => [], 'TotalCount' => 0}}
 
       it 'performs a GET request to /triggers/inboundrules' do
-        allow(http_client).to receive(:get).with('triggers/inboundrules', options) {response}
-        expect(api_client.get_triggers(:inbound_rules, options)).to be_an(Array)
-        expect(api_client.get_triggers(:inbound_rules, options).count).to be_zero
+        expect(http_client).to receive(:get).with('triggers/inboundrules', options) {response}
+        result = api_client.get_triggers(:inbound_rules, options)
+        expect(result).to be_an(Array)
+        expect(result.count).to be_zero
       end
     end
   end
@@ -612,7 +621,7 @@ describe Postmark::ApiClient do
     end
 
     it 'performs a GET request to /triggers/tags' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with('triggers/tags', an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Tags' => [{}])
       expect(api_client.triggers(:tags).first(5).count).to eq(1)
@@ -688,7 +697,7 @@ describe Postmark::ApiClient do
     end
 
     it 'requests data at /templates' do
-      allow(api_client.http_client).to receive(:get).
+      expect(api_client.http_client).to receive(:get).
           with('templates', an_instance_of(Hash)).
           and_return('TotalCount' => 1, 'Templates' => [{}])
       expect(api_client.templates.first(5).count).to eq(1)
@@ -1025,7 +1034,7 @@ describe Postmark::ApiClient do
     subject(:result) { api_client.get_message_streams(:offset => 22, :count => 33) }
 
     before do
-      allow(http_client).to receive(:get).
+      expect(http_client).to receive(:get).
         with('message-streams', :offset => 22, :count => 33).
         and_return({ 'TotalCount' => 1, 'MessageStreams' => [{'Name' => 'abc'}]})
     end
@@ -1045,7 +1054,7 @@ describe Postmark::ApiClient do
     it { is_expected.to be_kind_of(Enumerable) }
 
     it 'requests data at /message-streams' do
-      allow(http_client).to receive(:get).
+      expect(http_client).to receive(:get).
         with('message-streams', anything).
         and_return('TotalCount' => 1, 'MessageStreams' => [{}])
       expect(subject.first(5).count).to eq(1)
@@ -1056,7 +1065,7 @@ describe Postmark::ApiClient do
     subject(:result) { api_client.get_message_stream(123) }
 
     before do
-      allow(http_client).to receive(:get).
+      expect(http_client).to receive(:get).
         with('message-streams/123').
         and_return({
           'Id' => 'xxx',

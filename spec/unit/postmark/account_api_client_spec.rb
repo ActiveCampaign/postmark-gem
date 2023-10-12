@@ -37,7 +37,8 @@ describe Postmark::AccountApiClient do
       end
 
       it 'lazily loads senders' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
+            exactly(5).times.
             with('senders', an_instance_of(Hash)).and_return(response)
         subject.senders.take(1000)
       end
@@ -63,20 +64,20 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a GET request to /senders endpoint' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('senders', :offset => 0, :count => 30).
             and_return(response)
         subject.get_senders
       end
 
       it 'formats the keys of returned list of senders' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_senders.map { |s| s.keys }.flatten
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
       it 'accepts offset and count options' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('senders', :offset => 10, :count => 42).
             and_return(response)
         subject.get_senders(:offset => 10, :count => 42)
@@ -92,7 +93,7 @@ describe Postmark::AccountApiClient do
       end
 
       it 'returns a total number of senders' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('senders', an_instance_of(Hash)).and_return(response)
         expect(subject.get_senders_count).to eq(42)
       end
@@ -115,13 +116,13 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a GET request to /senders/:id endpoint' do
-        allow(subject.http_client).to receive(:get).with("senders/42").
+        expect(subject.http_client).to receive(:get).with("senders/42").
                                                     and_return(response)
         subject.get_sender(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_sender(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -144,19 +145,19 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a POST request to /senders endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with("senders", an_instance_of(String)).and_return(response)
         subject.create_sender(:name => 'Chris Nagele')
       end
 
       it 'converts the sender attributes names to camel case' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with("senders", {'FooBar' => 'bar'}.to_json).and_return(response)
         subject.create_sender(:foo_bar => 'bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.create_sender(:foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -180,19 +181,19 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a PUT request to /senders/:id endpoint' do
-        allow(subject.http_client).to receive(:put).
+        expect(subject.http_client).to receive(:put).
             with('senders/42', an_instance_of(String)).and_return(response)
         subject.update_sender(42, :name => 'Chris Nagele')
       end
 
       it 'converts the sender attributes names to camel case' do
-        allow(subject.http_client).to receive(:put).
+        expect(subject.http_client).to receive(:put).
             with('senders/42', {'FooBar' => 'bar'}.to_json).and_return(response)
         subject.update_sender(42, :foo_bar => 'bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:put).and_return(response)
+        expect(subject.http_client).to receive(:put).and_return(response)
         keys = subject.update_sender(42, :foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -212,13 +213,13 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a POST request to /senders/:id/resend endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('senders/42/resend').and_return(response)
         subject.resend_sender_confirmation(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.resend_sender_confirmation(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -233,18 +234,18 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a POST request to /senders/:id/verifyspf endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('senders/42/verifyspf').and_return(response)
         subject.verified_sender_spf?(42)
       end
 
       it 'returns false when SPFVerified field of the response is false' do
-        allow(subject.http_client).to receive(:post).and_return(false_response)
+        expect(subject.http_client).to receive(:post).and_return(false_response)
         expect(subject.verified_sender_spf?(42)).to be false
       end
 
       it 'returns true when SPFVerified field of the response is true' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         expect(subject.verified_sender_spf?(42)).to be true
       end
     end
@@ -267,13 +268,13 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a POST request to /senders/:id/requestnewdkim endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('senders/42/requestnewdkim').and_return(response)
         subject.request_new_sender_dkim(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.request_new_sender_dkim(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -292,13 +293,13 @@ describe Postmark::AccountApiClient do
       end
 
       it 'performs a DELETE request to /senders/:id endpoint' do
-        allow(subject.http_client).to receive(:delete).
+        expect(subject.http_client).to receive(:delete).
             with('senders/42').and_return(response)
         subject.delete_sender(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:delete).and_return(response)
+        expect(subject.http_client).to receive(:delete).and_return(response)
         keys = subject.delete_sender(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -312,7 +313,8 @@ describe Postmark::AccountApiClient do
       end
 
       it 'lazily loads domains' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
+            exactly(5).times.
             with('domains', an_instance_of(Hash)).and_return(response)
         subject.domains.take(1000)
       end
@@ -332,20 +334,20 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a GET request to /domains endpoint' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('domains', :offset => 0, :count => 30).
             and_return(response)
         subject.get_domains
       end
 
       it 'formats the keys of returned list of domains' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_domains.map { |s| s.keys }.flatten
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
       it 'accepts offset and count options' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('domains', :offset => 10, :count => 42).
             and_return(response)
         subject.get_domains(:offset => 10, :count => 42)
@@ -357,7 +359,7 @@ describe Postmark::AccountApiClient do
       let(:response) { {'TotalCount' => 42} }
 
       it 'returns a total number of domains' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('domains', an_instance_of(Hash)).and_return(response)
         expect(subject.get_domains_count).to eq(42)
       end
@@ -372,13 +374,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a GET request to /domains/:id endpoint' do
-        allow(subject.http_client).to receive(:get).with("domains/42").
+        expect(subject.http_client).to receive(:get).with("domains/42").
                                                     and_return(response)
         subject.get_domain(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_domain(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -393,19 +395,19 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a POST request to /domains endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with("domains", an_instance_of(String)).and_return(response)
         subject.create_domain(:name => 'example.com')
       end
 
       it 'converts the domain attributes names to camel case' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with("domains", {'FooBar' => 'bar'}.to_json).and_return(response)
         subject.create_domain(:foo_bar => 'bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.create_domain(:foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -421,19 +423,19 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a PUT request to /domains/:id endpoint' do
-        allow(subject.http_client).to receive(:put).
+        expect(subject.http_client).to receive(:put).
             with('domains/42', an_instance_of(String)).and_return(response)
         subject.update_domain(42, :return_path_domain => 'updated-return.example.com')
       end
 
       it 'converts the domain attributes names to camel case' do
-        allow(subject.http_client).to receive(:put).
+        expect(subject.http_client).to receive(:put).
             with('domains/42', {'FooBar' => 'bar'}.to_json).and_return(response)
         subject.update_domain(42, :foo_bar => 'bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:put).and_return(response)
+        expect(subject.http_client).to receive(:put).and_return(response)
         keys = subject.update_domain(42, :foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -444,18 +446,18 @@ describe Postmark::AccountApiClient do
       let(:false_response) { {"SPFVerified" => false} }
 
       it 'performs a POST request to /domains/:id/verifyspf endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('domains/42/verifyspf').and_return(response)
         subject.verified_domain_spf?(42)
       end
 
       it 'returns false when SPFVerified field of the response is false' do
-        allow(subject.http_client).to receive(:post).and_return(false_response)
+        expect(subject.http_client).to receive(:post).and_return(false_response)
         expect(subject.verified_domain_spf?(42)).to be false
       end
 
       it 'returns true when SPFVerified field of the response is true' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         expect(subject.verified_domain_spf?(42)).to be true
       end
     end
@@ -469,13 +471,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a POST request to /domains/:id/rotatedkim endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('domains/42/rotatedkim').and_return(response)
         subject.rotate_domain_dkim(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.rotate_domain_dkim(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -490,13 +492,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a DELETE request to /domains/:id endpoint' do
-        allow(subject.http_client).to receive(:delete).
+        expect(subject.http_client).to receive(:delete).
             with('domains/42').and_return(response)
         subject.delete_domain(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:delete).and_return(response)
+        expect(subject.http_client).to receive(:delete).and_return(response)
         keys = subject.delete_sender(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -510,7 +512,8 @@ describe Postmark::AccountApiClient do
       end
 
       it 'lazily loads servers' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
+            exactly(5).times.
             with('servers', an_instance_of(Hash)).and_return(response)
         subject.servers.take(100)
       end
@@ -542,19 +545,19 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a GET request to /servers endpoint' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('servers', an_instance_of(Hash)).and_return(response)
         subject.get_servers
       end
 
       it 'formats the keys of returned list of servers' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_servers.map { |s| s.keys }.flatten
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
 
       it 'accepts offset and count options' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('servers', :offset => 30, :count => 50).
             and_return(response)
         subject.get_servers(:offset => 30, :count => 50)
@@ -582,13 +585,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a GET request to /servers/:id endpoint' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('servers/42').and_return(response)
         subject.get_server(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_server(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -598,7 +601,7 @@ describe Postmark::AccountApiClient do
       let(:response) { {'TotalCount' => 42} }
 
       it 'returns a total number of servers' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
             with('servers', an_instance_of(Hash)).and_return(response)
         expect(subject.get_servers_count).to eq(42)
       end
@@ -619,20 +622,20 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a POST request to /servers endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('servers', an_instance_of(String)).and_return(response)
         subject.create_server(:foo => 'bar')
       end
 
       it 'converts the server attribute names to camel case' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
             with('servers', {'FooBar' => 'foo_bar'}.to_json).
             and_return(response)
         subject.create_server(:foo_bar => 'foo_bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.create_server(:foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -659,21 +662,21 @@ describe Postmark::AccountApiClient do
       }
 
       it 'converts the server attribute names to camel case' do
-        allow(subject.http_client).to receive(:put).
+        expect(subject.http_client).to receive(:put).
             with(an_instance_of(String), {'FooBar' => 'foo_bar'}.to_json).
             and_return(response)
         subject.update_server(42, :foo_bar => 'foo_bar')
       end
 
       it 'performs a PUT request to /servers/:id endpoint' do
-        allow(subject.http_client).to receive(:put).
+        expect(subject.http_client).to receive(:put).
             with('servers/42', an_instance_of(String)).
             and_return(response)
         subject.update_server(42, :foo => 'bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:put).and_return(response)
+        expect(subject.http_client).to receive(:put).and_return(response)
         keys = subject.update_server(42, :foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -688,13 +691,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a DELETE request to /servers/:id endpoint' do
-        allow(subject.http_client).to receive(:delete).
+        expect(subject.http_client).to receive(:delete).
             with('servers/42').and_return(response)
         subject.delete_server(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:delete).and_return(response)
+        expect(subject.http_client).to receive(:delete).and_return(response)
         keys = subject.delete_server(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -711,7 +714,7 @@ describe Postmark::AccountApiClient do
       let(:request_data) {{:source_server_id => 1, :destination_server_id => 2, :perform_changes => false}}
 
       it 'gets templates info and converts it to ruby format' do
-        allow(subject.http_client).to receive(:put).and_return(response)
+        expect(subject.http_client).to receive(:put).and_return(response)
         templates = subject.push_templates({:source_server_id => 1, :destination_server_id => 2, :perform_changes => false} )
 
         expect(templates.size).to eq(2)
@@ -720,7 +723,7 @@ describe Postmark::AccountApiClient do
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:put).and_return(response)
+        expect(subject.http_client).to receive(:put).and_return(response)
         templates = subject.push_templates({:source_server_id => 1, :destination_server_id => 2, :perform_changes => false} )
 
         keys = templates.map { |template| template.keys }.flatten
@@ -737,13 +740,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a GET request to /data-removals/:id endpoint' do
-        allow(subject.http_client).to receive(:get).
+        expect(subject.http_client).to receive(:get).
           with('data-removals/42').and_return(response)
         subject.get_data_removal_status(42)
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:get).and_return(response)
+        expect(subject.http_client).to receive(:get).and_return(response)
         keys = subject.get_data_removal_status(42).keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
@@ -758,13 +761,13 @@ describe Postmark::AccountApiClient do
       }
 
       it 'performs a POST request to /data-removals endpoint' do
-        allow(subject.http_client).to receive(:post).
+        expect(subject.http_client).to receive(:post).
           with('data-removals', an_instance_of(String)).and_return(response)
         subject.request_data_removal(:foo => 'bar')
       end
 
       it 'formats the keys of returned response' do
-        allow(subject.http_client).to receive(:post).and_return(response)
+        expect(subject.http_client).to receive(:post).and_return(response)
         keys = subject.request_data_removal(:foo => 'bar').keys
         expect(keys.all? { |k| k.is_a?(Symbol) }).to be true
       end
