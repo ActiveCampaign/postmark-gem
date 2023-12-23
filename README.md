@@ -23,8 +23,8 @@ For details about Postmark API in general, please check out [Postmark developer 
 You will need a Postmark account, server and sender signature (or verified domain) set up to use it. For details about setup, check out [wiki pages](https://github.com/ActiveCampaign/postmark-gem/wiki/Getting-Started).
 
 If you plan using the library in a Rails project, check out the [postmark-rails](https://github.com/ActiveCampaign/postmark-rails/) gem, which
-is meant to integrate with ActionMailer. The plugin will try to use ActiveSupport JSon if it is already included. If not,
-it will attempt to use the built-in Ruby JSon library.
+is meant to integrate with ActionMailer. The plugin will try to use ActiveSupport JSON if it is already included. If not,
+it will attempt to use the built-in Ruby JSON library.
 
 You can also explicitly specify which one to be used, using following code:
 
