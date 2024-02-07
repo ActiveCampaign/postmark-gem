@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
   s.executables      = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths    = ["lib"]
 
+  s.metadata["changelog_uri"] = "https://github.com/ActiveCampaign/postmark-gem/blob/main/CHANGELOG.rdoc"
+
   s.post_install_message = %q{
     ==================
     Thanks for installing the postmark gem. If you don't have an account, please
