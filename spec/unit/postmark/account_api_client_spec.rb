@@ -12,6 +12,13 @@ describe Postmark::AccountApiClient do
     expect { subject.new(api_token, :http_read_timeout => 5) }.not_to raise_error
   end
 
+  it "doesn't mutate options hash" do
+    options = { my_option: true }
+    subject.new(api_token, options)
+
+    expect(options).to eq({ my_option: true})
+  end
+
   context 'instance' do
     subject { Postmark::AccountApiClient.new(api_token) }
 
