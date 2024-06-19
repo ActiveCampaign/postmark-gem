@@ -21,7 +21,9 @@ Gem::Specification.new do |s|
   s.executables      = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths    = ["lib"]
 
-  s.metadata["changelog_uri"] = "https://github.com/ActiveCampaign/postmark-gem/blob/main/CHANGELOG.rdoc"
+  if s.respond_to?(:metadata) # not supported in Bundler/Ruby 1.x
+    s.metadata["changelog_uri"] = "https://github.com/ActiveCampaign/postmark-gem/blob/main/CHANGELOG.rdoc"
+  end
 
   s.post_install_message = %q{
     ==================
