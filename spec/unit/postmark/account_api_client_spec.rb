@@ -13,10 +13,10 @@ describe Postmark::AccountApiClient do
   end
 
   it "doesn't mutate options hash" do
-    options = { my_option: true }
+    options = { "my_option" => true }
     subject.new(api_token, options)
 
-    expect(options).to eq({ my_option: true})
+    expect(options).to eq({ "my_option" => true })
   end
 
   context 'instance' do
