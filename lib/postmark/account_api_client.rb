@@ -3,6 +3,7 @@ module Postmark
   class AccountApiClient < Client
 
     def initialize(api_token, options = {})
+      options = options.dup
       options[:auth_header_name] = 'X-Postmark-Account-Token'
       super
     end
