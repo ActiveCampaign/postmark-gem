@@ -1,5 +1,8 @@
 = Changelog
 
+== 1.25.1
+* Fix: Postmark::AccountApiClient would mutate "options" argument 
+
 == 1.25.0
 * Add support for https://postmarkapp.com/developer/api/data-removals-api
 
