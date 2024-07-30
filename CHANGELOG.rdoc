@@ -1,8 +1,5 @@
 = Changelog
 
-== 1.26.0
-* Adds support for Custom Tracking
-
 == 1.25.1
 * Fix: Postmark::AccountApiClient would mutate "options" argument 
 
