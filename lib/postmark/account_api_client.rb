@@ -98,6 +98,10 @@ module Postmark
       format_response http_client.put("domains/#{id.to_i}/verifyreturnpath")
     end
 
+    def verify_domain_custom_tracking(id)
+      format_response http_client.put("domains/#{id.to_i}/verifycustomtracking")
+    end
+
     def verified_domain_spf?(id)
       !!http_client.post("domains/#{id.to_i}/verifyspf")['SPFVerified']
     end

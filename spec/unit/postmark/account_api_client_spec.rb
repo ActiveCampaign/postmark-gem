@@ -448,6 +448,16 @@ describe Postmark::AccountApiClient do
       end
     end
 
+    describe '#verify_domain_custom_tracking' do
+      let(:response) { {"CustomTrackingVerified" => true } }
+
+      it 'performs a PUT request to /domains/:id/verifycustomtracking endpoint' do
+        expect(subject.http_client).to receive(:put).
+          with('domains/42/verifycustomtracking').and_return(response)
+        subject.verify_domain_custom_tracking(42)
+      end
+    end
+
     describe '#verified_domain_spf?' do
       let(:response) { {"SPFVerified" => true} }
       let(:false_response) { {"SPFVerified" => false} }
