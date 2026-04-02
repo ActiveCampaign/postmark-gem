@@ -290,6 +290,43 @@ module Postmark
       end
     end
 
+    # --- Bulk Email (Early Access) -----------------------------------------
+    # See: https://postmarkapp.com/developer/api/bulk-email
+    #
+    # Sends a bulk email request where the content is defined once, and
+    # per-recipient data is provided via the `Messages` array. The expected
+    # payload matches Postmark's Bulk API body. Example shape:
+    # {
+    #   From: "sender@example.com",
+    #   Subject: "Hello {{FirstName}}",
+    #   HtmlBody: "<b>Hi, {{FirstName}}</b>",
+    #   TextBody: "Hi, {{FirstName}}",
+    #   MessageStream: "broadcast",
+    #   Messages: [
+    #     { To: "a@example.com", TemplateModel: { FirstName: "Ada" } },
+    #     { To: "b@example.com", TemplateModel: { FirstName: "Bob" } }
+    #   ]
+    # }
+    #
+    # Returns a hash with keys like :id, :status, :submitted_at.
+    def deliver_bulk(attributes = {})
+      data = serialize(HashHelper.to_postmark(attributes, :deep => true))
+
+      with_retries do
+        format_response http_client.post('email/bulk', data), :deep => true
+      end
+    end
+
+    # Fetch the status/details of a bulk request by its ID returned from
+    # `deliver_bulk`.
+    # Returns a hash with keys like :id, :status, :submitted_at,
+    # :total_messages, :percentage_completed, :subject
+    def get_bulk_status(bulk_request_id)
+      with_retries do
+        format_response http_client.get("email/bulk/#{bulk_request_id}"), :deep => true
+      end
+    end
+
     def get_stats_totals(options = {})
       format_response(http_client.get('stats/outbound', options))
     end
