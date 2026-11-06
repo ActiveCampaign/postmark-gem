@@ -17,7 +17,8 @@ module Postmark
     end
 
     def delete_blank_fields(message_hash)
-      message_hash.delete_if { |k, v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }
+      # The API requires TemplateModel for templated sends, even an empty one
+      message_hash.delete_if { |k, v| v.nil? || (k != 'TemplateModel' && v.respond_to?(:empty?) && v.empty?) }
     end
 
     def headers_part

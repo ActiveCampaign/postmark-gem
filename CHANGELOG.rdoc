@@ -1,5 +1,8 @@
 = Changelog
 
+== Unreleased
+* Fix: templated messages with an empty template model no longer drop TemplateModel, which the API requires
+
 == 1.25.1
 * Fix: Postmark::AccountApiClient would mutate "options" argument 
 
