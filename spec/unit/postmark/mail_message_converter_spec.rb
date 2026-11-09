@@ -241,6 +241,12 @@ describe Postmark::MailMessageConverter do
                                                          "To" => "lenard@bigbangtheory.com"})
   end
 
+  it 'keeps an empty template model for templated messages' do
+    templated_message.template_model = {}
+
+    expect(subject.new(templated_message).run).to include("TemplateModel" => {})
+  end
+
   context 'open tracking' do
     context 'setup inside of mail' do
       it 'converts open tracking enabled messages correctly' do
